@@ -7,7 +7,8 @@
   },
   "files": ["cli.js"],
   "keywords": ["claude-code", "plugin", "bmad", "pipeline", "automation", "orchestration", "sdlc"],
-  "author": "Stefano Ginella",
+  "author": "bramvera",
+  "contributors": ["Stefano Ginella"],
   "license": "MIT",
   "repository": {
     "type": "git",

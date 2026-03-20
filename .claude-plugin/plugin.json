@@ -3,8 +3,11 @@
   "version": "0.5.1",
   "description": "[0.5.1] Automated BMAD pipeline orchestration: plan, sprint, story, epic lifecycle, and WDS design workflows.",
   "author": {
-    "name": "Stefano Ginella"
+    "name": "bramvera"
   },
+  "contributors": [
+    { "name": "Stefano Ginella", "url": "https://github.com/stefanoginella" }
+  ],
   "homepage": "https://github.com/bramvera/auto-bmad",
   "license": "MIT",
   "keywords": ["bmad", "wds", "pipeline", "automation", "orchestration", "sdlc", "ux"]
