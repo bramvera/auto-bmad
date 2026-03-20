@@ -1,16 +1,24 @@
 # 🤖 Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.1](https://img.shields.io/badge/TEA-v1.7.1-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.1](https://img.shields.io/badge/TEA-v1.7.1-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
 
 > Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 compatibility.
 
 Automated (and very opinionated) BMAD pipeline orchestration for Claude Code.
 
-Two pipeline suites — **BMM** (Business Model Method) and **GDS** (Game Dev Suite) — each with four sequential commands that drive the BMAD development lifecycle from planning through story delivery.
+Three pipeline suites — **BMM** (Business Model Method), **GDS** (Game Dev Suite), and **WDS** (Whiteport Design Studio) — with sequential commands that drive the BMAD development lifecycle from design through story delivery.
 
 > The pipelines are quite long and token hungry (the story pipeline alone can run for more than 60 minutes). Some steps might seem redundant, but the code quality and consistency is worth it. A Claude Code Max x5 or x20 subscription is recommended to avoid hitting limits mid-run.
 
-## 🚀 Commands
+## Tutorials
+
+New to auto-bmad? Start here:
+
+- [BMM Tutorial](docs/tutorial-bmm.md) -- Build a product from idea to implementation using the Business Model Method
+- [GDS Tutorial](docs/tutorial-gds.md) -- Build a game from concept to implementation using the Game Dev Suite
+- [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Deep UX design with Whiteport Design Studio before BMM implementation
+
+## Commands
 
 ### BMM (Business Model Method)
 
@@ -20,6 +28,14 @@ Two pipeline suites — **BMM** (Business Model Method) and **GDS** (Game Dev Su
 | `/auto-bmad-epic-start` | 1 | Start a new epic: epic-level test design |
 | `/auto-bmad-story` | 13 | Develop a story: create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, NFR, trace, automate, test review |
 | `/auto-bmad-epic-end` | 3 | Close an epic: trace, retrospective, project context refresh |
+
+### WDS (Whiteport Design Studio)
+
+| Command | Steps | Description |
+|---------|-------|-------------|
+| `/auto-bmad-wds` | 9 | UX design pipeline: alignment, project brief, trigger mapping, platform requirements, scenarios, sketching, specs, components, design delivery |
+
+> Run `/auto-bmad-wds` before `/auto-bmad-plan` for deep UX work. The plan pipeline will skip its UX step when WDS artifacts exist.
 
 ### GDS (Game Dev Suite)
 
@@ -40,6 +56,7 @@ The pipelines produce the following key artifacts throughout the lifecycle:
 | **BMM Epic Start** | Retro action resolution log, green baseline report, story order plan |
 | **BMM Story** | Story file, ATDD specs, implementation code, code review report, security scan results, regression/E2E results, traceability entries |
 | **BMM Epic End** | Aggregated epic data, traceability gate report, retrospective, next epic preview |
+| **WDS** | Project brief, trigger map, platform requirements, scenario overview, conceptual sketches, page/scenario specs, functional components, design delivery packages |
 | **GDS Plan** | Game brief, GDD, narrative design, game architecture, test framework, game test design, sprint plan |
 | **GDS Epic Start** | Epic-level game test design |
 | **GDS Story** | Story file, implementation code, code review report, performance assessment, game test automation, test review |
@@ -50,13 +67,14 @@ The pipelines produce the following key artifacts throughout the lifecycle:
 The workflow is the same for both BMM and GDS — substitute commands as needed. Below shows the BMM variant; for GDS, replace `/auto-bmad-*` with `/auto-gds-*`. If you already have all the planning artifacts ready, you can skip the plan pipeline and go directly to step 4 or 5.
 
 1. **Prepare a strong and comprehensive input** for the plan pipeline — it validates readiness and won't run with a simple `Create a todo app` prompt. I recommend going through a few `/bmad-brainstorming` and `/bmad-party-mode` sessions first to build up enough context. If the initial input isn't ready, the plan pipeline will tell you what to improve.
-2. **Run `/auto-bmad-plan`** (BMM) or **`/auto-gds-plan`** (GDS) to kick off the initial planning pipeline for a new project or major initiative.
-3. **Review the generated artifacts** — PRD/GDD, Architecture, UX/Narrative design, Epics, and Test Plan. Make sure they look good and adjust if necessary before moving on to implementation. You might want to go through a few iterations of `/bmad-party-mode` to refine the output, since it sets the foundation for the next steps.
-4. **For each new epic**, run `/auto-bmad-epic-start` (BMM) or `/auto-gds-epic-start` (GDS) to establish a baseline and plan the story order based on the epic's goals and dependencies.
-5. **For each story within an epic**, run `/auto-bmad-story` (BMM) or `/auto-gds-story` (GDS) to develop the story from creation through delivery.
-6. **After each story**, review the report generated by the story pipeline and any other BMAD artifacts, perform some manual testing, and correct course if necessary.
-7. **At the end of an epic**, run `/auto-bmad-epic-end` (BMM) or `/auto-gds-epic-end` (GDS) to close the epic, conduct a retrospective, and preview the next epic.
-8. **Review the outputs of each pipeline run**, check the generated artifacts, and make adjustments as needed. The pipelines are opinionated and automated, but they still require human judgment and iteration. Use `/bmad-correct-course` (BMM) or `/gds-correct-course` (GDS) when big changes are needed.
+2. **(Optional) Run `/auto-bmad-wds`** for deep UX design work before planning. This creates project brief, trigger maps, scenarios, and design specs. The plan pipeline will skip its UX step when WDS artifacts exist.
+3. **Run `/auto-bmad-plan`** (BMM) or **`/auto-gds-plan`** (GDS) to kick off the initial planning pipeline for a new project or major initiative.
+4. **Review the generated artifacts** — PRD/GDD, Architecture, UX/Narrative design, Epics, and Test Plan. Make sure they look good and adjust if necessary before moving on to implementation. You might want to go through a few iterations of `/bmad-party-mode` to refine the output, since it sets the foundation for the next steps.
+5. **For each new epic**, run `/auto-bmad-epic-start` (BMM) or `/auto-gds-epic-start` (GDS) to establish a baseline and plan the story order based on the epic's goals and dependencies.
+6. **For each story within an epic**, run `/auto-bmad-story` (BMM) or `/auto-gds-story` (GDS) to develop the story from creation through delivery.
+7. **After each story**, review the report generated by the story pipeline and any other BMAD artifacts, perform some manual testing, and correct course if necessary.
+8. **At the end of an epic**, run `/auto-bmad-epic-end` (BMM) or `/auto-gds-epic-end` (GDS) to close the epic, conduct a retrospective, and preview the next epic.
+9. **Review the outputs of each pipeline run**, check the generated artifacts, and make adjustments as needed. The pipelines are opinionated and automated, but they still require human judgment and iteration. Use `/bmad-correct-course` (BMM) or `/gds-correct-course` (GDS) when big changes are needed.
 
 > ℹ️ **Important**: This plugin won't automate a multi-story workflow or an entire epic. Some human orchestration and judgment is still required between pipeline runs.
 
@@ -91,13 +109,15 @@ The pipelines are based on the [BMAD Method](https://github.com/bmad-code-org/BM
 | BMAD-METHOD | v6.2.0 | [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) |
 | TEA | v1.7.1 | [bmad-code-org/bmad-method-test-architecture-enterprise](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) |
 | GDS | v0.2.2 | [bmad-code-org/bmad-module-game-dev-studio](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) |
+| WDS | latest | [bmad-code-org/bmad-method-wds-expansion](https://github.com/bmad-code-org/bmad-method-wds-expansion) |
 
 #### Required BMAD Modules
 
 - **TEA** — Test Engineering Architect. Provides test strategy, test design, and ATDD capabilities used by the BMM pipelines.
 - **GDS** — Game Dev Suite. Provides game design, game architecture, narrative design, and game testing capabilities used by the GDS pipelines.
+- **WDS** — Whiteport Design Studio. Provides UX design workflows: project briefs, trigger mapping, scenarios, conceptual specs, and design delivery. Used by the WDS pipeline.
 
-> You only need the modules for the pipeline suite you're using. TEA for BMM, GDS for GDS.
+> You only need the modules for the pipeline suite you're using. TEA for BMM, GDS for GDS, WDS for the design pipeline.
 
 #### Optional BMAD Modules
 
@@ -126,6 +146,9 @@ The pipelines expect BMAD configuration files in the project:
 
 **For GDS pipelines:**
 - `_bmad/gds/config.yaml` — GDS configuration (output folders, artifact paths)
+
+**For WDS pipeline:**
+- `_bmad/wds/config.yaml` — WDS configuration (design artifact paths)
 
 These files are normally created by the BMAD CLI when initializing BMAD in a project. The pipelines rely on the standard structure and paths defined by these configs, so custom configurations may require pipeline adjustments.
 
