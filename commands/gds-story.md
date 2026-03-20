@@ -86,11 +86,15 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 
 6. **Story {{STORY_ID}} Code Review #1**
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+   - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_1_ISSUES}}` (integer count). If the review was clean (0 issues), set `{{REVIEW_1_CLEAN}}` to true.
 
 7. **Story {{STORY_ID}} Code Review #2**
+   - **Skip if:** `{{REVIEW_1_CLEAN}}` is true. Log "Code Review #1 was clean — skipping reviews #2 and #3".
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+   - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_2_ISSUES}}`. If the review was clean (0 issues), set `{{REVIEW_2_CLEAN}}` to true.
 
 8. **Story {{STORY_ID}} Code Review #3**
+   - **Skip if:** `{{REVIEW_1_CLEAN}}` is true (already skipped with #2) OR `{{REVIEW_2_CLEAN}}` is true. Log "Previous review was clean — skipping review #3".
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 ## Performance & Test Automation
