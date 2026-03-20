@@ -55,10 +55,10 @@ Before running any steps, record:
 After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): step N/2 <step-name> - done"` and prints a 1-line progress update: `Step N/2: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
 
 1. **Epic {{EPIC_ID}} Retrospective**
-   - **Task prompt:** `/bmad-gds-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation.`
+   - **Task prompt:** `/gds-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation.`
 
 2. **Epic {{EPIC_ID}} Project Context Refresh**
-   - **Task prompt:** `/bmad-gds-generate-project-context yolo`
+   - **Task prompt:** `/gds-generate-project-context yolo`
 
 # Pipeline Report
 

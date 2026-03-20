@@ -77,51 +77,51 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 
 1. **Create Product Brief**
    - **Skip if:** product brief OR PRD already exists. Log "Product brief already exists" or "PRD already exists — product brief not needed".
-   - **Task prompt:** `/bmad-bmm-create-product-brief yolo — {{USER_INPUT_INSTRUCTION}}`
+   - **Task prompt:** `/bmad-create-product-brief yolo — {{USER_INPUT_INSTRUCTION}}`
 
 ## Phase 2: Planning
 
 2. **Create PRD**
    - **Skip if:** PRD already exists. Log "PRD already exists".
-   - **Task prompt:** `/bmad-bmm-create-prd ultrathink yolo — {{USER_INPUT_INSTRUCTION}}`
+   - **Task prompt:** `/bmad-create-prd ultrathink yolo — {{USER_INPUT_INSTRUCTION}}`
 
 3. **Validate PRD**
    - **Skip if:** PRD already existed (was not created in step 2) AND downstream artifacts exist (architecture OR UX design specs). Log "PRD validation skipped — PRD predates this run and downstream artifacts already exist".
-   - **Task prompt:** `/bmad-bmm-validate-prd yolo — automatically fix all issues and optimizations found.`
+   - **Task prompt:** `/bmad-validate-prd yolo — automatically fix all issues and optimizations found.`
 
 4. **Create UX Design**
    - **Skip if:** UX design specification already exists. Also skip if the project has no frontend or UI component. Log reason.
-   - **Task prompt:** `/bmad-bmm-create-ux-design ultrathink yolo`
+   - **Task prompt:** `/bmad-create-ux-design ultrathink yolo`
 
 ## Phase 3: Solutioning
 
 5. **Create Architecture**
    - **Skip if:** architecture docs already exist. Log "Architecture already exists".
-   - **Task prompt:** `/bmad-bmm-create-architecture ultrathink yolo`
+   - **Task prompt:** `/bmad-create-architecture ultrathink yolo`
 
 6. **Test Framework Setup**
    - **Skip if:** test framework already configured. Log "Test framework already configured".
-   - **Task prompt:** `/bmad-tea-testarch-framework yolo — configure a single browser target (Chromium) by default. Multi-browser testing should NOT be the default; it will be explicitly configured per-project based on audience.`
+   - **Task prompt:** `/bmad-testarch-framework yolo — configure a single browser target (Chromium) by default. Multi-browser testing should NOT be the default; it will be explicitly configured per-project based on audience.`
 
 7. **System-Level Test Design**
    - **Skip if:** test-design-architecture.md and test-design-qa.md already exist. Log "System-level test design already exists".
-   - **Task prompt:** `/bmad-tea-testarch-test-design ultrathink yolo — run in system-level mode using the PRD, architecture docs. IMPORTANT test strategy constraints: (1) follow a strict test pyramid — push testing effort to the lowest viable layer (unit > integration/API > E2E), (2) E2E tests must be limited to critical happy-path user journeys only — do not duplicate coverage that exists at lower layers, (3) for private/internal tools default to a single browser target (Chromium), for public-facing tools use at most 4 relevant browsers (Chromium, Firefox, WebKit, and 1 mobile browser), (4) the test design must explicitly define which test types belong at each layer to prevent duplication in downstream workflows.`
+   - **Task prompt:** `/bmad-testarch-test-design ultrathink yolo — run in system-level mode using the PRD, architecture docs. IMPORTANT test strategy constraints: (1) follow a strict test pyramid — push testing effort to the lowest viable layer (unit > integration/API > E2E), (2) E2E tests must be limited to critical happy-path user journeys only — do not duplicate coverage that exists at lower layers, (3) for private/internal tools default to a single browser target (Chromium), for public-facing tools use at most 4 relevant browsers (Chromium, Firefox, WebKit, and 1 mobile browser), (4) the test design must explicitly define which test types belong at each layer to prevent duplication in downstream workflows.`
 
 8. **Create Epics & Stories**
    - **Skip if:** epics already exist. Log "Epics already exist".
-   - **Task prompt:** `/bmad-bmm-create-epics-and-stories yolo`
+   - **Task prompt:** `/bmad-create-epics-and-stories yolo`
 
 9. **Check Implementation Readiness**
-   - **Task prompt:** `/bmad-bmm-check-implementation-readiness yolo — automatically fix all issues.`
+   - **Task prompt:** `/bmad-check-implementation-readiness yolo — automatically fix all issues.`
 
 ## Phase 4: Sprint Setup
 
 10. **Generate Project Context**
-    - **Task prompt:** `/bmad-bmm-generate-project-context yolo`
+    - **Task prompt:** `/bmad-generate-project-context yolo`
 
 11. **Sprint Planning**
     - **Skip if:** sprint-status.yaml already exists. Log "Sprint plan already exists".
-    - **Task prompt:** `/bmad-bmm-sprint-planning yolo`
+    - **Task prompt:** `/bmad-sprint-planning yolo`
 
 # Pipeline Report
 

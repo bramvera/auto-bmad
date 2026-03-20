@@ -56,19 +56,19 @@ Before running any steps, record:
 After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): step N/5 <step-name> - done"` and prints a 1-line progress update: `Step N/5: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
 
 1. **Epic {{EPIC_ID}} Trace**
-   - **Task prompt:** `/bmad-tea-testarch-trace yolo — run in epic-level mode for epic {{EPIC_ID}}`
+   - **Task prompt:** `/bmad-testarch-trace yolo — run in epic-level mode for epic {{EPIC_ID}}`
 
 2. **Epic {{EPIC_ID}} NFR**
-   - **Task prompt:** `/bmad-tea-testarch-nfr yolo - run in epic-level mode for epic {{EPIC_ID}}`
+   - **Task prompt:** `/bmad-testarch-nfr yolo - run in epic-level mode for epic {{EPIC_ID}}`
 
 3. **Epic {{EPIC_ID}} Test Review**
-    - **Task prompt:** `/bmad-tea-testarch-test-review yolo — run in epic-level mode for epic {{EPIC_ID}}. Include test pyramid compliance in the review: flag any E2E tests that duplicate coverage from lower layers (unit/integration/API), flag excessive E2E test counts, and recommend pushing tests down the pyramid where possible`
+    - **Task prompt:** `/bmad-testarch-test-review yolo — run in epic-level mode for epic {{EPIC_ID}}. Include test pyramid compliance in the review: flag any E2E tests that duplicate coverage from lower layers (unit/integration/API), flag excessive E2E test counts, and recommend pushing tests down the pyramid where possible`
   
 4. **Epic {{EPIC_ID}} Retrospective**
-   - **Task prompt:** `/bmad-bmm-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation`
+   - **Task prompt:** `/bmad-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation`
 
 5. **Epic {{EPIC_ID}} Project Context Refresh**
-   - **Task prompt:** `/bmad-bmm-generate-project-context yolo`
+   - **Task prompt:** `/bmad-generate-project-context yolo`
 
 # Pipeline Report
 

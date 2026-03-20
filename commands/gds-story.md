@@ -66,10 +66,10 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 
 1. **Story {{STORY_ID}} Create**
    - **Skip if:** a story file for {{STORY_ID}} already exists in `{{implementation_artifacts}}/` (glob for `{{STORY_ID}}-*.md`). Log "Story file already exists" with the file path. Set `{{STORY_FILE}}` to the existing file path.
-   - **Task prompt:** `/bmad-gds-create-story story {{STORY_ID}} yolo`
+   - **Task prompt:** `/gds-create-story story {{STORY_ID}} yolo`
 
 2. **Story {{STORY_ID}} Validate**
-   - **Task prompt:** `/bmad-gds-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
+   - **Task prompt:** `/gds-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
 
 3. **Story {{STORY_ID}} Adversarial Review**
    - **Task prompt:** `/bmad-review-adversarial-general {{STORY_FILE}} ultrathink yolo — review the story specification. Fix all issues found.`
@@ -77,7 +77,7 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 ## Development
 
 4. **Story {{STORY_ID}} Develop**
-   - **Task prompt:** `/bmad-gds-dev-story {{STORY_FILE}} ultrathink yolo`
+   - **Task prompt:** `/gds-dev-story {{STORY_FILE}} ultrathink yolo`
 
 ## Reviews
 
@@ -85,24 +85,24 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
    - **Task prompt:** `/bmad-review-edge-case-hunter ultrathink yolo — run git diff {{START_COMMIT_HASH}} to get the production code changes as content. Fix all relevant findings by adding the suggested guards.`
 
 6. **Story {{STORY_ID}} Code Review #1**
-   - **Task prompt:** `/bmad-gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+   - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 7. **Story {{STORY_ID}} Code Review #2**
-   - **Task prompt:** `/bmad-gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+   - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 8. **Story {{STORY_ID}} Code Review #3**
-   - **Task prompt:** `/bmad-gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+   - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 ## Performance & Test Automation
 
 9. **Story {{STORY_ID}} Performance**
-   - **Task prompt:** `/bmad-gds-gametest-performance {{STORY_FILE}} yolo`
+   - **Task prompt:** `/gds-performance-test {{STORY_FILE}} yolo`
 
 10. **Story {{STORY_ID}} Test Automate**
-    - **Task prompt:** `/bmad-gds-gametest-automate {{STORY_FILE}} yolo — when expanding test coverage, focus on game-specific scenarios: gameplay loops, state transitions, system interactions, and edge cases in game logic. Push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
+    - **Task prompt:** `/gds-test-automate {{STORY_FILE}} yolo — when expanding test coverage, focus on game-specific scenarios: gameplay loops, state transitions, system interactions, and edge cases in game logic. Push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
 
 11. **Story {{STORY_ID}} Test Review**
-    - **Task prompt:** `/bmad-gds-gametest-test-review {{STORY_FILE}} yolo — review game test quality, coverage of gameplay scenarios, and ensure test reliability across game states. Include test pyramid compliance in the review: flag any E2E tests that duplicate coverage from lower layers (unit/integration/API), flag excessive E2E test counts, and recommend pushing tests down the pyramid where possible.`
+    - **Task prompt:** `/gds-test-review {{STORY_FILE}} yolo — review game test quality, coverage of gameplay scenarios, and ensure test reliability across game states. Include test pyramid compliance in the review: flag any E2E tests that duplicate coverage from lower layers (unit/integration/API), flag excessive E2E test counts, and recommend pushing tests down the pyramid where possible.`
 
 # Story File Update
 

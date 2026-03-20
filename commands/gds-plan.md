@@ -75,40 +75,40 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 
 1. **Create Game Brief**
    - **Skip if:** game brief OR GDD already exists. Log "Game brief already exists" or "GDD already exists — game brief not needed".
-   - **Task prompt:** `/bmad-gds-create-game-brief yolo — {{USER_INPUT_INSTRUCTION}}`
+   - **Task prompt:** `/gds-create-game-brief yolo — {{USER_INPUT_INSTRUCTION}}`
 
 ## Phase 2: Design
 
 2. **Create GDD**
    - **Skip if:** GDD already exists. Log "GDD already exists".
-   - **Task prompt:** `/bmad-gds-create-gdd ultrathink yolo — {{USER_INPUT_INSTRUCTION}}`
+   - **Task prompt:** `/gds-create-gdd ultrathink yolo — {{USER_INPUT_INSTRUCTION}}`
 
 3. **Create Narrative Design**
    - **Skip if:** narrative design already exists. Also skip if the game has no narrative component (e.g., purely abstract puzzle game). Log reason.
-   - **Task prompt:** `/bmad-gds-narrative ultrathink yolo`
+   - **Task prompt:** `/gds-create-narrative ultrathink yolo`
 
 ## Phase 3: Solutioning
 
 4. **Create Game Architecture**
    - **Skip if:** game architecture docs already exist. Log "Game architecture already exists".
-   - **Task prompt:** `/bmad-gds-game-architecture ultrathink yolo`
+   - **Task prompt:** `/gds-game-architecture ultrathink yolo`
 
 5. **Test Framework Setup**
    - **Skip if:** test framework already configured. Log "Test framework already configured".
-   - **Task prompt:** `/bmad-gds-gametest-framework yolo`
+   - **Task prompt:** `/gds-test-framework yolo`
 
 6. **Game Test Design**
    - **Skip if:** test-design-architecture.md and test-design-qa.md already exist. Log "System-level test design already exists".
-   - **Task prompt:** `/bmad-gds-gametest-test-design ultrathink yolo — run in system-level mode using the GDD, game architecture docs, and epics as input. Focus on game-specific test scenarios: core gameplay loops, game systems interactions, state management, performance under load, and platform-specific behaviors. IMPORTANT test strategy constraints: (1) follow a strict test pyramid — push testing effort to the lowest viable layer (unit > integration/API > E2E), (2) E2E tests must be limited to critical happy-path user journeys only — do not duplicate coverage that exists at lower layers, (3) the test design must explicitly define which test types belong at each layer to prevent duplication in downstream workflows.`
+   - **Task prompt:** `/gds-test-design ultrathink yolo — run in system-level mode using the GDD, game architecture docs, and epics as input. Focus on game-specific test scenarios: core gameplay loops, game systems interactions, state management, performance under load, and platform-specific behaviors. IMPORTANT test strategy constraints: (1) follow a strict test pyramid — push testing effort to the lowest viable layer (unit > integration/API > E2E), (2) E2E tests must be limited to critical happy-path user journeys only — do not duplicate coverage that exists at lower layers, (3) the test design must explicitly define which test types belong at each layer to prevent duplication in downstream workflows.`
 
 ## Phase 4: Sprint Setup
 
 7. **Generate Project Context**
-   - **Task prompt:** `/bmad-gds-generate-project-context yolo`
+   - **Task prompt:** `/gds-generate-project-context yolo`
 
 8. **Sprint Planning**
    - **Skip if:** sprint-status.yaml already exists. Log "Sprint plan already exists".
-   - **Task prompt:** `/bmad-gds-sprint-planning yolo`
+   - **Task prompt:** `/gds-sprint-planning yolo`
 
 # Pipeline Report
 

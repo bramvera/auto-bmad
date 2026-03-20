@@ -1,6 +1,6 @@
 {
   "name": "@stefanoginella/auto-bmad",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "description": "Installs the auto-bmad Claude Code plugin — automated BMAD pipeline orchestration",
   "bin": {
     "auto-bmad": "cli.js"
@@ -11,8 +11,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stefanoginella/auto-bmad.git",
+    "url": "git+https://github.com/bramvera/auto-bmad.git",
     "directory": "package"
   },
-  "homepage": "https://github.com/stefanoginella/auto-bmad/blob/main/README.md"
+  "homepage": "https://github.com/bramvera/auto-bmad/blob/main/README.md"
 }
