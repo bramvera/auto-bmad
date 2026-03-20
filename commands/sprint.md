@@ -31,7 +31,9 @@ ELSE ask the user to provide the epic number to run and set {{EPIC_ID}} to the p
 
 # Sprint Pipeline
 
-Run the entire epic lifecycle autonomously — epic-start, all stories in sequence, then epic-end. This is fully hands-off: kick it off and walk away.
+Run the entire epic lifecycle autonomously — epic-start, then each story's 11 steps directly, then epic-end. This is fully hands-off: kick it off and walk away.
+
+**ARCHITECTURE NOTE:** The sprint coordinator runs each story step as a direct Task call — it does NOT delegate to `/auto-bmad-story`. This avoids 3-level nesting (sprint → story coordinator → step agent) which causes context exhaustion. Instead: sprint → step agent (2 levels only).
 
 Each step MUST run in its own **foreground Task tool call** (subagent_type: "general-purpose") so that each agent gets a fresh context window.
 
@@ -40,21 +42,22 @@ Each step MUST run in its own **foreground Task tool call** (subagent_type: "gen
 - **DO NOT** use TeamCreate, SendMessage, TaskOutput, TaskCreate, or TaskList. This is a sequential pipeline, not a team collaboration.
 - **DO NOT** launch multiple Task calls simultaneously. Wait for each to return before launching the next.
 - **DO NOT** execute any step, fix, or implement new code yourself — always delegate to a Task agent.
+- **DO NOT** invoke `/auto-bmad-story` or `/auto-bmad-epic-start` or `/auto-bmad-epic-end` as nested skills. Run the underlying BMAD skills directly to avoid nesting.
 
 **CRITICAL — Context management (prevents degradation on long runs):**
 
 The sprint coordinator can run for many hours across many stories. To prevent context window exhaustion and quality degradation:
 
-1. **Discard Task results immediately.** When a story Task returns, extract ONLY: pass/fail status, one-line summary (e.g., "4 patches applied" or "clean"), and duration. Do NOT retain the full story report, code diffs, or review findings in your context.
-2. **Write to disk, not memory.** All details go into the progress file on disk. If you need to reference previous story results, read the progress file — do not rely on your conversation history.
-3. **Keep coordinator messages minimal.** Print only the one-line progress update per story. Do not summarize, reflect, or analyze between stories.
-4. **Never re-read story reports.** The story pipeline already writes its own report to `{{auto_bmad_artifacts}}/`. The coordinator does not need to read or reprocess them.
-5. **Do not accumulate lists.** Track story results as a simple list of `(story_id, status, duration, one_line_summary)` tuples — nothing more.
+1. **Discard Task results immediately.** When a step Task returns, extract ONLY: pass/fail status and a one-line summary (e.g., "4 patches applied" or "clean"). Do NOT retain the full report, code diffs, or review findings in your context.
+2. **Write to disk, not memory.** All details go into the progress file on disk. If you need to reference previous results, read the progress file — do not rely on your conversation history.
+3. **Keep coordinator messages minimal.** Print only the one-line progress update per step. Do not summarize, reflect, or analyze between steps or stories.
+4. **Do not accumulate lists.** Track results as simple tuples — nothing more.
 
-**Retry policy:** If a story step fails, run `git reset --hard HEAD` to discard its partial changes, then retry **once**. If the retry also fails:
-- Log the failure with story ID and reason
-- **Skip the failed story and continue with the next one** — do NOT stop the entire sprint
-- Record the failure in the final report so the user can address it manually
+**Retry policy:** If a step fails, run `git reset --hard HEAD` to discard its partial changes, then retry **once**. If the retry also fails:
+- Roll back the entire story: `git reset --hard {{STORY_START_COMMIT}}`
+- Log the failure with story ID, step number, and reason
+- **Skip the remaining steps for this story and continue with the next story**
+- Record the failure in the progress file
 
 # Discover Stories
 
@@ -75,39 +78,83 @@ Before running any steps, record:
 - `{{SPRINT_START_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"` via Bash and store the output
 - `{{SPRINT_START_COMMIT}}` — run `git rev-parse --short HEAD` and store the result
 
-# Pipeline Phases
-
-## Phase 1: Epic Start
+# Phase 1: Epic Start
 
 Check if epic-level test design already exists for epic {{EPIC_ID}} (scan `{{test_artifacts}}/` for epic-{{EPIC_ID}} test design files).
 
 - **Skip if:** epic test design already exists. Log "Epic test design already exists".
-- **Task prompt:** `/auto-bmad-epic-start {{EPIC_ID}}`
+- **Task prompt:** `/bmad-testarch-test-design yolo — run in epic-level mode for epic {{EPIC_ID}}. Follow the test pyramid defined in the system-level test design: push tests to the lowest viable layer (unit > integration/API > E2E). Only plan E2E tests for critical happy-path flows in this epic. Do not plan E2E coverage for scenarios that can be verified at API or unit level.`
+- After Task completes: `git add -A && git commit --no-verify -m "chore(epic-{{EPIC_ID}}): epic start — test design complete"`
 
 Print: `Epic Start — done`
 
-## Phase 2: Stories
+# Phase 2: Stories
 
-For each story ID in {{STORY_LIST}}, in order:
+For each story ID `{{STORY_ID}}` in `{{STORY_LIST}}`, in order:
 
-1. Print: `Starting story {{STORY_ID}} ({{CURRENT}}/{{TOTAL_STORIES}})...`
+1. Print: `=== Story {{STORY_ID}} ({{CURRENT}}/{{TOTAL_STORIES}}) ===`
 2. Record `{{STORY_START_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"`
 3. Record `{{STORY_START_COMMIT}}` — run `git rev-parse --short HEAD`
-4. Run the story pipeline:
-   - **Task prompt:** `/auto-bmad-story {{STORY_ID}}`
-5. Record `{{STORY_END_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"`
-6. Calculate duration
-7. Print: `Story {{STORY_ID}} — done ({{DURATION}}m) [{{CURRENT}}/{{TOTAL_STORIES}}]`
-8. **Write progress report** — after each story (success or failure), update the progress file (see below)
+4. Set `{{EPIC_ID}}` and `{{STORY_NUM}}` by splitting `{{STORY_ID}}` on the dash separator.
 
-**On failure after retry:**
-- Record the failure reason, which step failed, and the commit hash before the story started
-- Print: `Story {{STORY_ID}} — FAILED, skipping to next story`
-- Continue with next story
+Run the 11 story steps below. After each successful step, run `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"`.
 
-**Between stories:** No manual intervention needed. The Task tool gives each story a fresh context window automatically.
+If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT}}`, log the failure, update the progress file, and skip to the next story.
 
-### Progress Report (written after every story)
+## Story Steps
+
+### Step 1: Create Story
+- **Skip if:** a story file for {{STORY_ID}} already exists in `{{implementation_artifacts}}/` (glob for `{{STORY_ID}}-*.md`). Set `{{STORY_FILE}}` to the existing file path.
+- **Task prompt:** `/bmad-create-story story {{STORY_ID}} yolo`
+- After success: glob `{{implementation_artifacts}}/{{STORY_ID}}-*.md` to set `{{STORY_FILE}}`.
+
+### Step 2: Validate Story
+- **Task prompt:** `/bmad-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
+
+### Step 3: Adversarial Review
+- **Task prompt:** `/bmad-review-adversarial-general {{STORY_FILE}} ultrathink yolo — review the story specification. Fix all issues found.`
+
+### Step 4: ATDD
+- **Task prompt:** `/bmad-testarch-atdd {{STORY_FILE}} ultrathink yolo — follow the test pyramid: prefer API-level and integration-level acceptance tests over E2E. Only create E2E tests for acceptance criteria that genuinely require full browser interaction (UI-specific flows). Generate unit tests for business logic criteria. Your scope is strictly TDD red phase: generate failing acceptance tests ONLY. Do not create or modify any production code, API routes, UI components, database schemas, or application logic — implementation is the Dev step's job.`
+
+### Step 5: Develop
+- **Task prompt:** `/bmad-dev-story {{STORY_FILE}} ultrathink yolo`
+
+### Step 6: Edge-Case Hunt
+- **Task prompt:** `/bmad-review-edge-case-hunter ultrathink yolo — run git diff {{STORY_START_COMMIT}} to get the production code changes as content. Fix all relevant findings by adding the suggested guards.`
+
+### Step 7: Code Review #1
+- **Task prompt:** `/bmad-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+- After Task returns, extract issue count. If 0 issues found, set `{{REVIEW_1_CLEAN}}` to true.
+
+### Step 8: Code Review #2
+- **Skip if:** `{{REVIEW_1_CLEAN}}` is true. Log "Code Review #1 was clean — skipping reviews #2 and #3".
+- **Task prompt:** `/bmad-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+- After Task returns, extract issue count. If 0 issues found, set `{{REVIEW_2_CLEAN}}` to true.
+
+### Step 9: Code Review #3
+- **Skip if:** `{{REVIEW_1_CLEAN}}` is true OR `{{REVIEW_2_CLEAN}}` is true. Log "Previous review was clean — skipping review #3".
+- **Task prompt:** `/bmad-code-review {{STORY_FILE}} yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
+
+### Step 10: Trace
+- **Task prompt:** `/bmad-testarch-trace {{STORY_FILE}} yolo`
+
+### Step 11: Test Automate
+- **Task prompt:** `/bmad-testarch-automate {{STORY_FILE}} yolo — when expanding test coverage, push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
+
+## Story Completion
+
+After step 11 completes successfully:
+
+1. Update `{{STORY_FILE}}` status if not already marked done.
+2. Update `{{implementation_artifacts}}/sprint-status.yaml` to mark the story as completed.
+3. Squash story commits: `git reset --soft {{STORY_START_COMMIT}}` then determine commit type from story content:
+   - `feat` for new features, `fix` for bug fixes, `refactor` for restructuring, `chore` for configs/tooling
+   - Commit: `git add -A && git commit -m "<type>({{STORY_ID}}): <one-line summary>"`
+4. Print: `Story {{STORY_ID}} — done ({{DURATION}}m) [{{CURRENT}}/{{TOTAL_STORIES}}]`
+5. Update progress file (see below).
+
+## Progress Report (written after every story)
 
 After each story completes (or fails), write/update `{{auto_bmad_artifacts}}/sprint-epic-{{EPIC_ID}}-progress.md`. This is a **live file** — overwritten after each story so you always have a record even if the sprint crashes.
 
@@ -122,7 +169,7 @@ Stories completed: {{COMPLETED}} / {{TOTAL_STORIES}}
 |---|-------|--------|----------|---------------|---------|
 | 1 | 1-1 | done | 62m | abc1234 | Project scaffold |
 | 2 | 1-2 | done | 58m | def5678 | Auth system |
-| 3 | 1-3 | FAILED | 12m | ghi9012 | Payment integration — ATDD failed: Stripe SDK not installed |
+| 3 | 1-3 | FAILED (step 4) | 12m | ghi9012 | ATDD failed: Stripe SDK not installed |
 | 4 | 1-4 | pending | - | - | - |
 | 5 | 1-5 | pending | - | - | - |
 
@@ -133,13 +180,19 @@ Stories completed: {{COMPLETED}} / {{TOTAL_STORIES}}
   - Recovery: `git reset --hard ghi9012`, fix the issue, then `/auto-bmad-story 1-3`
 ```
 
-This ensures that even if the sprint process crashes, the terminal closes, or context runs out — you have a file on disk showing exactly what happened, which stories passed, which failed and why, and the commit hashes needed to recover.
-
-## Phase 3: Epic End
+# Phase 3: Epic End
 
 After all stories have been attempted (whether all succeeded or some failed):
 
-- **Task prompt:** `/auto-bmad-epic-end {{EPIC_ID}}`
+1. **Trace:** Task prompt: `/bmad-testarch-trace yolo — run in epic-level mode for epic {{EPIC_ID}}`
+2. **NFR:** Task prompt: `/bmad-testarch-nfr yolo - run in epic-level mode for epic {{EPIC_ID}}`
+3. **Test Review:** Task prompt: `/bmad-testarch-test-review yolo — run in epic-level mode for epic {{EPIC_ID}}. Include test pyramid compliance in the review.`
+4. **Retrospective:** Task prompt: `/bmad-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation`
+5. **Project Context Refresh:** Task prompt: `/bmad-generate-project-context yolo`
+
+After each step: `git add -A && git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): <step-name> - done"`
+
+After all epic-end steps complete, squash: `git reset --soft <commit-before-epic-end>` then `git add -A && git commit -m "chore(epic-{{EPIC_ID}}): epic end — retro done, actions resolved"`
 
 Print: `Epic End — done`
 
@@ -172,15 +225,14 @@ Use this template for the report:
 
 | # | Story | Status | Duration | Summary |
 |---|-------|--------|----------|---------|
-| 1 | {{STORY_ID}} | done/failed | Xm | <one-line summary from story report> |
-| 2 | ... | ... | ... | ... |
+| 1 | {{STORY_ID}} | done/failed | Xm | <one-line summary> |
 
 ## Failed Stories
 
 List any stories that failed with the reason. If none, write "None — all stories completed successfully."
 
 For each failed story:
-- **Story {{STORY_ID}}**: <failure reason>
+- **Story {{STORY_ID}}** (failed at step N): <failure reason>
 - **Recovery**: `git reset --hard <commit-before-story>` to clean up, then run `/auto-bmad-story {{STORY_ID}}` manually
 
 ## Sprint Summary
