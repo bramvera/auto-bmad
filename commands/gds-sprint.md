@@ -81,18 +81,48 @@ For each story ID in {{STORY_LIST}}, in order:
 
 1. Print: `Starting story {{STORY_ID}} ({{CURRENT}}/{{TOTAL_STORIES}})...`
 2. Record `{{STORY_START_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"`
-3. Run the story pipeline:
+3. Record `{{STORY_START_COMMIT}}` — run `git rev-parse --short HEAD`
+4. Run the story pipeline:
    - **Task prompt:** `/auto-gds-story {{STORY_ID}}`
-4. Record `{{STORY_END_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"`
-5. Calculate duration
-6. Print: `Story {{STORY_ID}} — done ({{DURATION}}m) [{{CURRENT}}/{{TOTAL_STORIES}}]`
+5. Record `{{STORY_END_TIME}}` — run `date -u +"%Y-%m-%dT%H:%M:%S"`
+6. Calculate duration
+7. Print: `Story {{STORY_ID}} — done ({{DURATION}}m) [{{CURRENT}}/{{TOTAL_STORIES}}]`
+8. **Write progress report** — after each story (success or failure), update the progress file (see below)
 
 **On failure after retry:**
+- Record the failure reason, which step failed, and the commit hash before the story started
 - Print: `Story {{STORY_ID}} — FAILED, skipping to next story`
-- Record failure in results list
 - Continue with next story
 
 **Between stories:** No manual intervention needed. The Task tool gives each story a fresh context window automatically.
+
+### Progress Report (written after every story)
+
+After each story completes (or fails), write/update `{{auto_bmad_artifacts}}/gds-sprint-epic-{{EPIC_ID}}-progress.md`. This is a **live file** — overwritten after each story so you always have a record even if the sprint crashes.
+
+```markdown
+# Sprint Progress: GDS Epic {{EPIC_ID}} (LIVE)
+
+Last updated: {{STORY_END_TIME}}
+Sprint started: {{SPRINT_START_TIME}}
+Stories completed: {{COMPLETED}} / {{TOTAL_STORIES}}
+
+| # | Story | Status | Duration | Commit Before | Summary |
+|---|-------|--------|----------|---------------|---------|
+| 1 | 1-1 | done | 62m | abc1234 | Core game loop |
+| 2 | 1-2 | done | 58m | def5678 | Input system |
+| 3 | 1-3 | FAILED | 12m | ghi9012 | Physics engine — Develop failed: missing dependency |
+| 4 | 1-4 | pending | - | - | - |
+| 5 | 1-5 | pending | - | - | - |
+
+## Failed Stories
+
+- **Story 1-3** (failed at step 4 — Develop): Missing physics library dependency
+  - Commit before story: ghi9012
+  - Recovery: `git reset --hard ghi9012`, fix the issue, then `/auto-gds-story 1-3`
+```
+
+This ensures that even if the sprint process crashes, the terminal closes, or context runs out — you have a file on disk showing exactly what happened, which stories passed, which failed and why, and the commit hashes needed to recover.
 
 ## Phase 3: Epic End
 
