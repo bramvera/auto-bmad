@@ -84,7 +84,19 @@ When a story-level failure happens:
 3. Logs the failure (which step failed, why, and the commit hash before the story)
 4. **Skips to the next story and keeps going** — it does not stop the entire sprint
 
-This means later stories still run even if an earlier one failed. Later stories that depend on the failed story's code may also fail — that's expected and will show in the report.
+**What about dependent stories?** Stories are ordered by dependency — story 1-2 often builds on code from 1-1. If story 1-1 fails and its code gets rolled back, story 1-2 will likely fail too because the code it depends on doesn't exist. The sprint will attempt it, it will fail, and the sprint moves on. This is by design — the alternative (stopping the entire sprint) wastes the remaining stories that might be independent.
+
+In practice, a failed story usually causes a cascade of failures for dependent stories. The sprint report will show the chain clearly:
+
+```
+Story 1-1 — FAILED (missing dependency)
+Story 1-2 — FAILED (depends on 1-1 code)
+Story 1-3 — FAILED (depends on 1-1 code)
+Story 1-4 — done   (independent story, no dependency on 1-1)
+Story 1-5 — done   (independent story)
+```
+
+After the sprint, fix story 1-1 manually, then rerun `/auto-bmad-sprint 1` — it skips 1-4 and 1-5 (already done) and runs 1-1, 1-2, and 1-3.
 
 **Live progress file:**
 
