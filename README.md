@@ -35,7 +35,7 @@ New to auto-bmad? Start here:
 | `/auto-bmad-epic-start` | 1 | Start a new epic: epic-level test design |
 | `/auto-bmad-story` | 13 | Develop a story: create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, NFR, trace, automate, test review |
 | `/auto-bmad-epic-end` | 3 | Close an epic: trace, retrospective, project context refresh |
-| `/auto-bmad-sprint` | all | Run an entire epic hands-off: epic-start, all stories, epic-end. Reads sprint-status.yaml, skips completed stories, continues on failure |
+| `/auto-bmad-sprint` | all | Run an entire epic hands-off: epic-start, all stories, epic-end (see [how sprint works](#how-sprint-works)) |
 
 ### WDS (Whiteport Design Studio)
 
@@ -53,7 +53,48 @@ New to auto-bmad? Start here:
 | `/auto-gds-epic-start` | 1 | Start a new epic: epic-level game test design |
 | `/auto-gds-story` | 11 | Develop a story: create, validate, adversarial review, develop, edge-case hunt, 3x code review, performance, test automate, test review |
 | `/auto-gds-epic-end` | 2 | Close an epic: retrospective, project context refresh |
-| `/auto-gds-sprint` | all | Run an entire GDS epic hands-off: epic-start, all stories, epic-end |
+| `/auto-gds-sprint` | all | Run an entire GDS epic hands-off: epic-start, all stories, epic-end (see [how sprint works](#how-sprint-works)) |
+
+### How Sprint Works
+
+The sprint command (`/auto-bmad-sprint` or `/auto-gds-sprint`) runs an entire epic autonomously. Provide an epic number and walk away.
+
+```
+/auto-bmad-sprint 1
+```
+
+**What it does:**
+
+1. Reads `sprint-status.yaml` to discover all stories for the epic
+2. Skips stories already marked as completed
+3. Runs `/auto-bmad-epic-start` (if not already done)
+4. Runs each pending story sequentially, each in a fresh context
+5. Runs `/auto-bmad-epic-end` after all stories
+6. Generates a final sprint report
+
+**What "continues on failure" means:**
+
+Within each story, test failures and code review findings are normal — they get auto-fixed as part of the pipeline (ATDD writes failing tests, Develop makes them pass, Code Review finds and fixes issues). This is expected behavior, not a failure.
+
+A story-level failure is different — it means the entire story pipeline crashed and could not complete even after one retry. Examples: a missing dependency the agent can't install, context window exhaustion, an unrecoverable tool error, or a skill that doesn't resolve.
+
+When a story-level failure happens:
+1. The sprint retries the story once
+2. If it fails again, it rolls back the story's partial changes (`git reset --hard`)
+3. Logs the failure (which step failed, why, and the commit hash before the story)
+4. **Skips to the next story and keeps going** — it does not stop the entire sprint
+
+This means later stories still run even if an earlier one failed. Later stories that depend on the failed story's code may also fail — that's expected and will show in the report.
+
+**Live progress file:**
+
+After every story (pass or fail), the sprint writes a progress file to disk at `auto-bmad-artifacts/sprint-epic-<N>-progress.md`. If the sprint crashes, the terminal closes, or context runs out, this file shows:
+- Which stories completed, failed, or are still pending
+- Duration of each story
+- The exact commit hash before each story (for recovery)
+- The step and reason for any failure
+
+**Resumable:** Run `/auto-bmad-sprint 1` again after a crash or interruption. It reads `sprint-status.yaml`, skips completed stories, and picks up where it left off.
 
 ## 🗂 Artifacts
 
