@@ -34,6 +34,7 @@ New to auto-bmad? Start here:
 | `/auto-bmad-epic-start` | 1 | Start a new epic: epic-level test design |
 | `/auto-bmad-story` | 13 | Develop a story: create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, NFR, trace, automate, test review |
 | `/auto-bmad-epic-end` | 3 | Close an epic: trace, retrospective, project context refresh |
+| `/auto-bmad-sprint` | all | Run an entire epic hands-off: epic-start, all stories, epic-end. Reads sprint-status.yaml, skips completed stories, continues on failure |
 
 ### WDS (Whiteport Design Studio)
 
@@ -51,6 +52,7 @@ New to auto-bmad? Start here:
 | `/auto-gds-epic-start` | 1 | Start a new epic: epic-level game test design |
 | `/auto-gds-story` | 11 | Develop a story: create, validate, adversarial review, develop, edge-case hunt, 3x code review, performance, test automate, test review |
 | `/auto-gds-epic-end` | 2 | Close an epic: retrospective, project context refresh |
+| `/auto-gds-sprint` | all | Run an entire GDS epic hands-off: epic-start, all stories, epic-end |
 
 ## 🗂 Artifacts
 
