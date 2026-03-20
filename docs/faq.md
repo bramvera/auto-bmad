@@ -129,9 +129,19 @@ Yes. `/auto-bmad-plan` scans for existing artifacts and skips steps where output
 
 ### Can I stop a pipeline mid-run?
 
-You can stop between stories (Ctrl+C or close the terminal). Previous completed stories are committed and safe.
+**Between stories:** Yes. Previous completed stories are committed and safe. Run `/auto-bmad-sprint <epic>` again — it skips completed stories and picks up where you left off.
 
-If you stop mid-story, partial changes will be in your working tree. Clean up with `git reset --hard HEAD`, then resume with `/auto-bmad-sprint <epic>` — it skips completed stories.
+**Mid-story:** You can Ctrl+C or close the terminal, but you cannot pause and resume a story. Each story runs as a single Task — there's no checkpoint within it that allows resumption. What's left behind:
+
+| When you stop mid-story | State | Recovery |
+|---|---|---|
+| During steps 1-3 (spec creation) | Partial story spec, no code | `git reset --hard HEAD` to discard, then rerun the story |
+| During step 4 (ATDD) | Failing tests written, no prod code | `git reset --hard HEAD` to discard, then rerun |
+| During step 5 (Develop) | Partial implementation, some tests passing | `git reset --hard HEAD` to discard, then rerun |
+| During steps 6-9 (reviews) | Code exists, partially reviewed | `git reset --hard HEAD` to discard, then rerun |
+| During steps 10-11 (trace/automate) | Code is reviewed but traceability incomplete | `git reset --hard HEAD` to discard, then rerun |
+
+In all cases, `git reset --hard HEAD` cleans up the partial work and `/auto-bmad-sprint <epic>` (or `/auto-bmad-story <id>`) will rerun that story from scratch. There is no way to resume a story from step 6 if you stopped at step 5 — the entire story reruns.
 
 ### Is the sprint command resumable?
 
