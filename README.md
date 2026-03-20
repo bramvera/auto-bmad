@@ -23,6 +23,7 @@ New to auto-bmad? Start here:
 - [BMM Tutorial](docs/tutorial-bmm.md) -- Build a product from idea to implementation using the Business Model Method
 - [GDS Tutorial](docs/tutorial-gds.md) -- Build a game from concept to implementation using the Game Dev Suite
 - [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Deep UX design with Whiteport Design Studio before BMM implementation
+- [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
 
 ## Commands
 
