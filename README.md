@@ -10,6 +10,12 @@ Three pipeline suites — **BMM** (Business Model Method), **GDS** (Game Dev Sui
 
 > The pipelines are quite long and token hungry (the story pipeline alone can run for more than 60 minutes). Some steps might seem redundant, but the code quality and consistency is worth it. A Claude Code Max x5 or x20 subscription is recommended to avoid hitting limits mid-run.
 
+### WDS Pipeline in Action
+
+![WDS pipeline running on a real project](docs/images/wds-pipeline-run.png)
+
+*Real-world run of `/auto-bmad-wds` -- project brief, trigger mapping, platform requirements, scenarios, conceptual sketching, and specs running sequentially with git checkpoints.*
+
 ## Tutorials
 
 New to auto-bmad? Start here:
