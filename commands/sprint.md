@@ -41,6 +41,16 @@ Each step MUST run in its own **foreground Task tool call** (subagent_type: "gen
 - **DO NOT** launch multiple Task calls simultaneously. Wait for each to return before launching the next.
 - **DO NOT** execute any step, fix, or implement new code yourself — always delegate to a Task agent.
 
+**CRITICAL — Context management (prevents degradation on long runs):**
+
+The sprint coordinator can run for many hours across many stories. To prevent context window exhaustion and quality degradation:
+
+1. **Discard Task results immediately.** When a story Task returns, extract ONLY: pass/fail status, one-line summary (e.g., "4 patches applied" or "clean"), and duration. Do NOT retain the full story report, code diffs, or review findings in your context.
+2. **Write to disk, not memory.** All details go into the progress file on disk. If you need to reference previous story results, read the progress file — do not rely on your conversation history.
+3. **Keep coordinator messages minimal.** Print only the one-line progress update per story. Do not summarize, reflect, or analyze between stories.
+4. **Never re-read story reports.** The story pipeline already writes its own report to `{{auto_bmad_artifacts}}/`. The coordinator does not need to read or reprocess them.
+5. **Do not accumulate lists.** Track story results as a simple list of `(story_id, status, duration, one_line_summary)` tuples — nothing more.
+
 **Retry policy:** If a story step fails, run `git reset --hard HEAD` to discard its partial changes, then retry **once**. If the retry also fails:
 - Log the failure with story ID and reason
 - **Skip the failed story and continue with the next one** — do NOT stop the entire sprint
