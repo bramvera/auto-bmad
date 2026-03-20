@@ -175,6 +175,8 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already verified (tests passed, acceptance criteria matched, code review clean). Do NOT fabricate items to fill a quota.
 
+**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+
 ### Next
 - Start a new session with fresh context, then run `/auto-bmad-gds-story <next-story>` for the next story in the sprint
 - After all stories in the epic are done, start a new session and run `/auto-bmad-gds-epic-end <epic-number>` to close the epic

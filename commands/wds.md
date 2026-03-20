@@ -170,6 +170,8 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already handled successfully. Do NOT fabricate items to fill a quota.
 
+**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+
 ### Next
 - Review the design artifacts in `{{design_artifacts}}/` — especially the trigger map and conceptual specs
 - Run `/auto-bmad-plan` to continue with PRD, architecture, epics, and sprint setup (the UX step will be skipped since WDS artifacts exist)

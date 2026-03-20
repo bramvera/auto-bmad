@@ -179,6 +179,8 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already handled successfully. Do NOT fabricate items to fill a quota.
 
+**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+
 ### Next
 - Start a new session with fresh context, then run `/auto-bmad-epic-start <epic-number>` to prepare the first epic (test design)
 - Then run `/auto-bmad-story <epic-story>` for each story in the sprint (one story per session)

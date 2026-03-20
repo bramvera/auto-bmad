@@ -121,6 +121,8 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already handled successfully. Do NOT fabricate items to fill a quota.
 
+**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+
 ### Next
 - If more epics remain, start a new session with fresh context and run `/auto-bmad-epic-start <next-epic-number>` to prepare the next epic
 - If all epics are done, the project is complete — consider a final end-to-end review
