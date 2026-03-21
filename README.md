@@ -240,6 +240,7 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 - [BMM Tutorial](docs/tutorial-bmm.md) -- Step-by-step guide for the Business Model Method pipeline
 - [GDS Tutorial](docs/tutorial-gds.md) -- Step-by-step guide for the Game Dev Suite pipeline
 - [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Combined UX design and implementation workflow
+- [Commands Reference](docs/commands-reference.md) -- Every command mapped to the exact BMAD skills it calls
 - [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
 
 ---
