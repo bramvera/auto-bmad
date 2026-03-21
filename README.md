@@ -115,24 +115,74 @@ A Claude Code Max x5 or x20 subscription is recommended.
 
 ## Workflow
 
+### Understanding the Phases
+
+BMAD has three distinct phases. Knowing where human judgment matters vs where automation shines is key to getting good results.
+
+| Phase | Human or Auto? | Why |
+|-------|---------------|-----|
+| **Analysis** (brainstorming, research, product brief) | **Human-driven** | This is collaborative discovery. The AI asks questions, you provide domain knowledge. Automating this means the AI makes assumptions without your input -- you lose the core value of BMAD. |
+| **Planning** (PRD, UX, architecture, epics, sprint plan) | **Either** (see tradeoffs below) | Each artifact benefits from review and iteration, but can be automated if you provide strong input. |
+| **Execution** (story implementation, testing, reviews) | **Automated** | Stories are well-defined at this point. Execution is mechanical -- create, test, develop, review. This is where auto-bmad saves you hours. |
+
+### Analysis: Always Manual
+
+Do not automate analysis. Run these BMAD skills interactively:
+
 ```
-/auto-bmad-wds          <-- optional: deep UX design
-/auto-bmad-plan         <-- plan: PRD, architecture, epics, sprint
+/bmad-brainstorming              <-- explore the idea
+/bmad-party-mode                 <-- multi-agent discussion to find blind spots
+/bmad-domain-research            <-- understand the space
+/bmad-market-research            <-- competitive analysis
+/bmad-create-product-brief       <-- guided discovery (the AI asks, you answer)
+```
+
+This produces the product brief that everything else builds on. Garbage in, garbage out.
+
+### Planning: Tradeoffs
+
+You can run planning manually (step by step with BMAD skills) or automated (`/auto-bmad-plan`). Both work, but the tradeoffs matter:
+
+| | Manual Planning | `/auto-bmad-plan` |
+|---|---|---|
+| **Time** | 2-4 hours (human-paced) | ~40-60 min (automated) |
+| **Quality** | Higher -- you catch blind spots between steps with `/bmad-party-mode` and `/bmad-advanced-elicitation` | Good -- but the AI may make assumptions you'd catch in review |
+| **Iteration** | Natural -- review each artifact, iterate, move on | All-or-nothing -- generates everything in one pass |
+| **Blind spots** | Caught early through elicitation and party mode | Found later during implementation, harder to fix |
+| **Best for** | Complex products, unfamiliar domains, high-stakes projects | Side projects, prototypes, domains you know well, rebuilds of existing products |
+
+**Recommended approach for important projects:**
+
+```
+# Manual planning (human-guided)
+/bmad-create-prd                 <-- create PRD interactively
+/bmad-party-mode                 <-- review PRD, find gaps
+/bmad-validate-prd               <-- validate and fix
+/bmad-create-ux-design           <-- if applicable
+/bmad-create-architecture        <-- architecture decisions
+/bmad-party-mode                 <-- stress-test the architecture
+/bmad-create-epics-and-stories   <-- break into epics
+/bmad-sprint-planning            <-- plan the first sprint
+```
+
+**Quick approach for familiar domains:**
+
+```
+/auto-bmad-plan <detailed description or @file>
+# Review artifacts after, iterate with /bmad-party-mode if needed
+```
+
+### Execution: Always Automated
+
+Once your sprint plan exists with well-defined stories, auto-bmad takes over:
+
+```
 /auto-bmad-sprint 1     <-- epic 1: all stories, hands-off
 /auto-bmad-sprint 2     <-- epic 2: all stories, hands-off
 ...                     <-- repeat for each epic
 ```
 
-**Step by step:**
-
-1. Prepare a detailed product description. Run `/bmad-brainstorming` and `/bmad-party-mode` to flesh out the idea first.
-2. (Optional) Run `/auto-bmad-wds` for deep UX design.
-3. Run `/auto-bmad-plan` to generate PRD, architecture, epics, and sprint plan.
-4. Review the artifacts. Iterate with `/bmad-party-mode` if needed.
-5. Run `/auto-bmad-sprint 1` to execute the first epic. Go to sleep.
-6. Review the sprint report. Fix any failed stories with `/auto-bmad-story <id>`.
-7. Run `/auto-bmad-sprint 2` for the next epic. Repeat.
-8. Use `/bmad-correct-course` (BMM) or `/gds-correct-course` (GDS) when plans need to change.
+Review the sprint report after each epic. Fix any failed stories with `/auto-bmad-story <id>`. Use `/bmad-correct-course` when plans need to change.
 
 ---
 
