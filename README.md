@@ -54,21 +54,23 @@ claude --plugin-dir /path/to/auto-bmad/auto-bmad
 
 ## Commands
 
+Every command orchestrates existing BMAD skills — nothing bypasses BMAD guardrails. See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each step calls.
+
 ### BMM (Business Model Method)
 
 | Command | Description |
 |---------|-------------|
-| `/auto-bmad-plan` | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
-| `/auto-bmad-sprint <epic>` | Run an entire epic hands-off: epic-start, all stories, epic-end ([details](#how-sprint-works)) |
-| `/auto-bmad-story <id>` | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
-| `/auto-bmad-epic-start <epic>` | Epic-level test design |
-| `/auto-bmad-epic-end <epic>` | Trace, NFR assessment, test review, retrospective, project context refresh |
+| [`/auto-bmad-plan`](docs/commands-reference.md#auto-bmad-plan) | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
+| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic hands-off: epic-start, all stories, epic-end ([details](#how-sprint-works)) |
+| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
+| [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | Epic-level test design |
+| [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | Trace, NFR assessment, test review, retrospective, project context refresh |
 
 ### WDS (Whiteport Design Studio)
 
 | Command | Description |
 |---------|-------------|
-| `/auto-bmad-wds` | 9-step UX design pipeline: project brief, trigger mapping, scenarios, specs, design delivery |
+| [`/auto-bmad-wds`](docs/commands-reference.md#auto-bmad-wds) | 9-step UX design pipeline: project brief, trigger mapping, scenarios, specs, design delivery |
 
 Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX step when WDS artifacts exist.
 
@@ -76,8 +78,8 @@ Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX st
 
 | Command | Description |
 |---------|-------------|
-| `/auto-bmad-change-spec` | Interactive: assess scope, route to `bmad-correct-course` (significant) or `bmad-quick-spec` (minor) |
-| `/auto-bmad-change-dev <spec>` | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
+| [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | Interactive: assess scope, route to `bmad-correct-course` (significant) or `bmad-quick-spec` (minor) |
+| [`/auto-bmad-change-dev <spec>`](docs/commands-reference.md#auto-bmad-change-dev-spec) | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
 
 For changes to existing systems where breaking things matters. The spec step is human-driven (BMAD skills handle impact analysis). The dev step adds the regression safety net that `bmad-quick-dev` doesn't have.
 
@@ -85,11 +87,11 @@ For changes to existing systems where breaking things matters. The spec step is 
 
 | Command | Description |
 |---------|-------------|
-| `/auto-gds-plan` | 8-step planning: game brief, GDD, narrative, game architecture, test design, sprint plan |
-| `/auto-gds-sprint <epic>` | Run an entire GDS epic hands-off ([details](#how-sprint-works)) |
-| `/auto-gds-story <id>` | Run a single GDS story (11 steps) |
-| `/auto-gds-epic-start <epic>` | Epic-level game test design |
-| `/auto-gds-epic-end <epic>` | Retrospective, project context refresh |
+| [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | 8-step planning: game brief, GDD, narrative, game architecture, test design, sprint plan |
+| [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | Run an entire GDS epic hands-off ([details](#how-sprint-works)) |
+| [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | Run a single GDS story (11 steps) |
+| [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | Epic-level game test design |
+| [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | Retrospective, project context refresh |
 
 ---
 
