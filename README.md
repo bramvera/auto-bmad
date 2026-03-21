@@ -8,6 +8,8 @@ Automated BMAD pipeline orchestration for Claude Code. One command to plan, one 
 
 > **Token usage warning:** These pipelines are extremely token-intensive. A single story runs ~60-90 min and consumes ~150-200k tokens. A full sprint (5 stories) runs ~6 hours and consumes ~800k-1M tokens. **Claude Code Max x5 is the minimum recommended plan. x20 is ideal.** On x1 you will hit rate limits mid-run. Tested on Max x20.
 
+> **Permissions:** The pipelines run hundreds of tool calls (file reads, writes, bash commands, skill invocations) across multiple agents. Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions` or configure your `allowedTools` in settings. **Use at your own risk — only run in environments you trust.**
+
 ---
 
 ## Real-World Results
