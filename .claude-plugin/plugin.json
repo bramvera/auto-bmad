@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.5.1",
-  "description": "[0.5.1] Automated BMAD pipeline orchestration: plan, sprint, story, epic lifecycle, and WDS design workflows.",
+  "version": "0.6.0",
+  "description": "[0.6.0] Automated BMAD pipeline orchestration: plan, sprint, story, epic lifecycle, and WDS design workflows.",
   "author": {
     "name": "bramvera"
   },
