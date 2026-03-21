@@ -72,6 +72,15 @@ claude --plugin-dir /path/to/auto-bmad/auto-bmad
 
 Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX step when WDS artifacts exist.
 
+### Brownfield (Existing Codebase)
+
+| Command | Description |
+|---------|-------------|
+| `/auto-bmad-change-spec` | Interactive: assess scope, route to `bmad-correct-course` (significant) or `bmad-quick-spec` (minor) |
+| `/auto-bmad-change-dev <spec>` | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
+
+For changes to existing systems where breaking things matters. The spec step is human-driven (BMAD skills handle impact analysis). The dev step adds the regression safety net that `bmad-quick-dev` doesn't have.
+
 ### GDS (Game Dev Suite)
 
 | Command | Description |

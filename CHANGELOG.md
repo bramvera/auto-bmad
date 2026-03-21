@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.7.0] - 2026-03-21
+
+### Added
+- `/auto-bmad-change-spec` — brownfield change spec: routes to `bmad-correct-course` (significant changes) or `bmad-quick-spec` (minor changes) based on scope assessment
+- `/auto-bmad-change-dev` — brownfield implementation with regression safety: locks existing behavior with regression tests before making changes, then ATDD, implement, full test suite verification, code review, and trace
+- All brownfield steps use BMAD skills with full project context (PRD, architecture, project-context.md) — no custom flows bypassing BMAD guardrails
+
 ## [0.6.0] - 2026-03-21
 
 ### Fixed

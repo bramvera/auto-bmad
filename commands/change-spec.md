@@ -1,0 +1,95 @@
+---
+name: 'auto-bmad-change-spec'
+description: 'Create a change spec for brownfield modifications — routes to bmad-correct-course or bmad-quick-spec based on scope'
+---
+
+# Brownfield Change Spec
+
+Create a focused change specification for a modification to an existing codebase. This routes to the appropriate BMAD skill based on the size of the change.
+
+**This command is interactive.** It requires human judgment on scope, risk, and tradeoffs. Do NOT run with `yolo`.
+
+## User Input
+
+The user MUST describe the change alongside the command. This can be:
+- A description of what needs to change (e.g., "add soft delete to the users table")
+- A bug report (e.g., "login fails when email has a plus sign")
+- A feature request (e.g., "add CSV export to the reports page")
+- A file path + description (e.g., "@issue-123.md")
+
+If no input is provided, ask the user to describe the change.
+
+Set `{{CHANGE_DESCRIPTION}}` to the user's input.
+
+## Scope Assessment
+
+Before routing, quickly assess the change scope by asking the user:
+
+**Does this change affect any of the following?**
+- Multiple epics or stories
+- PRD requirements or MVP scope
+- Architecture decisions (new components, changed patterns, schema changes)
+- UX flows or specifications
+
+**Routing:**
+
+- **If YES to any** → This is a **significant change**. Route to `bmad-correct-course` (full impact analysis across all BMAD artifacts, Sprint Change Proposal, interactive checklist).
+- **If NO to all** → This is a **minor change**. Route to `bmad-quick-spec` (conversational spec creation with code investigation).
+
+Present the routing decision to the user and let them override if they disagree.
+
+## Route A: Significant Change
+
+Tell the user:
+
+```
+This looks like a significant change that affects project artifacts.
+Running /bmad-correct-course for full impact analysis.
+```
+
+Invoke `/bmad-correct-course` with the user's change description. This skill will:
+
+1. Load all BMAD project artifacts (PRD, epics, architecture, UX, project context)
+2. Run a systematic impact analysis checklist with the user
+3. Assess epic, story, PRD, architecture, and UX conflicts
+4. Evaluate path forward options (direct adjustment, rollback, MVP review)
+5. Produce a Sprint Change Proposal with specific edit proposals
+6. Get user approval
+
+After `bmad-correct-course` completes, the Sprint Change Proposal serves as the change spec. Tell the user:
+
+```
+Sprint Change Proposal ready at: <path>
+To implement, update the affected stories/epics as proposed, then run:
+- /auto-bmad-sprint <epic> for full epic re-execution
+- /auto-bmad-story <id> for individual stories
+- /auto-bmad-change-dev <proposal-path> for targeted implementation with regression safety
+```
+
+## Route B: Minor Change
+
+Tell the user:
+
+```
+This looks like a contained change. Running /bmad-quick-spec for focused spec creation.
+```
+
+Invoke `/bmad-quick-spec` with the user's change description. This skill will:
+
+1. Understand the change through conversation
+2. Investigate the existing codebase for affected code
+3. Generate an implementation-ready tech spec
+4. Review the spec with the user
+
+After `bmad-quick-spec` completes, tell the user:
+
+```
+Quick spec ready at: <path>
+Run /auto-bmad-change-dev <spec-path> to implement with regression safety.
+```
+
+## Important
+
+- **Do NOT proceed to implementation.** The user runs `/auto-bmad-change-dev` separately when ready.
+- **Do NOT bypass BMAD skills.** The impact analysis and spec creation MUST go through `bmad-correct-course` or `bmad-quick-spec` — they read project context, architecture, and constraints that raw codebase scanning would miss.
+- **The user decides the route.** If they disagree with the scope assessment, let them choose.
