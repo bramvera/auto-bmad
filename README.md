@@ -6,6 +6,8 @@ Automated BMAD pipeline orchestration for Claude Code. One command to plan, one 
 
 > Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 with sprint automation, WDS integration, and flattened agent architecture.
 
+> **Token usage warning:** These pipelines are extremely token-intensive. A single story runs ~60-90 min and consumes ~150-200k tokens. A full sprint (5 stories) runs ~6 hours and consumes ~800k-1M tokens. **Claude Code Max x5 is the minimum recommended plan. x20 is ideal.** On x1 you will hit rate limits mid-run. Tested on Max x20.
+
 ---
 
 ## Real-World Results
