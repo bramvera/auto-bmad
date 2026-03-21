@@ -10,6 +10,8 @@ Automated BMAD pipeline orchestration for Claude Code. One command to plan, one 
 
 > **Permissions:** The pipelines run hundreds of tool calls (file reads, writes, bash commands, skill invocations) across multiple agents. Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions` or configure your `allowedTools` in settings. **Use at your own risk — only run in environments you trust.**
 
+> **This is not a "make my app" button.** BMAD is built around human-AI collaboration — brainstorming, research, and product discovery are meant to be interactive. If you automate everything from brief to deployment, you skip the process that makes BMAD valuable and end up with an AI guessing at your requirements. Use auto-bmad for **execution** (sprint/story), not for **thinking** (analysis/planning). See [Workflow](#workflow) for the recommended approach.
+
 ---
 
 ## Real-World Results
