@@ -145,9 +145,10 @@ If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT
 
 After step 11 completes successfully:
 
-1. Update `{{STORY_FILE}}` status if not already marked done.
-2. Update `{{implementation_artifacts}}/sprint-status.yaml` to mark the story as completed.
-3. Squash story commits: `git reset --soft {{STORY_START_COMMIT}}` then determine commit type from story content:
+1. **Mark all tasks as done in the story file.** Read `{{STORY_FILE}}` and replace every unchecked task checkbox (`- [ ]`) with a checked one (`- [x]`). All tasks were implemented — the dev step built the code, the tests pass, and the reviews confirmed it. Do not leave unchecked boxes in a completed story.
+2. Update `{{STORY_FILE}}` status if not already marked done.
+3. Update `{{implementation_artifacts}}/sprint-status.yaml` to mark the story as completed.
+4. Squash story commits: `git reset --soft {{STORY_START_COMMIT}}` then determine commit type from story content:
    - `feat` for new features, `fix` for bug fixes, `refactor` for restructuring, `chore` for configs/tooling
    - Commit: `git add -A && git commit -m "<type>({{STORY_ID}}): <one-line summary>"`
 4. Print: `Story {{STORY_ID}} — done ({{DURATION}}m) [{{CURRENT}}/{{TOTAL_STORIES}}]`
