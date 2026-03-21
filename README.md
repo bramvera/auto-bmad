@@ -179,6 +179,12 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 
 ---
 
+## Credits
+
+Built on the original [auto-bmad](https://github.com/stefanoginella/auto-bmad) by [Stefano Ginella](https://github.com/stefanoginella), who designed the core pipeline orchestration concept and the BMM/GDS command structure. This fork extends his work with sprint automation, WDS integration, flattened agent architecture, and context management optimizations.
+
+The pipelines are powered by the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) by [bmad-code-org](https://github.com/bmad-code-org).
+
 ## License
 
 [MIT](LICENSE.md)
