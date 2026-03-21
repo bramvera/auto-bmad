@@ -1,231 +1,184 @@
-# 🤖 Auto BMAD
+# Auto BMAD
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.1](https://img.shields.io/badge/TEA-v1.7.1-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
 
-> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 compatibility.
+Automated BMAD pipeline orchestration for Claude Code. One command to plan, one command to run an entire sprint.
 
-Automated (and very opinionated) BMAD pipeline orchestration for Claude Code.
+> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 with sprint automation, WDS integration, and flattened agent architecture.
 
-Three pipeline suites — **BMM** (Business Model Method), **GDS** (Game Dev Suite), and **WDS** (Whiteport Design Studio) — with sequential commands that drive the BMAD development lifecycle from design through story delivery.
+---
 
-> The pipelines are quite long and token hungry (the story pipeline alone can run for more than 60 minutes). Some steps might seem redundant, but the code quality and consistency is worth it. A Claude Code Max x5 or x20 subscription is recommended to avoid hitting limits mid-run.
+## Real-World Results
 
-### WDS Pipeline in Action
+| | |
+|---|---|
+| ![WDS pipeline](docs/images/wds-pipeline-run.png) | ![Sprint report](docs/images/sprint-report.png) |
+| `/auto-bmad-wds` -- 9-step UX design pipeline | `/auto-bmad-sprint 1` -- 5 stories, ~6 hours, zero failures |
 
-![WDS pipeline running on a real project](docs/images/wds-pipeline-run.png)
+---
 
-*Real-world run of `/auto-bmad-wds` -- project brief, trigger mapping, platform requirements, scenarios, conceptual sketching, and specs running sequentially with git checkpoints.*
-
-### Sprint Report
-
-![Sprint progress report showing 5/5 stories completed](docs/images/sprint-report.png)
-
-*`/auto-bmad-sprint 1` -- 5 stories completed autonomously in ~6 hours with zero failures. The progress file is written to disk after each story so you always have a record, even if the process crashes.*
-
-## Tutorials
-
-New to auto-bmad? Start here:
-
-- [BMM Tutorial](docs/tutorial-bmm.md) -- Build a product from idea to implementation using the Business Model Method
-- [GDS Tutorial](docs/tutorial-gds.md) -- Build a game from concept to implementation using the Game Dev Suite
-- [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Deep UX design with Whiteport Design Studio before BMM implementation
-- [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
-
-## Commands
-
-### BMM (Business Model Method)
-
-| Command | Steps | Description |
-|---------|-------|-------------|
-| `/auto-bmad-plan` | 11 | Pre-implementation pipeline: product brief, PRD, validate, UX, architecture, test framework, test design, epics, readiness, project context, sprint planning |
-| `/auto-bmad-epic-start` | 1 | Start a new epic: epic-level test design |
-| `/auto-bmad-story` | 13 | Develop a story: create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, NFR, trace, automate, test review |
-| `/auto-bmad-epic-end` | 3 | Close an epic: trace, retrospective, project context refresh |
-| `/auto-bmad-sprint` | all | Run an entire epic hands-off: epic-start, all stories, epic-end (see [how sprint works](#how-sprint-works)) |
-
-### WDS (Whiteport Design Studio)
-
-| Command | Steps | Description |
-|---------|-------|-------------|
-| `/auto-bmad-wds` | 9 | UX design pipeline: alignment, project brief, trigger mapping, platform requirements, scenarios, sketching, specs, components, design delivery |
-
-> Run `/auto-bmad-wds` before `/auto-bmad-plan` for deep UX work. The plan pipeline will skip its UX step when WDS artifacts exist.
-
-### GDS (Game Dev Suite)
-
-| Command | Steps | Description |
-|---------|-------|-------------|
-| `/auto-gds-plan` | 8 | Pre-implementation pipeline: game brief, GDD, narrative design, game architecture, test framework, game test design, project context, sprint planning |
-| `/auto-gds-epic-start` | 1 | Start a new epic: epic-level game test design |
-| `/auto-gds-story` | 11 | Develop a story: create, validate, adversarial review, develop, edge-case hunt, 3x code review, performance, test automate, test review |
-| `/auto-gds-epic-end` | 2 | Close an epic: retrospective, project context refresh |
-| `/auto-gds-sprint` | all | Run an entire GDS epic hands-off: epic-start, all stories, epic-end (see [how sprint works](#how-sprint-works)) |
-
-### How Sprint Works
-
-The sprint command (`/auto-bmad-sprint` or `/auto-gds-sprint`) runs an entire epic autonomously. Provide an epic number and walk away.
-
-```
-/auto-bmad-sprint 1
-```
-
-**What it does:**
-
-1. Reads `sprint-status.yaml` to discover all stories for the epic
-2. Skips stories already marked as completed
-3. Runs `/auto-bmad-epic-start` (if not already done)
-4. Runs each pending story sequentially, each in a fresh context
-5. Runs `/auto-bmad-epic-end` after all stories
-6. Generates a final sprint report
-
-**What "continues on failure" means:**
-
-Within each story, test failures and code review findings are normal — they get auto-fixed as part of the pipeline (ATDD writes failing tests, Develop makes them pass, Code Review finds and fixes issues). This is expected behavior, not a failure.
-
-A story-level failure is different — it means the entire story pipeline crashed and could not complete even after one retry. Examples: a missing dependency the agent can't install, context window exhaustion, an unrecoverable tool error, or a skill that doesn't resolve.
-
-When a story-level failure happens:
-1. The sprint retries the story once
-2. If it fails again, it rolls back the story's partial changes (`git reset --hard`)
-3. Logs the failure (which step failed, why, and the commit hash before the story)
-4. **Skips to the next story and keeps going** — it does not stop the entire sprint
-
-**What about dependent stories?** Stories are ordered by dependency — story 1-2 often builds on code from 1-1. If story 1-1 fails and its code gets rolled back, story 1-2 will likely fail too because the code it depends on doesn't exist. The sprint will attempt it, it will fail, and the sprint moves on. This is by design — the alternative (stopping the entire sprint) wastes the remaining stories that might be independent.
-
-In practice, a failed story usually causes a cascade of failures for dependent stories. The sprint report will show the chain clearly:
-
-```
-Story 1-1 — FAILED (missing dependency)
-Story 1-2 — FAILED (depends on 1-1 code)
-Story 1-3 — FAILED (depends on 1-1 code)
-Story 1-4 — done   (independent story, no dependency on 1-1)
-Story 1-5 — done   (independent story)
-```
-
-After the sprint, fix story 1-1 manually, then rerun `/auto-bmad-sprint 1` — it skips 1-4 and 1-5 (already done) and runs 1-1, 1-2, and 1-3.
-
-**Live progress file:**
-
-After every story (pass or fail), the sprint writes a progress file to disk at `auto-bmad-artifacts/sprint-epic-<N>-progress.md`. If the sprint crashes, the terminal closes, or context runs out, this file shows:
-- Which stories completed, failed, or are still pending
-- Duration of each story
-- The exact commit hash before each story (for recovery)
-- The step and reason for any failure
-
-**Resumable:** Run `/auto-bmad-sprint 1` again after a crash or interruption. It reads `sprint-status.yaml`, skips completed stories, and picks up where it left off.
-
-## 🗂 Artifacts
-
-The pipelines produce the following key artifacts throughout the lifecycle:
-
-| Pipeline | Artifacts |
-|----------|-----------|
-| **BMM Plan** | Product brief, PRD, UX design, architecture doc, test framework, CI configuration, epics, test design, sprint plan |
-| **BMM Epic Start** | Retro action resolution log, green baseline report, story order plan |
-| **BMM Story** | Story file, ATDD specs, implementation code, code review report, security scan results, regression/E2E results, traceability entries |
-| **BMM Epic End** | Aggregated epic data, traceability gate report, retrospective, next epic preview |
-| **WDS** | Project brief, trigger map, platform requirements, scenario overview, conceptual sketches, page/scenario specs, functional components, design delivery packages |
-| **GDS Plan** | Game brief, GDD, narrative design, game architecture, test framework, game test design, sprint plan |
-| **GDS Epic Start** | Epic-level game test design |
-| **GDS Story** | Story file, implementation code, code review report, performance assessment, game test automation, test review |
-| **GDS Epic End** | Retrospective, project context refresh |
-
-## 🛠 Typical Workflow
-
-The workflow is the same for both BMM and GDS — substitute commands as needed. Below shows the BMM variant; for GDS, replace `/auto-bmad-*` with `/auto-gds-*`. If you already have all the planning artifacts ready, you can skip the plan pipeline and go directly to step 4 or 5.
-
-1. **Prepare a strong and comprehensive input** for the plan pipeline — it validates readiness and won't run with a simple `Create a todo app` prompt. I recommend going through a few `/bmad-brainstorming` and `/bmad-party-mode` sessions first to build up enough context. If the initial input isn't ready, the plan pipeline will tell you what to improve.
-2. **(Optional) Run `/auto-bmad-wds`** for deep UX design work before planning. This creates project brief, trigger maps, scenarios, and design specs. The plan pipeline will skip its UX step when WDS artifacts exist.
-3. **Run `/auto-bmad-plan`** (BMM) or **`/auto-gds-plan`** (GDS) to kick off the initial planning pipeline for a new project or major initiative.
-4. **Review the generated artifacts** — PRD/GDD, Architecture, UX/Narrative design, Epics, and Test Plan. Make sure they look good and adjust if necessary before moving on to implementation. You might want to go through a few iterations of `/bmad-party-mode` to refine the output, since it sets the foundation for the next steps.
-5. **For each new epic**, run `/auto-bmad-epic-start` (BMM) or `/auto-gds-epic-start` (GDS) to establish a baseline and plan the story order based on the epic's goals and dependencies.
-6. **For each story within an epic**, run `/auto-bmad-story` (BMM) or `/auto-gds-story` (GDS) to develop the story from creation through delivery.
-7. **After each story**, review the report generated by the story pipeline and any other BMAD artifacts, perform some manual testing, and correct course if necessary.
-8. **At the end of an epic**, run `/auto-bmad-epic-end` (BMM) or `/auto-gds-epic-end` (GDS) to close the epic, conduct a retrospective, and preview the next epic.
-9. **Review the outputs of each pipeline run**, check the generated artifacts, and make adjustments as needed. The pipelines are opinionated and automated, but they still require human judgment and iteration. Use `/bmad-correct-course` (BMM) or `/gds-correct-course` (GDS) when big changes are needed.
-
-> ℹ️ **Important**: This plugin won't automate a multi-story workflow or an entire epic. Some human orchestration and judgment is still required between pipeline runs.
-
-## 📦 Installation
-
-From the marketplace inside Claude Code:
+## Installation
 
 ```
 /plugin marketplace add bramvera/claude-code-plugins
-/plugin install auto-bmad@bramvera-plugins --scope <project|user|local>
+/plugin install auto-bmad@bramvera-plugins --scope user
+/reload-plugins
 ```
 
-Scopes: `project` (shared with team), `user` (all your projects), `local` (personal, gitignored).
-
-Or as a local plugin for development:
+Or as a local plugin:
 
 ```bash
 git clone https://github.com/bramvera/auto-bmad.git
 claude --plugin-dir /path/to/auto-bmad/auto-bmad
 ```
 
-## 📋 Prerequisites
+## Quick Start
 
-> ⚠️ **IMPORTANT**: Without these, the pipelines might fail or produce incorrect results. Make sure they're in place before running the pipelines.
+```bash
+# 1. Plan the project
+/auto-bmad-plan <product description or @file>
 
-### BMAD Method
+# 2. Run the entire first epic (stories + tests + reviews)
+/auto-bmad-sprint 1
 
-The pipelines are based on the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) and rely on specific BMAD modules. This fork targets:
+# That's it. Check the report in the morning.
+```
 
-| Component | Version | Repo |
-|-----------|---------|------|
-| BMAD-METHOD | v6.2.0 | [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) |
-| TEA | v1.7.1 | [bmad-code-org/bmad-method-test-architecture-enterprise](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) |
-| GDS | v0.2.2 | [bmad-code-org/bmad-module-game-dev-studio](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) |
-| WDS | latest | [bmad-code-org/bmad-method-wds-expansion](https://github.com/bmad-code-org/bmad-method-wds-expansion) |
+---
 
-#### Required BMAD Modules
+## Commands
 
-- **TEA** — Test Engineering Architect. Provides test strategy, test design, and ATDD capabilities used by the BMM pipelines.
-- **GDS** — Game Dev Suite. Provides game design, game architecture, narrative design, and game testing capabilities used by the GDS pipelines.
-- **WDS** — Whiteport Design Studio. Provides UX design workflows: project briefs, trigger mapping, scenarios, conceptual specs, and design delivery. Used by the WDS pipeline.
+### BMM (Business Model Method)
 
-> You only need the modules for the pipeline suite you're using. TEA for BMM, GDS for GDS, WDS for the design pipeline.
+| Command | Description |
+|---------|-------------|
+| `/auto-bmad-plan` | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
+| `/auto-bmad-sprint <epic>` | Run an entire epic hands-off: epic-start, all stories, epic-end ([details](#how-sprint-works)) |
+| `/auto-bmad-story <id>` | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
+| `/auto-bmad-epic-start <epic>` | Epic-level test design |
+| `/auto-bmad-epic-end <epic>` | Trace, NFR assessment, test review, retrospective, project context refresh |
 
-#### Optional BMAD Modules
+### WDS (Whiteport Design Studio)
 
-- **CIS** — Creative Intelligence Suite. Enhances UX design quality during the BMM plan pipeline. Without it, UX steps use baseline prompts.
+| Command | Description |
+|---------|-------------|
+| `/auto-bmad-wds` | 9-step UX design pipeline: project brief, trigger mapping, scenarios, specs, design delivery |
 
-### Optional (but recommended) Claude Code Plugins
+Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX step when WDS artifacts exist.
 
-From the [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude-plugins-official) marketplace.
+### GDS (Game Dev Suite)
 
-- **context7** — Live documentation lookups for library APIs. Used during architecture creation (plan) and story development (story). Without it, agents rely on training data instead of current docs.
-- **security-guidance** — Security best practice recommendations during story development.
-- Any relevant `lsp` plugin(s) for your codebase — used during story development for linting and test feedback. They can improve the code quality and feedback loop, but are not strictly required since the pipelines also include manual lint and test steps.
+| Command | Description |
+|---------|-------------|
+| `/auto-gds-plan` | 8-step planning: game brief, GDD, narrative, game architecture, test design, sprint plan |
+| `/auto-gds-sprint <epic>` | Run an entire GDS epic hands-off ([details](#how-sprint-works)) |
+| `/auto-gds-story <id>` | Run a single GDS story (11 steps) |
+| `/auto-gds-epic-start <epic>` | Epic-level game test design |
+| `/auto-gds-epic-end <epic>` | Retrospective, project context refresh |
 
-### Required and optional CLI tools
+---
 
-- `jq` (required) - JSON processing in bash steps. Needed by the pipelines.
-- Any relevant CLI tool (optional) needed by your LSP plugin(s).
+## How Sprint Works
 
-### Project Requirements
+```
+/auto-bmad-sprint 1
+```
 
-The pipelines expect BMAD configuration files in the project:
+The sprint command reads `sprint-status.yaml`, finds all pending stories for the epic, and runs them sequentially -- each story's 11 steps as direct Task calls with fresh context. No manual intervention needed.
 
-**For BMM pipelines:**
-- `_bmad/bmm/config.yaml` — BMM configuration (output folders, artifact paths)
-- `_bmad/tea/config.yaml` — TEA configuration (test artifact paths)
+**Lifecycle:** epic-start (test design) --> story 1-1 --> story 1-2 --> ... --> epic-end (retro)
 
-**For GDS pipelines:**
-- `_bmad/gds/config.yaml` — GDS configuration (output folders, artifact paths)
+**Failure handling:** If a story crashes (not test failures -- those are auto-fixed within each story), the sprint retries once. If it still fails, it rolls back the story, logs the failure, and moves to the next story. Independent stories still complete. The sprint report shows the full chain.
 
-**For WDS pipeline:**
-- `_bmad/wds/config.yaml` — WDS configuration (design artifact paths)
+**Resumable:** Run the same command again. It skips completed stories and picks up where it left off.
 
-These files are normally created by the BMAD CLI when initializing BMAD in a project. The pipelines rely on the standard structure and paths defined by these configs, so custom configurations may require pipeline adjustments.
+**Live progress:** After every story, a progress file is written to disk at `auto-bmad-artifacts/sprint-epic-<N>-progress.md` with status, duration, commit hashes, and failure details. If the process crashes, you have a full record.
 
-## 🔐 Permissions
+**Context management:** The sprint coordinator discards Task results immediately and tracks only pass/fail + one-line summaries. Each step agent gets a fresh context window. This prevents degradation on long runs (5+ hours).
 
-The pipelines run various bash commands (depending on the project), skills and MCP that Claude Code will prompt you to approve if they are not already approved. For the first few runs in a new project, expect several approval prompts as the allow list builds up. After that, things stabilize and the pipelines run more autonomously.
+### Typical Duration
 
-> ⚠️ Alternatively, you can run Claude Code in "dangerously skip permissions" mode (`--dangerously-skip-permissions`), but do so at your own risk — this disables **all** permission checks. Only use it in an isolated environment like a VM or container.
+| Command | Duration | Tokens |
+|---------|----------|--------|
+| `/auto-bmad-wds` | ~50-60m | ~130k |
+| `/auto-bmad-plan` | ~40-60m | ~100-150k |
+| `/auto-bmad-story` | ~60-90m | ~150-200k |
+| `/auto-bmad-sprint` (5 stories) | ~5-6h | ~800k-1M |
 
-## 📄 License
+A Claude Code Max x5 or x20 subscription is recommended.
+
+---
+
+## Workflow
+
+```
+/auto-bmad-wds          <-- optional: deep UX design
+/auto-bmad-plan         <-- plan: PRD, architecture, epics, sprint
+/auto-bmad-sprint 1     <-- epic 1: all stories, hands-off
+/auto-bmad-sprint 2     <-- epic 2: all stories, hands-off
+...                     <-- repeat for each epic
+```
+
+**Step by step:**
+
+1. Prepare a detailed product description. Run `/bmad-brainstorming` and `/bmad-party-mode` to flesh out the idea first.
+2. (Optional) Run `/auto-bmad-wds` for deep UX design.
+3. Run `/auto-bmad-plan` to generate PRD, architecture, epics, and sprint plan.
+4. Review the artifacts. Iterate with `/bmad-party-mode` if needed.
+5. Run `/auto-bmad-sprint 1` to execute the first epic. Go to sleep.
+6. Review the sprint report. Fix any failed stories with `/auto-bmad-story <id>`.
+7. Run `/auto-bmad-sprint 2` for the next epic. Repeat.
+8. Use `/bmad-correct-course` (BMM) or `/gds-correct-course` (GDS) when plans need to change.
+
+---
+
+## Prerequisites
+
+### BMAD Modules
+
+| Component | Version | Required For |
+|-----------|---------|-------------|
+| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) | v6.2.0 | All pipelines |
+| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) | v1.7.1 | BMM pipelines |
+| [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
+| [WDS](https://github.com/bmad-code-org/bmad-method-wds-expansion) | latest | WDS pipeline |
+| [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
+
+You only need the modules for the pipeline you're using.
+
+### Config Files
+
+Created by `npx bmad-method install`. The pipelines expect:
+
+| Pipeline | Config Files |
+|----------|-------------|
+| BMM | `_bmad/bmm/config.yaml`, `_bmad/tea/config.yaml` |
+| GDS | `_bmad/gds/config.yaml` |
+| WDS | `_bmad/wds/config.yaml` |
+
+### Recommended Plugins
+
+From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude-plugins-official):
+
+- **context7** -- live docs lookups during architecture and development
+- **security-guidance** -- security recommendations during development
+- **lsp** plugins -- lint/test feedback for your stack
+
+### CLI Tools
+
+- `jq` (required) -- JSON processing in pipeline steps
+
+---
+
+## Documentation
+
+- [BMM Tutorial](docs/tutorial-bmm.md) -- Step-by-step guide for the Business Model Method pipeline
+- [GDS Tutorial](docs/tutorial-gds.md) -- Step-by-step guide for the Game Dev Suite pipeline
+- [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Combined UX design and implementation workflow
+- [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
+
+---
+
+## License
 
 [MIT](LICENSE.md)
