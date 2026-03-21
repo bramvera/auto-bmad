@@ -16,6 +16,12 @@ Three pipeline suites — **BMM** (Business Model Method), **GDS** (Game Dev Sui
 
 *Real-world run of `/auto-bmad-wds` -- project brief, trigger mapping, platform requirements, scenarios, conceptual sketching, and specs running sequentially with git checkpoints.*
 
+### Sprint Report
+
+![Sprint progress report showing 5/5 stories completed](docs/images/sprint-report.png)
+
+*`/auto-bmad-sprint 1` -- 5 stories completed autonomously in ~6 hours with zero failures. The progress file is written to disk after each story so you always have a record, even if the process crashes.*
+
 ## Tutorials
 
 New to auto-bmad? Start here:
