@@ -128,14 +128,34 @@ UX design pipeline using the Whiteport Design Studio module.
 
 ### `/auto-bmad-change-spec`
 
-Interactive change spec for brownfield modifications. Routes to the appropriate BMAD skill based on scope.
+Interactive change spec for brownfield modifications. The command assesses scope and routes to the appropriate BMAD skill. **This is human-driven — not automated.**
 
-| Scope | BMAD Skill | What it does |
-|-------|-----------|-------------|
-| Significant (affects PRD, architecture, epics) | `/bmad-correct-course` | Full impact analysis across all BMAD artifacts. 6-step interactive checklist. Produces Sprint Change Proposal. |
-| Minor (contained code change) | `/bmad-quick-spec` | Conversational spec creation with code investigation. 4 steps: understand, investigate, generate, review. |
+| Step | What | BMAD Skill |
+|------|------|-----------|
+| 1 | **Scope Assessment** | None — auto-bmad asks the user whether the change affects PRD, architecture, or epics |
+| 2 | **Route to BMAD skill** | See below |
 
-Both skills read project context, architecture, PRD, and epics. The human decides scope and approves the spec.
+**Route A: Significant change** (affects PRD, architecture, or epics) → `/bmad-correct-course`
+
+| Step | What |
+|------|------|
+| 1 | Load all BMAD artifacts (PRD, epics, architecture, UX, project context) |
+| 2 | Run systematic impact analysis checklist with the user |
+| 3 | Draft specific change proposals (old → new for each artifact) |
+| 4 | Generate Sprint Change Proposal document |
+| 5 | Get user approval |
+| 6 | Finalize and route for implementation |
+
+**Route B: Minor change** (contained code change) → `/bmad-quick-spec`
+
+| Step | What |
+|------|------|
+| 1 | Understand the change through conversation |
+| 2 | Investigate existing codebase for affected code |
+| 3 | Generate implementation-ready tech spec |
+| 4 | Review spec with the user |
+
+Both routes read project context, architecture, PRD, and epics. The human decides scope and approves the spec. Output is a spec file that `/auto-bmad-change-dev` takes as input.
 
 ---
 
