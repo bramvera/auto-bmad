@@ -107,7 +107,11 @@ The sprint command reads `sprint-status.yaml`, finds all pending stories for the
 
 **Failure handling:** If a story crashes (not test failures -- those are auto-fixed within each story), the sprint retries once. If it still fails, it rolls back the story, logs the failure, and moves to the next story. Independent stories still complete. The sprint report shows the full chain.
 
-**Resumable:** Run the same command again. It skips completed stories and picks up where it left off.
+**Resumable:** Run the same command again — or type `please resume` in Claude Code. It reads `sprint-status.yaml`, skips completed stories, and picks up where it left off. Terminal crash, context exhaustion, rate limit — doesn't matter. Git commits are the checkpoints.
+
+![Sprint resume after terminal crash](docs/images/sprint-resume.png)
+
+*Terminal crashed mid-sprint. `claude --resume` picked up at story 1-4 (4/5) — stories 1-1 through 1-3 were already committed and skipped automatically.*
 
 **Live progress:** After every story, a progress file is written to disk at `auto-bmad-artifacts/sprint-epic-<N>-progress.md` with status, duration, commit hashes, and failure details. If the process crashes, you have a full record.
 
