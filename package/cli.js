@@ -3,9 +3,9 @@ const { execFileSync } = require("child_process");
 const { createInterface } = require("readline");
 
 const PLUGIN_NAME = "auto-bmad";
-const MARKETPLACE = "stefanoginella-plugins";
-const MARKETPLACE_REPO = "stefanoginella/claude-code-plugins";
-const NPM_SCOPE = "@stefanoginella";
+const MARKETPLACE = "bramvera-plugins";
+const MARKETPLACE_REPO = "bramvera/claude-code-plugins";
+const NPM_SCOPE = "@bramvera";
 
 const noColor = process.env.NO_COLOR || !process.stdout.isTTY;
 const GREEN = noColor ? "" : "\x1b[32m";
