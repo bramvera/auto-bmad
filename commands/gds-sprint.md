@@ -96,7 +96,7 @@ For each story ID `{{STORY_ID}}` in `{{STORY_LIST}}`, in order:
 3. Record `{{STORY_START_COMMIT}}` — run `git rev-parse --short HEAD`
 4. Set `{{EPIC_ID}}` and `{{STORY_NUM}}` by splitting `{{STORY_ID}}` on the dash separator.
 
-Run the 11 story steps below. After each successful step, run `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"`.
+Run the 11 story steps below. After each successful step, run `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"`. This skips the commit if the BMAD skill already committed its own changes (working tree clean). Do NOT treat "nothing to commit" as an error — it just means the skill handled its own commits.
 
 If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT}}`, log the failure, update the progress file, and skip to the next story.
 
@@ -185,9 +185,11 @@ After all stories have been attempted:
 1. **Retrospective:** Task prompt: `/gds-retrospective epic {{EPIC_ID}} ultrathink yolo - and fix all implementable action items required before the next epic, mark them as done/resolved, and defer any non-implementable items with a clear explanation.`
 2. **Project Context Refresh:** Task prompt: `/gds-generate-project-context yolo`
 
-After each step: `git add -A && git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): <step-name> - done"`
+After each step: `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): <step-name> - done"`. If the working tree is clean (BMAD skill already committed), skip the commit — this is normal, not an error.
 
-After all epic-end steps complete, squash: `git reset --soft <commit-before-epic-end>` then `git add -A && git commit -m "chore(epic-{{EPIC_ID}}): epic end — retro done, actions resolved"`
+**IMPORTANT — BMAD skills may commit and squash internally.** Some skills (especially `gds-retrospective`) commit their own changes, update sprint status, refresh project context, and even squash commits — all within their Task. Before running each epic-end step, check `git log --oneline -3` to see if the previous skill already handled it. If a step's work is already committed, skip it and move on. Do NOT re-run steps that are already done.
+
+After all epic-end steps complete, check if the BMAD skills already squashed. If a commit like `chore(epic-X): epic end — retro done, actions resolved` already exists, skip the squash. Otherwise: `git reset --soft <commit-before-epic-end>` then `git add -A && git commit -m "chore(epic-{{EPIC_ID}}): epic end — retro done, actions resolved"`
 
 Print: `Epic End — done`
 
