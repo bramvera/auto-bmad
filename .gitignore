@@ -3,3 +3,11 @@ CLAUDE.md
 package/README.md
 package/LICENSE.md
 .DS_Store
+claude-code-plugins/
+
+# BMAD installation artifacts
+_bmad/
+_bmad-output/
+.agents/
+AGENTS.md
+project-context.md

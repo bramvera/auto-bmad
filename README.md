@@ -2,15 +2,48 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.1](https://img.shields.io/badge/TEA-v1.7.1-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
 
-Automated BMAD pipeline orchestration for Claude Code. One command to plan, one command to run an entire sprint.
+Automated BMAD pipeline orchestration for Claude Code. One command to run an entire sprint.
 
 > Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 with sprint automation, WDS integration, and flattened agent architecture.
 
-> **Token usage warning:** These pipelines are extremely token-intensive. A single story runs ~60-90 min and consumes ~150-200k tokens. A full sprint (5 stories) runs ~6 hours and consumes ~800k-1M tokens. **Claude Code Max x5 is the minimum recommended plan. x20 is ideal.** On x1 you will hit rate limits mid-run. Tested on Max x20.
+> **Permissions:** Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions`. **Use at your own risk -- only run in environments you trust.**
 
-> **Permissions:** The pipelines run hundreds of tool calls (file reads, writes, bash commands, skill invocations) across multiple agents. Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions` or configure your `allowedTools` in settings. **Use at your own risk — only run in environments you trust.**
+> **This is not a "make my app" button.** BMAD is built around human-AI collaboration -- brainstorming, research, and product discovery are meant to be interactive. Use auto-bmad for **execution** (sprint/story), not for **thinking** (analysis/planning). See [Workflow](#workflow) for details.
 
-> **This is not a "make my app" button.** BMAD is built around human-AI collaboration — brainstorming, research, and product discovery are meant to be interactive. If you automate everything from brief to deployment, you skip the process that makes BMAD valuable and end up with an AI guessing at your requirements. Use auto-bmad for **execution** (sprint/story), not for **thinking** (analysis/planning). See [Workflow](#workflow) for the recommended approach.
+---
+
+## Choose Your Mode
+
+auto-bmad supports two execution modes. **Pick based on your project, subscription, and risk tolerance.**
+
+| | Quick Mode | Full Mode |
+|---|---|---|
+| **What it does per story** | Create, develop, code review (3 steps) | Create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, trace, test automate (11 steps) |
+| **What it does at epic-end** | Quinn QA (epic-level tests), retrospective (2 steps) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
+| **Testing approach** | Tests generated at epic level by Quinn (built-in BMAD QA) | TDD per story -- ATDD writes failing tests, dev implements against them |
+| **BMAD modules needed** | BMAD-METHOD only | BMAD-METHOD + TEA |
+| **Duration per story** | ~25-35 min | ~60-90 min |
+| **Tokens per story** | ~60-80k | ~150-200k |
+| **Duration per sprint (5 stories)** | ~2.5-3.5h | ~5-6h |
+| **Tokens per sprint (5 stories)** | ~350-450k | ~800k-1M |
+| **Recommended plan** | Max x5 or higher | Max x5 minimum, x20 ideal |
+| **Best for** | Prototypes, familiar domains, solo devs, simpler projects, tight token budgets | Production systems, complex domains, brownfield with breaking change risk, regulated environments |
+
+### When to Use Quick Mode
+
+- Building a prototype or proof of concept
+- Working in a domain you know well
+- Fewer than 5 epics, straightforward requirements
+- Solo developer, want fast iteration
+- On Max x5 and want to complete a sprint without hitting limits
+
+### When to Use Full Mode
+
+- Building production systems serving real users
+- Complex or unfamiliar domain where spec weaknesses become implementation bugs
+- Brownfield where a small change can break existing functionality
+- You need per-story traceability (requirements -> tests -> code)
+- You want TDD -- tests written before code, not after
 
 ---
 
@@ -19,7 +52,7 @@ Automated BMAD pipeline orchestration for Claude Code. One command to plan, one 
 | | |
 |---|---|
 | ![WDS pipeline](docs/images/wds-pipeline-run.png) | ![Sprint report](docs/images/sprint-report.png) |
-| `/auto-bmad-wds` -- 9-step UX design pipeline | `/auto-bmad-sprint 1` -- 5 stories, ~6 hours, zero failures |
+| `/auto-bmad-wds` -- 9-step UX design pipeline | `/auto-bmad-sprint 1` (full mode) -- 5 stories, ~6 hours, zero failures |
 
 ---
 
@@ -41,38 +74,56 @@ claude --plugin-dir /path/to/auto-bmad/auto-bmad
 ## Quick Start
 
 ```bash
-# 1. Plan the project
+# Optional: deep UX design before planning
+/auto-bmad-wds <product description or @file>
+
+# Plan the project
 /auto-bmad-plan <product description or @file>
 
-# 2. Run the entire first epic (stories + tests + reviews)
+# Quick mode (no TEA needed, ~2.5-3.5h per epic)
+/auto-bmad-sprint-quick 1
+
+# Full mode (requires TEA, ~5-6h per epic)
 /auto-bmad-sprint 1
 
-# That's it. Check the report in the morning.
+# Check the report in the morning.
 ```
 
 ---
 
 ## Commands
 
-Every command orchestrates existing BMAD skills — nothing bypasses BMAD guardrails. See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each step calls.
+Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each step calls.
 
-### BMM (Business Model Method)
+### Quick Mode (BMAD Core -- no TEA required)
+
+| Command | Description |
+|---------|-------------|
+| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + Quinn QA + retro at epic-end |
+| [`/auto-bmad-story-quick <id>`](docs/commands-reference.md#auto-bmad-story-quick-id) | Run a single story (3 steps): create, develop, code review |
+| [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | GDS variant: run a game dev epic in quick mode |
+| [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | GDS variant: run a single game dev story in quick mode |
+
+### Full Mode (requires TEA module)
+
+| Command | Description |
+|---------|-------------|
+| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic: 11 steps per story + 5-step epic-end ([details](#how-sprint-works)) |
+| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
+| [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | Epic-level test design (TEA) |
+| [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | Trace, NFR, test review, retrospective, context refresh |
+| [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | GDS variant: run a game dev epic in full mode |
+| [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | GDS variant: run a single game dev story in full mode |
+| [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | GDS epic-level game test design |
+| [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | GDS retrospective, context refresh |
+
+### Planning and Design
 
 | Command | Description |
 |---------|-------------|
 | [`/auto-bmad-plan`](docs/commands-reference.md#auto-bmad-plan) | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
-| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic hands-off: epic-start, all stories, epic-end ([details](#how-sprint-works)) |
-| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
-| [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | Epic-level test design |
-| [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | Trace, NFR assessment, test review, retrospective, project context refresh |
-
-### WDS (Whiteport Design Studio)
-
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-wds`](docs/commands-reference.md#auto-bmad-wds) | 9-step UX design pipeline: project brief, trigger mapping, scenarios, specs, design delivery |
-
-Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX step when WDS artifacts exist.
+| [`/auto-bmad-wds`](docs/commands-reference.md#auto-bmad-wds) | 9-step UX design pipeline (WDS module): project brief, trigger mapping, scenarios, specs, design delivery |
+| [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | 8-step GDS planning: game brief, GDD, narrative, architecture, test design, sprint plan |
 
 ### Brownfield (Existing Codebase)
 
@@ -81,52 +132,56 @@ Run before `/auto-bmad-plan` for deep UX work. The plan pipeline skips its UX st
 | [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | Interactive: assess scope, route to `bmad-correct-course` (significant) or `bmad-quick-spec` (minor) |
 | [`/auto-bmad-change-dev <spec>`](docs/commands-reference.md#auto-bmad-change-dev-spec) | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
 
-For changes to existing systems where breaking things matters. The spec step is human-driven (BMAD skills handle impact analysis). The dev step adds the regression safety net that `bmad-quick-dev` doesn't have.
-
-### GDS (Game Dev Suite)
-
-| Command | Description |
-|---------|-------------|
-| [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | 8-step planning: game brief, GDD, narrative, game architecture, test design, sprint plan |
-| [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | Run an entire GDS epic hands-off ([details](#how-sprint-works)) |
-| [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | Run a single GDS story (11 steps) |
-| [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | Epic-level game test design |
-| [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | Retrospective, project context refresh |
-
 ---
 
 ## How Sprint Works
+
+Both quick and full mode sprints share the same architecture: the coordinator runs each step as a direct Task call with fresh context (no nested agents), writes a progress file after every story, and continues to the next story on failure.
+
+### Quick Mode Sprint
+
+```
+/auto-bmad-sprint-quick 1
+```
+
+**Lifecycle:** story 1-1 (3 steps) --> story 1-2 --> ... --> Quinn QA --> retro
+
+No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end, Quinn (built-in BMAD QA) generates E2E tests for the entire epic, followed by a retrospective.
+
+### Full Mode Sprint
 
 ```
 /auto-bmad-sprint 1
 ```
 
-The sprint command reads `sprint-status.yaml`, finds all pending stories for the epic, and runs them sequentially -- each story's 11 steps as direct Task calls with fresh context. No manual intervention needed.
+**Lifecycle:** epic-start (test design) --> story 1-1 (11 steps) --> story 1-2 --> ... --> epic-end (trace, NFR, test review, retro, context refresh)
 
-**Lifecycle:** epic-start (test design) --> story 1-1 --> story 1-2 --> ... --> epic-end (retro)
+### Shared Sprint Features
 
-**Failure handling:** If a story crashes (not test failures -- those are auto-fixed within each story), the sprint retries once. If it still fails, it rolls back the story, logs the failure, and moves to the next story. Independent stories still complete. The sprint report shows the full chain.
+**Failure handling:** If a story crashes (not test failures -- those are auto-fixed), the sprint retries once. If it still fails, it rolls back, logs the failure, and moves to the next story.
 
-**Resumable:** Run the same command again — or type `please resume` in Claude Code. It reads `sprint-status.yaml`, skips completed stories, and picks up where it left off. Terminal crash, context exhaustion, rate limit — doesn't matter. Git commits are the checkpoints.
+**What about dependent stories?** If story 1-1 fails, dependent stories 1-2 and 1-3 will likely fail too. Independent stories still complete. Fix the root cause, rerun the sprint -- it skips completed stories.
+
+**Resumable:** Run the same command again -- or `please resume` in Claude Code. It reads `sprint-status.yaml`, skips completed stories, picks up where it left off.
 
 ![Sprint resume after terminal crash](docs/images/sprint-resume.png)
 
-*Terminal crashed mid-sprint. `claude --resume` picked up at story 1-4 (4/5) — stories 1-1 through 1-3 were already committed and skipped automatically.*
+*Terminal crashed mid-sprint. Resume picked up at story 1-4 (4/5) -- stories 1-1 through 1-3 were already committed and skipped.*
 
-**Live progress:** After every story, a progress file is written to disk at `auto-bmad-artifacts/sprint-epic-<N>-progress.md` with status, duration, commit hashes, and failure details. If the process crashes, you have a full record.
+**Live progress:** After every story, a progress file is written to disk with status, duration, commit hashes, and failure details.
 
-**Context management:** The sprint coordinator discards Task results immediately and tracks only pass/fail + one-line summaries. Each step agent gets a fresh context window. This prevents degradation on long runs (5+ hours).
+**Context management:** The coordinator discards Task results immediately and tracks only pass/fail + one-line summaries. Each step agent gets a fresh context window. No degradation on long runs.
 
-### Typical Duration
+### Duration and Token Comparison
 
 | Command | Duration | Tokens |
 |---------|----------|--------|
+| `/auto-bmad-story-quick` | ~25-35m | ~60-80k |
+| `/auto-bmad-sprint-quick` (5 stories) | ~2.5-3.5h | ~350-450k |
+| `/auto-bmad-story` (full) | ~60-90m | ~150-200k |
+| `/auto-bmad-sprint` (full, 5 stories) | ~5-6h | ~800k-1M |
 | `/auto-bmad-wds` | ~50-60m | ~130k |
 | `/auto-bmad-plan` | ~40-60m | ~100-150k |
-| `/auto-bmad-story` | ~60-90m | ~150-200k |
-| `/auto-bmad-sprint` (5 stories) | ~5-6h | ~800k-1M |
-
-A Claude Code Max x5 or x20 subscription is recommended.
 
 ---
 
@@ -134,13 +189,11 @@ A Claude Code Max x5 or x20 subscription is recommended.
 
 ### Understanding the Phases
 
-BMAD has three distinct phases. Knowing where human judgment matters vs where automation shines is key to getting good results.
-
 | Phase | Human or Auto? | Why |
 |-------|---------------|-----|
-| **Analysis** (brainstorming, research, product brief) | **Human-driven** | This is collaborative discovery. The AI asks questions, you provide domain knowledge. Automating this means the AI makes assumptions without your input -- you lose the core value of BMAD. |
-| **Planning** (PRD, UX, architecture, epics, sprint plan) | **Either** (see tradeoffs below) | Each artifact benefits from review and iteration, but can be automated if you provide strong input. |
-| **Execution** (story implementation, testing, reviews) | **Automated** | Stories are well-defined at this point. Execution is mechanical -- create, test, develop, review. This is where auto-bmad saves you hours. |
+| **Analysis** (brainstorming, research, product brief) | **Human-driven** | Collaborative discovery. The AI asks, you provide domain knowledge. Automating this loses the core value of BMAD. |
+| **Planning** (PRD, UX, architecture, epics, sprint plan) | **Either** (see tradeoffs below) | Benefits from review and iteration, but can be automated with strong input. |
+| **Execution** (story implementation, testing, reviews) | **Automated** | Stories are well-defined. Execution is mechanical. This is where auto-bmad saves you hours. |
 
 ### Analysis: Always Manual
 
@@ -158,48 +211,23 @@ This produces the product brief that everything else builds on. Garbage in, garb
 
 ### Planning: Tradeoffs
 
-You can run planning manually (step by step with BMAD skills) or automated (`/auto-bmad-plan`). Both work, but the tradeoffs matter:
-
 | | Manual Planning | `/auto-bmad-plan` |
 |---|---|---|
 | **Time** | 2-4 hours (human-paced) | ~40-60 min (automated) |
-| **Quality** | Higher -- you catch blind spots between steps with `/bmad-party-mode` and `/bmad-advanced-elicitation` | Good -- but the AI may make assumptions you'd catch in review |
-| **Iteration** | Natural -- review each artifact, iterate, move on | All-or-nothing -- generates everything in one pass |
-| **Blind spots** | Caught early through elicitation and party mode | Found later during implementation, harder to fix |
-| **Best for** | Complex products, unfamiliar domains, high-stakes projects | Side projects, prototypes, domains you know well, rebuilds of existing products |
+| **Quality** | Higher -- catch blind spots with `/bmad-party-mode` and `/bmad-advanced-elicitation` | Good -- but the AI may make assumptions you'd catch in review |
+| **Best for** | Complex products, unfamiliar domains, high-stakes projects | Side projects, prototypes, familiar domains |
 
-**Recommended approach for important projects:**
+### Execution: Pick Your Mode
 
-```
-# Manual planning (human-guided)
-/bmad-create-prd                 <-- create PRD interactively
-/bmad-party-mode                 <-- review PRD, find gaps
-/bmad-validate-prd               <-- validate and fix
-/bmad-create-ux-design           <-- if applicable
-/bmad-create-architecture        <-- architecture decisions
-/bmad-party-mode                 <-- stress-test the architecture
-/bmad-create-epics-and-stories   <-- break into epics
-/bmad-sprint-planning            <-- plan the first sprint
+```bash
+# Quick mode -- 3 steps per story, no TEA, ~2.5-3.5h per epic
+/auto-bmad-sprint-quick 1
+
+# Full mode -- 11 steps per story, TEA required, ~5-6h per epic
+/auto-bmad-sprint 1
 ```
 
-**Quick approach for familiar domains:**
-
-```
-/auto-bmad-plan <detailed description or @file>
-# Review artifacts after, iterate with /bmad-party-mode if needed
-```
-
-### Execution: Always Automated
-
-Once your sprint plan exists with well-defined stories, auto-bmad takes over:
-
-```
-/auto-bmad-sprint 1     <-- epic 1: all stories, hands-off
-/auto-bmad-sprint 2     <-- epic 2: all stories, hands-off
-...                     <-- repeat for each epic
-```
-
-Review the sprint report after each epic. Fix any failed stories with `/auto-bmad-story <id>`. Use `/bmad-correct-course` when plans need to change.
+Review the sprint report after each epic. Fix any failed stories individually. Use `/bmad-correct-course` when plans need to change.
 
 ---
 
@@ -210,12 +238,12 @@ Review the sprint report after each epic. Fix any failed stories with `/auto-bma
 | Component | Version | Required For |
 |-----------|---------|-------------|
 | [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) | v6.2.0 | All pipelines |
-| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) | v1.7.1 | BMM pipelines |
+| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) | v1.7.1 | Full mode only (BMM) |
 | [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
 | [WDS](https://github.com/bmad-code-org/bmad-method-wds-expansion) | latest | WDS pipeline |
 | [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
 
-You only need the modules for the pipeline you're using.
+**Quick mode needs only BMAD-METHOD** (and GDS for game projects). No TEA required.
 
 ### Config Files
 
@@ -223,8 +251,9 @@ Created by `npx bmad-method install`. The pipelines expect:
 
 | Pipeline | Config Files |
 |----------|-------------|
-| BMM | `_bmad/bmm/config.yaml`, `_bmad/tea/config.yaml` |
-| GDS | `_bmad/gds/config.yaml` |
+| Quick mode (BMM) | `_bmad/bmm/config.yaml` |
+| Full mode (BMM) | `_bmad/bmm/config.yaml`, `_bmad/tea/config.yaml` |
+| GDS (both modes) | `_bmad/gds/config.yaml` |
 | WDS | `_bmad/wds/config.yaml` |
 
 ### Recommended Plugins
@@ -253,7 +282,7 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 
 ## Credits
 
-Built on the original [auto-bmad](https://github.com/stefanoginella/auto-bmad) by [Stefano Ginella](https://github.com/stefanoginella), who designed the core pipeline orchestration concept and the BMM/GDS command structure. This fork extends his work with sprint automation, WDS integration, flattened agent architecture, and context management optimizations.
+Built on the original [auto-bmad](https://github.com/stefanoginella/auto-bmad) by [Stefano Ginella](https://github.com/stefanoginella), who designed the core pipeline orchestration concept and the BMM/GDS command structure. This fork extends his work with quick/full modes, sprint automation, WDS integration, brownfield pipelines, flattened agent architecture, and context management optimizations.
 
 The pipelines are powered by the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) by [bmad-code-org](https://github.com/bmad-code-org).
 

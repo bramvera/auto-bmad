@@ -1,5 +1,51 @@
 # FAQ
 
+## Quick Mode vs Full Mode
+
+### What is quick mode?
+
+Quick mode runs 3 steps per story (create, dev, code review) instead of 11. It skips validation, adversarial review, ATDD, edge-case hunt, extra code reviews, trace, and test automate. Tests are generated at the epic level by Quinn QA (built-in BMAD) instead of per-story. Quick mode requires only BMAD-METHOD core -- no TEA module.
+
+### When should I use quick mode vs full mode?
+
+| Situation | Mode |
+|-----------|------|
+| Prototype or proof of concept | Quick |
+| Familiar domain, low ambiguity | Quick |
+| Solo developer, moving fast | Quick |
+| Max x5 subscription, want to conserve tokens | Quick |
+| Fewer than 5 epics, straightforward | Quick |
+| Production system serving real users | Full |
+| Complex or unfamiliar domain | Full |
+| Brownfield with breaking change risk | Full |
+| Need per-story traceability | Full |
+| Regulated environment requiring audit trails | Full |
+
+### Can I mix quick and full mode in the same project?
+
+Yes, but pick one mode per epic. Quick mode stories don't produce ATDD tests or traceability artifacts, so switching to full mode mid-epic will flag gaps. Switching between epics (quick for epic 1, full for epic 2) is fine.
+
+### Do I need TEA for quick mode?
+
+No. Quick mode only requires BMAD-METHOD core (and GDS for game projects). TEA is not loaded or referenced.
+
+### How much faster is quick mode?
+
+| | Quick | Full |
+|---|---|---|
+| Per story | ~25-35m, ~60-80k tokens | ~60-90m, ~150-200k tokens |
+| Per sprint (5 stories) | ~2.5-3.5h, ~350-450k tokens | ~5-6h, ~800k-1M tokens |
+
+### Does quick mode still generate tests?
+
+Yes, but at the epic level. After all stories complete, Quinn QA (`bmad-qa-generate-e2e-tests`) generates E2E tests for the entire epic. The dev step within each story may also write tests as part of its normal flow. There is no per-story ATDD (test-driven development) and no per-story test automation.
+
+### Can I run a single quick mode story without the sprint command?
+
+Yes. `/auto-bmad-story-quick 1-1` runs a single story in quick mode (3 steps). If running stories individually, you'll need to run Quinn QA and retrospective manually after all stories complete -- the sprint-quick command handles this automatically.
+
+---
+
 ## General
 
 ### What is auto-bmad?
@@ -28,12 +74,14 @@ Rough token usage per command:
 
 | Command | Duration | Tokens |
 |---------|----------|--------|
+| `/auto-bmad-story-quick` | ~25-35m | ~60-80k |
+| `/auto-bmad-sprint-quick` (5 stories) | ~2.5-3.5h | ~350-450k |
+| `/auto-bmad-story` (full) | ~60-90m | ~150-200k |
+| `/auto-bmad-sprint` (full, 5 stories) | ~5-6h | ~800k-1M |
 | `/auto-bmad-wds` | ~50-60m | ~130-150k |
 | `/auto-bmad-plan` | ~40-60m | ~100-150k |
 | `/auto-bmad-epic-start` | ~5-10m | ~20-30k |
-| `/auto-bmad-story` | ~60-90m | ~150-200k |
 | `/auto-bmad-epic-end` | ~15-20m | ~40-60k |
-| `/auto-bmad-sprint` (5 stories) | ~5-6h | ~800k-1M |
 
 ---
 

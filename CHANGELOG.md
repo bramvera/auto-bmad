@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.8.0] - 2026-03-23
+
+### Added
+- **Quick Mode** -- lightweight pipeline requiring only BMAD-METHOD core (no TEA module)
+- `/auto-bmad-story-quick` -- 3-step story: create, dev, code review (~25-35 min, ~60-80k tokens)
+- `/auto-bmad-sprint-quick` -- quick sprint: all stories (3 steps each) + Quinn QA + retro at epic-end
+- `/auto-gds-story-quick` -- GDS variant of quick story
+- `/auto-gds-sprint-quick` -- GDS variant of quick sprint
+- Quick mode skips: story validation, adversarial review, ATDD, edge-case hunt, reviews #2/#3, trace, test automate
+- Quick mode epic-end uses Quinn QA (built-in BMAD) for epic-level E2E test generation instead of TEA
+- Mode comparison table in README with token/duration estimates for Max x5 users
+- Quick vs Full mode FAQ section
+- Quick mode commands in commands reference with dependency table
+
+### Changed
+- README restructured: modes at the top, commands grouped by mode, clear subscription guidance
+- Quick Start section shows both modes
+
 ## [0.7.0] - 2026-03-21
 
 ### Added

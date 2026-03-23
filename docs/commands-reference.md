@@ -244,6 +244,64 @@ Same 11 steps as GDS sprint Phase 2, standalone with its own report.
 
 ---
 
+## Quick Mode Commands
+
+Quick mode uses BMAD-METHOD core only -- no TEA module required. 3 steps per story, tests generated at epic level by Quinn QA.
+
+### `/auto-bmad-story-quick <id>`
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/bmad-create-story` | Generate story spec from epics |
+| 2 | `/bmad-dev-story` | Implement |
+| 3 | `/bmad-code-review` | Code review -- fix critical/high/medium issues |
+
+### `/auto-bmad-sprint-quick <epic>`
+
+No epic-start phase. 3 steps per story. 2-step epic-end.
+
+**Stories (repeated for each pending story)**
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/bmad-create-story` | Generate story spec |
+| 2 | `/bmad-dev-story` | Implement |
+| 3 | `/bmad-code-review` | Code review |
+
+**Epic End**
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/bmad-qa-generate-e2e-tests` | Quinn QA -- epic-level E2E test generation |
+| 2 | `/bmad-retrospective` | Retrospective with action item resolution |
+
+### `/auto-gds-story-quick <id>`
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/gds-create-story` | Generate story spec |
+| 2 | `/gds-dev-story` | Implement |
+| 3 | `/gds-code-review` | Code review |
+
+### `/auto-gds-sprint-quick <epic>`
+
+**Stories**
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/gds-create-story` | Generate story spec |
+| 2 | `/gds-dev-story` | Implement |
+| 3 | `/gds-code-review` | Code review |
+
+**Epic End**
+
+| Step | BMAD Skill | Purpose |
+|------|-----------|---------|
+| 1 | `/bmad-qa-generate-e2e-tests` | Quinn QA -- epic-level E2E test generation |
+| 2 | `/gds-retrospective` | Retrospective with action items |
+
+---
+
 ## BMAD Module Dependencies
 
 | auto-bmad Command | Requires |
@@ -256,6 +314,10 @@ Same 11 steps as GDS sprint Phase 2, standalone with its own report.
 | `/auto-bmad-wds` | BMAD-METHOD + WDS |
 | `/auto-bmad-change-spec` | BMAD-METHOD |
 | `/auto-bmad-change-dev` | BMAD-METHOD + TEA |
+| `/auto-bmad-story-quick` | BMAD-METHOD |
+| `/auto-bmad-sprint-quick` | BMAD-METHOD |
+| `/auto-gds-story-quick` | BMAD-METHOD + GDS |
+| `/auto-gds-sprint-quick` | BMAD-METHOD + GDS |
 | `/auto-gds-plan` | BMAD-METHOD + GDS |
 | `/auto-gds-sprint` | BMAD-METHOD + GDS |
 | `/auto-gds-story` | BMAD-METHOD + GDS |
