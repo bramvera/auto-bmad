@@ -120,7 +120,7 @@ After step 3 completes successfully:
 
 ## Progress Report (written after every story)
 
-After each story completes (or fails), write/update `{{auto_bmad_artifacts}}/quick-sprint-epic-{{EPIC_ID}}-progress.md`. This is a **live file** — overwritten after each story so you always have a record even if the sprint crashes.
+After each story completes (or fails), create `{{auto_bmad_artifacts}}/` directory if it doesn't exist, then write/update `{{auto_bmad_artifacts}}/quick-sprint-epic-{{EPIC_ID}}-progress.md`. This is a **live file** — overwritten after each story so you always have a record even if the sprint crashes.
 
 ```markdown
 # Sprint Progress: Epic {{EPIC_ID}} — Quick Mode (LIVE)
