@@ -124,6 +124,8 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 4. Generate the report and save it to `{{auto_bmad_artifacts}}/wds-report-YYYY-MM-DD-HHMMSS.md` (using `{{END_TIME}}` for the timestamp).
 5. Print the full report to the user.
 
+Run the token cost report: `python3 "$(find ~/.claude/plugins/cache/bramvera-plugins/auto-bmad -name token-report.py | sort | tail -1)" .` — saves accurate billing breakdown to `{{auto_bmad_artifacts}}/`. Use the `Cost: $X.XX standard` line for the Est. Cost row.
+
 Use this template for the report:
 
 ```markdown
@@ -135,6 +137,7 @@ Use this template for the report:
 | Start | {{START_TIME}} |
 | End | {{END_TIME}} |
 | Duration | <minutes>m |
+| Est. Cost | ~$X.XX (see token-report-*.md) |
 | Initial Commit | {{START_COMMIT_HASH}} |
 
 ## Artifacts

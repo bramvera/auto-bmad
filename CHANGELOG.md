@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.8.2] - 2026-03-24
+
+### Added
+- **Token cost reports**: all 16 pipeline reports now run `token-report.py` at the end of each pipeline, saving accurate billing breakdown (`token-report-*.md`) to `auto-bmad-artifacts/` automatically
+
 ## [0.8.1] - 2026-03-23
 
 ### Fixed

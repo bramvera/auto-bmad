@@ -174,6 +174,8 @@ Print: `Epic End — done (quick mode)`
 4. Generate the report and save it to `{{auto_bmad_artifacts}}/quick-sprint-epic-{{EPIC_ID}}-YYYY-MM-DD-HHMMSS.md` (using `{{SPRINT_END_TIME}}` for the timestamp).
 5. Print the full report to the user.
 
+Run the token cost report: `python3 "$(find ~/.claude/plugins/cache/bramvera-plugins/auto-bmad -name token-report.py | sort | tail -1)" .` — saves accurate billing breakdown to `{{auto_bmad_artifacts}}/`. Use the `Cost: $X.XX standard` line for the Est. Cost row.
+
 Use this template for the report:
 
 ```markdown
@@ -187,6 +189,7 @@ Use this template for the report:
 | Start | {{SPRINT_START_TIME}} |
 | End | {{SPRINT_END_TIME}} |
 | Duration | <hours>h <minutes>m |
+| Est. Cost | ~$X.XX (see token-report-*.md) |
 | Initial Commit | {{SPRINT_START_COMMIT}} |
 | Stories Attempted | {{TOTAL_STORIES}} |
 | Stories Completed | <count> |

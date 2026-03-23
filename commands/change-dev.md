@@ -99,6 +99,8 @@ Verify nothing broke — both the new tests AND the regression tests AND all exi
 3. Generate report at `{{auto_bmad_artifacts}}/change-YYYY-MM-DD-HHMMSS.md`.
 4. Print the report.
 
+Run the token cost report: `python3 "$(find ~/.claude/plugins/cache/bramvera-plugins/auto-bmad -name token-report.py | sort | tail -1)" .` — saves accurate billing breakdown to `{{auto_bmad_artifacts}}/`. Use the `Cost: $X.XX standard` line for the Est. Cost row.
+
 ```markdown
 # Change Report
 
@@ -109,6 +111,7 @@ Verify nothing broke — both the new tests AND the regression tests AND all exi
 | Start | {{START_TIME}} |
 | End | {{END_TIME}} |
 | Duration | <minutes>m |
+| Est. Cost | ~$X.XX (see token-report-*.md) |
 | Initial Commit | {{START_COMMIT_HASH}} |
 
 ## Pipeline Outcome
