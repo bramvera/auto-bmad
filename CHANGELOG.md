@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.8.1] - 2026-03-23
+
+### Fixed
+- **WDS**: `design_artifacts` now derived from `output_folder` instead of reading config field directly — fixes artifacts being created at project root instead of inside the configured output folder
+
 ## [0.8.0] - 2026-03-23
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.8.0",
-  "description": "[0.8.0] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield and WDS.",
+  "version": "0.8.1",
+  "description": "[0.8.1] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield and WDS.",
   "author": {
     "name": "bramvera"
   },
