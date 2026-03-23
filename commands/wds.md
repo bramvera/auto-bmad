@@ -9,9 +9,9 @@ Read `_bmad/wds/config.yaml` and set the following variables (resolve `{project-
 
 | Variable | Source | Example |
 |----------|--------|---------|
-| `{{output_folder}}` | wds `output_folder` | `_bmad-output` |
-| `{{design_artifacts}}` | wds `design_artifacts` | `design-artifacts` |
-| `{{auto_bmad_artifacts}}` | derived: `{{output_folder}}/auto-bmad-artifacts` | `_bmad-output/auto-bmad-artifacts` |
+| `{{output_folder}}` | wds `output_folder` | `output` |
+| `{{design_artifacts}}` | derived: `{{output_folder}}/design-artifacts` | `output/design-artifacts` |
+| `{{auto_bmad_artifacts}}` | derived: `{{output_folder}}/auto-bmad-artifacts` | `output/auto-bmad-artifacts` |
 
 All paths in this command that reference WDS output directories MUST use these variables — never hardcode paths.
 
