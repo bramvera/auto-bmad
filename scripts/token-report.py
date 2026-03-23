@@ -48,16 +48,42 @@ PRICING = {
 }
 # Longest-match wins (more specific keys first)
 PRICING_KEYS = sorted(PRICING.keys(), key=len, reverse=True)
+
+# Family fallbacks: if exact model not found, use the latest known price for that family.
+# This handles future models (e.g. claude-opus-4-7) gracefully with a warned estimate.
+FAMILY_FALLBACK = {
+    "opus":   PRICING["claude-opus-4-6"],    # latest opus pricing
+    "sonnet": PRICING["claude-sonnet-4-6"],  # latest sonnet pricing
+    "haiku":  PRICING["claude-haiku-4-5"],   # latest haiku pricing
+}
 DEFAULT_PRICING = PRICING["claude-sonnet-4-6"]
 
 BATCH_DISCOUNT = 0.50  # 50% off input + output only; cache pricing unchanged
 
-def get_pricing(model: str) -> dict:
+# Tracks unknown models seen this run so we warn once per model
+_unknown_models: set[str] = set()
+
+def get_pricing(model: str) -> tuple[dict, bool]:
+    """Return (pricing_dict, is_exact_match).
+    Falls back to family pricing for unrecognised models and warns once."""
     m = (model or "").lower()
     for key in PRICING_KEYS:
         if key in m:
-            return PRICING[key]
-    return DEFAULT_PRICING
+            return PRICING[key], True
+    # Try family fallback
+    for family, prices in FAMILY_FALLBACK.items():
+        if family in m:
+            if model not in _unknown_models:
+                _unknown_models.add(model)
+                print(f"  ⚠  Unknown model '{model}' — using {family} family pricing as estimate.")
+                print(f"     Update PRICING dict in token-report.py with exact rates.")
+            return prices, False
+    # Total unknown
+    if model not in _unknown_models:
+        _unknown_models.add(model)
+        print(f"  ⚠  Unrecognised model '{model}' — falling back to Sonnet 4.6 pricing.")
+        print(f"     Update PRICING dict in token-report.py with exact rates.")
+    return DEFAULT_PRICING, False
 
 def calc_cost(u: dict, p: dict, batch: bool = False) -> float:
     M = 1_000_000
@@ -191,10 +217,11 @@ def collect_steps(session: dict, claude_dir: Path) -> list[dict]:
         if jsonl_path.exists():
             result = analyze_subagent(jsonl_path)
         model = result["model"] or "unknown"
-        prices = get_pricing(model)
+        prices, exact = get_pricing(model)
         steps.append({
             "description": description,
             "model": model,
+            "model_exact": exact,
             "usage": result["usage"],
             "cost": calc_cost(result["usage"], prices),
             "cost_batch": calc_cost(result["usage"], prices, batch=True),
@@ -215,9 +242,10 @@ def render_steps_table(steps: list[dict], title: str) -> list[str]:
 
     for s in sorted(steps, key=lambda x: x["cost"], reverse=True):
         u = s["usage"]
+        model_label = fmt_model(s["model"]) + ("" if s.get("model_exact", True) else "~")
         lines.append(
             f"{s['description'][:W]:<{W}} "
-            f"{fmt_model(s['model']):<16} "
+            f"{model_label:<16} "
             f"{fmt_k(u['input']):>6} "
             f"{fmt_k(u['output']):>6} "
             f"{fmt_k(u['cache_read']):>6} "
@@ -321,7 +349,7 @@ def build_markdown(session: dict, steps: list[dict], project_path: Path) -> str:
     ]
     # Use the dominant model's pricing for the breakdown
     dominant_model = max(set(s["model"] for s in steps), key=lambda m: sum(s["cost"] for s in steps if s["model"] == m))
-    p = get_pricing(dominant_model)
+    p, _ = get_pricing(dominant_model)
     M = 1_000_000
     type_rows = [
         ("Input (direct)",    total_u["input"],      total_u["input"]/M*p["input"],               total_u["input"]/M*p["input"]*(1-BATCH_DISCOUNT)),
