@@ -1,6 +1,6 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.1](https://img.shields.io/badge/TEA-v1.7.1-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.2](https://img.shields.io/badge/TEA-v1.7.2-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
 
 Automated BMAD pipeline orchestration for Claude Code. One command to run an entire sprint.
 
@@ -238,7 +238,7 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 | Component | Version | Required For |
 |-----------|---------|-------------|
 | [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) | v6.2.0 | All pipelines |
-| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1) | v1.7.1 | Full mode only (BMM) |
+| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) | v1.7.2 | Full mode only (BMM) |
 | [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
 | [WDS](https://github.com/bmad-code-org/bmad-method-wds-expansion) | latest | WDS pipeline |
 | [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
