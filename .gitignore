@@ -12,3 +12,4 @@ _bmad-output/
 AGENTS.md
 project-context.md
 .pycache
+__pycache__/
