@@ -14,6 +14,7 @@ class UsageData:
     session_reset_at: Optional[str] = None
     weekly_pct: Optional[float] = None    # 0.0–1.0
     weekly_reset_at: Optional[str] = None
+    stale: bool = False
 
     @property
     def session_bar_color(self) -> str:
@@ -43,18 +44,22 @@ def _pct_color(pct: Optional[float]) -> str:
 
 
 _CACHE = Path.home() / ".cache" / "ccstatusline" / "usage.json"
+_CACHE_MAX_AGE = 300  # treat as stale after 5 min
 
 
 def load_usage() -> UsageData:
     """Try ccstatusline cache first, fall back to empty."""
     if _CACHE.exists():
         try:
+            import time
+            age = time.time() - _CACHE.stat().st_mtime
             raw = json.loads(_CACHE.read_text())
             return UsageData(
                 session_pct=_to_pct(raw.get("sessionUsage")),
                 session_reset_at=raw.get("sessionResetAt"),
                 weekly_pct=_to_pct(raw.get("weeklyUsage")),
                 weekly_reset_at=raw.get("weeklyResetAt"),
+                stale=age > _CACHE_MAX_AGE,
             )
         except Exception:
             pass
@@ -66,7 +71,10 @@ def _to_pct(val: object) -> Optional[float]:
         return None
     try:
         f = float(val)
-        # API returns 0–1 utilization
+        # ccstatusline cache stores 0–100 integers (e.g. 97 = 97%)
+        # normalise to 0.0–1.0
+        if f > 1.0:
+            f = f / 100.0
         return max(0.0, min(1.0, f))
     except (TypeError, ValueError):
         return None

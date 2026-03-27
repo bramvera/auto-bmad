@@ -44,7 +44,8 @@ class StatusBar(Widget):
         s_pct = _pct_str(u.session_pct)
         w_pct = _pct_str(u.weekly_pct)
 
-        warn = " ⚠" if u.weekly_warning else ""
+        warn  = " ⚠" if u.weekly_warning else ""
+        stale = " [bright_black](stale)[/]" if u.stale else ""
 
         line = (
             f"[bold cyan]auto-bmad[/]  "
@@ -52,8 +53,7 @@ class StatusBar(Widget):
             f"session [{s_color}]{session_bar} {s_pct}[/]"
             f"[bright_black]  │[/]  "
             f"weekly [{w_color}]{weekly_bar} {w_pct}{warn}[/]"
+            f"{stale}"
         )
-        if u.session_reset_at:
-            line += f"[bright_black]  reset soon[/]"
 
         yield Static(line, id="status-line")
