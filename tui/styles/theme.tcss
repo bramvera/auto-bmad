@@ -1,0 +1,116 @@
+/* auto-bmad TUI — btop-inspired dark theme */
+
+Screen {
+    background: #0a0e14;
+    color: #b3b1ad;
+}
+
+/* ── Panel borders ── */
+.panel {
+    border: solid #1e2d3d;
+    border-title-color: #39bae6;
+    border-title-style: bold;
+    background: #0d1117;
+    height: 1fr;
+}
+
+.panel:focus-within {
+    border: solid #39bae6;
+    border-title-color: #e6b450;
+}
+
+/* ── Status bar ── */
+StatusBar {
+    height: 2;
+    background: #0d1117;
+    border-bottom: solid #1e2d3d;
+    padding: 0 1;
+}
+
+.status-model   { color: #39bae6; }
+.status-ok      { color: #7fd962; }
+.status-warn    { color: #e6b450; }
+.status-danger  { color: #f07178; }
+.status-dim     { color: #3d4d5c; }
+.status-sep     { color: #1e2d3d; }
+
+/* ── Footer keybindings ── */
+Footer {
+    background: #0d1117;
+    border-top: solid #1e2d3d;
+    color: #3d4d5c;
+}
+
+Footer > .footer--key {
+    color: #e6b450;
+    background: #0d1117;
+}
+
+Footer > .footer--description {
+    color: #3d4d5c;
+    background: #0d1117;
+}
+
+/* ── Epic list ── */
+.epic-done        { color: #7fd962; }
+.epic-active      { color: #e6b450; }
+.epic-backlog     { color: #3d4d5c; }
+.epic-selected    { background: #1e2d3d; color: #e6b450; }
+
+/* ── Story list ── */
+.story-done       { color: #7fd962; }
+.story-running    { color: #e6b450; }
+.story-review     { color: #39bae6; }
+.story-backlog    { color: #3d4d5c; }
+.story-blocked    { color: #f07178; }
+.story-selected   { background: #1e2d3d; }
+
+/* ── Pipeline steps ── */
+.step-done        { color: #7fd962; }
+.step-running     { color: #e6b450; }
+.step-skipped     { color: #3d4d5c; }
+.step-pending     { color: #3d4d5c; }
+
+/* ── Artifact tree ── */
+.artifact-group   { color: #39bae6; text-style: bold; }
+.artifact-file    { color: #b3b1ad; }
+.artifact-label   { color: #3d4d5c; }
+.artifact-selected { background: #1e2d3d; color: #e6b450; }
+
+/* ── Config panel ── */
+.config-label     { color: #39bae6; }
+.config-value     { color: #e6b450; }
+.config-toggle-on { color: #7fd962; }
+.config-toggle-off { color: #3d4d5c; }
+.config-warning   { color: #f07178; }
+.config-command   { color: #b3b1ad; background: #131920; padding: 0 1; }
+.config-hint      { color: #3d4d5c; }
+
+/* ── Progress bar ── */
+ProgressBar {
+    width: 12;
+}
+
+ProgressBar > .bar--bar {
+    color: #7fd962;
+    background: #1e2d3d;
+}
+
+ProgressBar > .bar--complete {
+    color: #f07178;
+}
+
+/* ── Markdown preview ── */
+Markdown {
+    background: #0d1117;
+    padding: 1 2;
+    scrollbar-color: #1e2d3d;
+    scrollbar-background: #0d1117;
+}
+
+Markdown H1 { color: #39bae6; text-style: bold; }
+Markdown H2 { color: #e6b450; text-style: bold; }
+Markdown H3 { color: #7fd962; }
+Markdown code { background: #131920; color: #b3b1ad; }
+Markdown em   { color: #e6b450; }
+Markdown strong { text-style: bold; color: #e6b450; }
