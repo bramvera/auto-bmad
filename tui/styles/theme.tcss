@@ -111,6 +111,3 @@ Markdown {
 Markdown H1 { color: #39bae6; text-style: bold; }
 Markdown H2 { color: #e6b450; text-style: bold; }
 Markdown H3 { color: #7fd962; }
-Markdown code { background: #131920; color: #b3b1ad; }
-Markdown em   { color: #e6b450; }
-Markdown strong { text-style: bold; color: #e6b450; }

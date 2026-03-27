@@ -65,4 +65,4 @@ class EpicsPanel(Widget):
 
     def update_epics(self, epics: list[Epic]) -> None:
         self._epics = epics
-        self.recompose()
+        self.call_after_refresh(self.recompose)

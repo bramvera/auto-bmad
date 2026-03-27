@@ -57,7 +57,7 @@ class StoriesPanel(Widget):
 
     def set_epic(self, epic: Epic) -> None:
         self._epic = epic
-        self.recompose()
+        self.call_after_refresh(self.recompose)
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if not self._epic:

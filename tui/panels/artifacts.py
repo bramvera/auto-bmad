@@ -89,7 +89,7 @@ class ArtifactTreePanel(Widget):
 
     def update_groups(self, groups: list[ArtifactGroup]) -> None:
         self._groups = groups
-        self.recompose()
+        self.call_after_refresh(self.recompose)
 
     def filter_by_story(self, story_id: str) -> None:
         """Scroll to and highlight files for a given story."""

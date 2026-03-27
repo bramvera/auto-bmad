@@ -40,10 +40,16 @@ class AutoBmadTUI(App):
 
     def __init__(self, project_root: Path, **kwargs: object) -> None:
         self._root = project_root
-        self._state = SprintState()
-        self._preset = 0  # 0=board, 1=pipeline, 2=cost, 3=config
-        self._panels = ["epics", "stories", "artifacts", "preview"]
+        self._preset = 0
         self._panel_idx = 0
+        # Load data before compose() runs
+        self._state = load_sprint(project_root)
+        self._usage = load_usage()
+        self._artifact_groups = (
+            load_artifacts(self._state.output_folder)
+            if self._state.output_folder
+            else []
+        )
         super().__init__(**kwargs)
 
     # ── Lifecycle ─────────────────────────────────────────────────────────
