@@ -56,27 +56,6 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 
 ---
 
-## Coming Soon — v1.0.0 TUI Command Center
-
-![auto-bmad TUI](docs/images/tui-preview.png)
-
-A full-screen terminal command center for auto-bmad. Configure modules, browse artifacts, and monitor sprint progress — all without leaving your terminal.
-
-- **Sprint board** — live epic/story status from `sprint-status.yaml`
-- **Artifact browser** — semantic file tree with rich markdown preview
-- **Config panel** — TEA, TDS seed size, WDS, quick/full mode toggles
-- **Usage bar** — live session & weekly token budget direct from the API
-- **4 presets** — board, pipeline, cost/graphs, config (`p` to cycle)
-- **Budget-aware** — auto-suggests quick mode when weekly usage >80%
-
-```bash
-python -m tui /path/to/your/project
-```
-
-> Built with Python + Textual. Requires `pip install textual pyyaml`.
-
----
-
 ## Installation
 
 ```

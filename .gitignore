@@ -1,15 +1,66 @@
+# Claude Code
 .claude
 CLAUDE.md
+
+# Package build artifacts
 package/README.md
 package/LICENSE.md
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Plugin marketplace
 claude-code-plugins/
 
-# BMAD installation artifacts
+# BMAD installation artifacts (per-project, not part of plugin)
 _bmad/
 _bmad-output/
+BMAD_OUTPUT/
 .agents/
 AGENTS.md
 project-context.md
-.pycache
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.mypy_cache/
+.pyright/
+.pytest_cache/
+htmlcov/
+.coverage
+*.pyo
+
+# TUI (not ready for release — development only)
+tui/
+
+# auto-bmad runtime artifacts (per-project, not part of plugin)
+auto-bmad-artifacts/
+
+# Credentials and secrets (NEVER commit)
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+.credentials.json
+secrets/
+.kamal/secrets
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
