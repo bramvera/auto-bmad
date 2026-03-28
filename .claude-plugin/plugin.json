@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.8.2",
-  "description": "[0.8.2] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield and WDS.",
+  "version": "0.9.0",
+  "description": "[0.9.0] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield pipelines.",
   "author": {
     "name": "bramvera"
   },
@@ -10,5 +10,5 @@
   ],
   "homepage": "https://github.com/bramvera/auto-bmad",
   "license": "MIT",
-  "keywords": ["bmad", "wds", "pipeline", "automation", "orchestration", "sdlc", "ux"]
+  "keywords": ["bmad", "pipeline", "automation", "orchestration", "sdlc"]
 }

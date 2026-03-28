@@ -104,26 +104,6 @@ Runs a single story. Same 11 steps as the sprint's Phase 2, but as a standalone 
 
 ---
 
-## WDS Command
-
-### `/auto-bmad-wds`
-
-UX design pipeline using the Whiteport Design Studio module.
-
-| Step | BMAD Skill (WDS module) | Purpose | Skippable |
-|------|------------------------|---------|-----------|
-| 1 | `/bmad-wds-alignment` | Stakeholder alignment and signoff | Yes — if not client work |
-| 2 | `/bmad-wds-project-brief` | Strategic project brief | Yes — if brief exists |
-| 3 | `/bmad-wds-trigger-mapping` | Map business goals to user psychology | Yes — if trigger map exists |
-| 4 | `/bmad-wds-platform-requirements` | Define technical boundaries for design | Yes — if simple project |
-| 5 | `/bmad-wds-outline-scenarios` | Define user journeys | Yes — if scenarios exist |
-| 6 | `/bmad-wds-conceptual-sketching` | Visual exploration of flows | Yes — if simple scenarios |
-| 7 | `/bmad-wds-conceptual-specs` | Page-by-page specifications | Yes — if specs exist |
-| 8 | `/bmad-wds-functional-components` | Identify reusable patterns | Yes — if design system mode is "none" |
-| 9 | `/bmad-wds-design-delivery` | Validate and package specs for dev | Yes — if delivery exists |
-
----
-
 ## Brownfield Commands
 
 ### `/auto-bmad-change-spec`
@@ -311,7 +291,6 @@ No epic-start phase. 3 steps per story. 2-step epic-end.
 | `/auto-bmad-story` | BMAD-METHOD + TEA |
 | `/auto-bmad-epic-start` | BMAD-METHOD + TEA |
 | `/auto-bmad-epic-end` | BMAD-METHOD + TEA |
-| `/auto-bmad-wds` | BMAD-METHOD + WDS |
 | `/auto-bmad-change-spec` | BMAD-METHOD |
 | `/auto-bmad-change-dev` | BMAD-METHOD + TEA |
 | `/auto-bmad-story-quick` | BMAD-METHOD |

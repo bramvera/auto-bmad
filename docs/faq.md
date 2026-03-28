@@ -64,7 +64,6 @@ No. You only need the modules for the pipeline you're using:
 |----------|-----------------|
 | BMM (plan, story, sprint) | BMAD-METHOD + TEA |
 | GDS (gds-plan, gds-story, gds-sprint) | BMAD-METHOD + GDS |
-| WDS (wds) | BMAD-METHOD + WDS |
 
 ### What Claude Code subscription do I need?
 
@@ -78,7 +77,6 @@ Rough token usage per command:
 | `/auto-bmad-sprint-quick` (5 stories) | ~2.5-3.5h | ~350-450k |
 | `/auto-bmad-story` (full) | ~60-90m | ~150-200k |
 | `/auto-bmad-sprint` (full, 5 stories) | ~5-6h | ~800k-1M |
-| `/auto-bmad-wds` | ~50-60m | ~130-150k |
 | `/auto-bmad-plan` | ~40-60m | ~100-150k |
 | `/auto-bmad-epic-start` | ~5-10m | ~20-30k |
 | `/auto-bmad-epic-end` | ~15-20m | ~40-60k |
@@ -155,11 +153,9 @@ Acceptance Test-Driven Development. Step 4 reads the story spec's acceptance cri
 
 Each pass catches different things. Review #1 typically finds the most issues. Review #2 verifies the fixes and catches what #1 missed. Review #3 is a lighter final pass. In practice, reviews #2 and #3 often come back clean, confirming the code is solid. You can modify the story command to reduce this to 1-2 reviews if speed matters more.
 
-### What does `/auto-bmad-wds` do and when should I use it?
+### Why was WDS removed from auto-bmad?
 
-WDS (Whiteport Design Studio) is a deep UX design pipeline — project briefs, trigger mapping (personas + driving forces), user scenarios, page-by-page specs, and design delivery packages. Run it before `/auto-bmad-plan` when your product needs thorough UX work. The plan pipeline detects WDS artifacts and skips its own UX step.
-
-Skip WDS for internal tools, APIs, CLIs, or anything without a UI.
+[WDS v0.3+](https://github.com/bmad-code-org/bmad-method-wds-expansion) introduced interactive visual design workflows (Figma round-trips, storyboarding, HTML prototyping, asset generation) that require human-in-the-loop participation. These cannot be run unattended by auto-bmad's automated pipeline. Use WDS directly via `/bmad-wds-*` skills inside Claude Code for the full interactive design experience.
 
 ### Do I need to specify story IDs?
 

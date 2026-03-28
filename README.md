@@ -1,10 +1,10 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.0](https://img.shields.io/badge/BMAD-v6.2.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) [![TEA v1.7.2](https://img.shields.io/badge/TEA-v1.7.2-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) [![WDS](https://img.shields.io/badge/WDS-latest-blue)](https://github.com/bmad-code-org/bmad-method-wds-expansion)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.2](https://img.shields.io/badge/BMAD-v6.2.2-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.2) [![TEA v1.7.3](https://img.shields.io/badge/TEA-v1.7.3-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.3) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
 
 Automated BMAD pipeline orchestration for Claude Code. One command to run an entire sprint.
 
-> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.0 with sprint automation, WDS integration, and flattened agent architecture.
+> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.2 with sprint automation and flattened agent architecture.
 
 > **Permissions:** Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions`. **Use at your own risk -- only run in environments you trust.**
 
@@ -49,10 +49,10 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 
 ## Real-World Results
 
-| | |
-|---|---|
-| ![WDS pipeline](docs/images/wds-pipeline-run.png) | ![Sprint report](docs/images/sprint-report.png) |
-| `/auto-bmad-wds` -- 9-step UX design pipeline | `/auto-bmad-sprint 1` (full mode) -- 5 stories, ~6 hours, zero failures |
+| |
+|---|
+| ![Sprint report](docs/images/sprint-report.png) |
+| `/auto-bmad-sprint 1` (full mode) -- 5 stories, ~6 hours, zero failures |
 
 ---
 
@@ -74,9 +74,6 @@ claude --plugin-dir /path/to/auto-bmad/auto-bmad
 ## Quick Start
 
 ```bash
-# Optional: deep UX design before planning
-/auto-bmad-wds <product description or @file>
-
 # Plan the project
 /auto-bmad-plan <product description or @file>
 
@@ -122,7 +119,6 @@ Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardra
 | Command | Description |
 |---------|-------------|
 | [`/auto-bmad-plan`](docs/commands-reference.md#auto-bmad-plan) | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
-| [`/auto-bmad-wds`](docs/commands-reference.md#auto-bmad-wds) | 9-step UX design pipeline (WDS module): project brief, trigger mapping, scenarios, specs, design delivery |
 | [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | 8-step GDS planning: game brief, GDD, narrative, architecture, test design, sprint plan |
 
 ### Brownfield (Existing Codebase)
@@ -180,7 +176,6 @@ No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end
 | `/auto-bmad-sprint-quick` (5 stories) | ~2.5-3.5h | ~350-450k |
 | `/auto-bmad-story` (full) | ~60-90m | ~150-200k |
 | `/auto-bmad-sprint` (full, 5 stories) | ~5-6h | ~800k-1M |
-| `/auto-bmad-wds` | ~50-60m | ~130k |
 | `/auto-bmad-plan` | ~40-60m | ~100-150k |
 
 ---
@@ -237,13 +232,14 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 
 | Component | Version | Required For |
 |-----------|---------|-------------|
-| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0) | v6.2.0 | All pipelines |
-| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) | v1.7.2 | Full mode only (BMM) |
+| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.2) | v6.2.2 | All pipelines |
+| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.3) | v1.7.3 | Full mode only (BMM) |
 | [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
-| [WDS](https://github.com/bmad-code-org/bmad-method-wds-expansion) | latest | WDS pipeline |
 | [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
 
 **Quick mode needs only BMAD-METHOD** (and GDS for game projects). No TEA required.
+
+> **WDS removed from auto-bmad.** [WDS v0.3+](https://github.com/bmad-code-org/bmad-method-wds-expansion) introduced interactive visual design workflows (Figma round-trips, storyboarding, asset generation, HTML prototyping) that require human-in-the-loop participation. These cannot be run unattended by auto-bmad's automated pipeline. Use WDS directly via `/bmad-wds-*` skills inside Claude Code for the full interactive design experience.
 
 ### Config Files
 
@@ -254,7 +250,6 @@ Created by `npx bmad-method install`. The pipelines expect:
 | Quick mode (BMM) | `_bmad/bmm/config.yaml` |
 | Full mode (BMM) | `_bmad/bmm/config.yaml`, `_bmad/tea/config.yaml` |
 | GDS (both modes) | `_bmad/gds/config.yaml` |
-| WDS | `_bmad/wds/config.yaml` |
 
 ### Recommended Plugins
 
@@ -274,7 +269,6 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 
 - [BMM Tutorial](docs/tutorial-bmm.md) -- Step-by-step guide for the Business Model Method pipeline
 - [GDS Tutorial](docs/tutorial-gds.md) -- Step-by-step guide for the Game Dev Suite pipeline
-- [WDS + BMM Tutorial](docs/tutorial-wds.md) -- Combined UX design and implementation workflow
 - [Commands Reference](docs/commands-reference.md) -- Every command mapped to the exact BMAD skills it calls
 - [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
 
@@ -282,7 +276,7 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 
 ## Credits
 
-Built on the original [auto-bmad](https://github.com/stefanoginella/auto-bmad) by [Stefano Ginella](https://github.com/stefanoginella), who designed the core pipeline orchestration concept and the BMM/GDS command structure. This fork extends his work with quick/full modes, sprint automation, WDS integration, brownfield pipelines, flattened agent architecture, and context management optimizations.
+Built on the original [auto-bmad](https://github.com/stefanoginella/auto-bmad) by [Stefano Ginella](https://github.com/stefanoginella), who designed the core pipeline orchestration concept and the BMM/GDS command structure. This fork extends his work with quick/full modes, sprint automation, brownfield pipelines, flattened agent architecture, and context management optimizations.
 
 The pipelines are powered by the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) by [bmad-code-org](https://github.com/bmad-code-org).
 
