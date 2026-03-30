@@ -71,6 +71,22 @@ git clone https://github.com/bramvera/auto-bmad.git
 claude --plugin-dir /path/to/auto-bmad/auto-bmad
 ```
 
+## Recommended: RTK for Token Savings
+
+[RTK (Rust Token Killer)](https://github.com/rtk-ai/rtk) is a CLI proxy that filters verbose tool output before it reaches Claude's context window, reducing token usage by 60-90% on common dev operations (git, build, test, lint). Since auto-bmad sprints run many shell commands over hours, RTK can significantly reduce your total token consumption.
+
+```bash
+# Install
+cargo install rtk-cli
+
+# Add to your Claude Code config
+rtk init --global
+```
+
+Once installed, commands like `git status`, `cargo build`, and `pnpm install` are automatically rewritten to pass through RTK's filters — no changes to auto-bmad needed.
+
+---
+
 ## Quick Start
 
 ```bash
