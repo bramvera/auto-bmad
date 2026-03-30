@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.8.3] - 2026-03-30
+
+### Fixed
+- **Sprint-quick retry policy**: stop and ask user for guidance on double failure instead of silently skipping to next story — two consecutive failures need human attention
+- **Cosmetic**: added rule to never print `{{variable}}` syntax literally in terminal output — always resolve to actual values
+
 ## [0.8.2] - 2026-03-24
 
 ### Added
