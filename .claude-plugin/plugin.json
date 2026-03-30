@@ -1,12 +1,13 @@
 {
   "name": "auto-bmad",
-  "version": "0.9.0",
-  "description": "[0.9.0] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield pipelines.",
+  "version": "0.9.1",
+  "description": "[0.9.1] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA) and full mode (11-step, TEA), plus brownfield pipelines.",
   "author": {
-    "name": "bramvera"
+    "name": "bramvera",
+    "url": "https://github.com/bramvera"
   },
   "contributors": [
-    { "name": "Stefano Ginella", "url": "https://github.com/stefanoginella" }
+    { "name": "Stefano Ginella", "url": "https://github.com/stefanoginella/auto-bmad" }
   ],
   "homepage": "https://github.com/bramvera/auto-bmad",
   "license": "MIT",
