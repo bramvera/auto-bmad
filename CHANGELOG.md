@@ -4,11 +4,19 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
-## [0.8.3] - 2026-03-30
+## [0.9.1] - 2026-03-30
 
 ### Fixed
 - **Sprint-quick retry policy**: stop and ask user for guidance on double failure instead of silently skipping to next story — two consecutive failures need human attention
 - **Cosmetic**: added rule to never print `{{variable}}` syntax literally in terminal output — always resolve to actual values
+
+## [0.9.0] - 2026-03-29
+
+### Removed
+- **WDS pipeline**: removed `/auto-bmad-wds` command, tutorial, and related config — WDS v0.3+ requires human-in-the-loop participation incompatible with auto-bmad's automated pipeline
+
+### Changed
+- Bump BMAD badge to v6.2.2, TEA badge to v1.7.3
 
 ## [0.8.2] - 2026-03-24
 
