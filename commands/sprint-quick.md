@@ -16,6 +16,8 @@ Read `_bmad/bmm/config.yaml` and set the following variables (resolve `{project-
 
 All paths in this command that reference BMAD output directories MUST use these variables — never hardcode `_bmad-output` paths.
 
+**COSMETIC RULE:** The `{{variable}}` syntax in this document is for YOUR internal use only. NEVER print `{{variable}}` literally in terminal output — always resolve to the actual value. For example, print `Story 1-3 — done` not `Story {{STORY_ID}} — done`.
+
 **NOTE:** This is quick mode. Do NOT read `_bmad/tea/config.yaml`. TEA is not required.
 
 # Load Project Context
@@ -55,8 +57,8 @@ Each step MUST run in its own **foreground Task tool call** (subagent_type: "gen
 **Retry policy:** If a step fails, run `git reset --hard HEAD` to discard its partial changes, then retry **once**. If the retry also fails:
 - Roll back the entire story: `git reset --hard {{STORY_START_COMMIT}}`
 - Log the failure with story ID, step number, and reason
-- **Skip the remaining steps for this story and continue with the next story**
 - Record the failure in the progress file
+- **STOP the sprint and ask the user for guidance** — do not skip to the next story. Two consecutive failures indicate a real issue that needs human attention. Present the user with options: fix manually and resume, skip this story, or abort the sprint.
 
 # Discover Stories
 
@@ -90,7 +92,7 @@ For each story ID `{{STORY_ID}}` in `{{STORY_LIST}}`, in order:
 
 Run the 3 story steps below. After each successful step, run `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip({{STORY_ID}}): step N/3 <step-name> - done"`. This skips the commit if the BMAD skill already committed its own changes. Do NOT treat "nothing to commit" as an error.
 
-If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT}}`, log the failure, update the progress file, and skip to the next story.
+If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT}}`, log the failure, update the progress file, and STOP — ask the user for guidance before continuing.
 
 ## Story Steps
 
