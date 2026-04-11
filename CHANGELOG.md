@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.9.2] - 2026-04-12
+
+### Changed
+- Updated all references from Quinn QA persona to `bmad-qa-generate-e2e-tests` skill name (Quinn agent removed in BMAD v6.3.0)
+- Updated version badges and prerequisites: BMAD v6.2.2 -> v6.3.0, TEA v1.7.3 -> v1.7.2
+- Updated commit messages in sprint-quick pipelines: `quinn-qa` -> `e2e-tests`
+
+### Added
+- **README: "This Is Not Vibe Coding"** — comparison table showing how BMAD + auto-bmad differs from prompt-and-pray code generation
+- **README: visual pipeline flows** — mermaid diagrams showing what runs per story in quick and full mode
+- **README: "Where auto-bmad Fits in BMAD"** — diagram showing interactive (human) vs automated (auto-bmad) phases
+- **README: "What You Gain and What You Trade"** — honest tradeoffs table
+- **README: "BMAD Skills Compatibility"** — table of which BMAD skills work in auto-bmad and which don't (with reasons)
+- Marketplace distribution manifest (`.claude-plugin/marketplace.json`)
+- FAQ entry explaining why new v6.3.0 interactive skills (`bmad-checkpoint-preview`, `bmad-create-story:validate`) are excluded from automated pipelines
+
+### Internal
+- No functional pipeline changes — all underlying BMAD skills remain compatible
+- v6.3.0 improvements (epic context compilation, previous story continuity, sharded document support) work automatically through existing skill calls
+
 ## [0.9.1] - 2026-03-30
 
 ### Fixed

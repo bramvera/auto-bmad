@@ -4,7 +4,7 @@
 
 ### What is quick mode?
 
-Quick mode runs 3 steps per story (create, dev, code review) instead of 11. It skips validation, adversarial review, ATDD, edge-case hunt, extra code reviews, trace, and test automate. Tests are generated at the epic level by Quinn QA (built-in BMAD) instead of per-story. Quick mode requires only BMAD-METHOD core -- no TEA module.
+Quick mode runs 3 steps per story (create, dev, code review) instead of 11. It skips validation, adversarial review, ATDD, edge-case hunt, extra code reviews, trace, and test automate. Tests are generated at the epic level by `bmad-qa-generate-e2e-tests` instead of per-story. Quick mode requires only BMAD-METHOD core -- no TEA module.
 
 ### When should I use quick mode vs full mode?
 
@@ -38,11 +38,11 @@ No. Quick mode only requires BMAD-METHOD core (and GDS for game projects). TEA i
 
 ### Does quick mode still generate tests?
 
-Yes, but at the epic level. After all stories complete, Quinn QA (`bmad-qa-generate-e2e-tests`) generates E2E tests for the entire epic. The dev step within each story may also write tests as part of its normal flow. There is no per-story ATDD (test-driven development) and no per-story test automation.
+Yes, but at the epic level. After all stories complete, `bmad-qa-generate-e2e-tests` generates E2E tests for the entire epic. The dev step within each story may also write tests as part of its normal flow. There is no per-story ATDD (test-driven development) and no per-story test automation.
 
 ### Can I run a single quick mode story without the sprint command?
 
-Yes. `/auto-bmad-story-quick 1-1` runs a single story in quick mode (3 steps). If running stories individually, you'll need to run Quinn QA and retrospective manually after all stories complete -- the sprint-quick command handles this automatically.
+Yes. `/auto-bmad-story-quick 1-1` runs a single story in quick mode (3 steps). If running stories individually, you'll need to run E2E test generation and retrospective manually after all stories complete -- the sprint-quick command handles this automatically.
 
 ---
 
@@ -54,7 +54,7 @@ A Claude Code plugin that orchestrates BMAD skills sequentially. It doesn't impl
 
 ### Which BMAD version does this fork support?
 
-BMAD-METHOD v6.2.0, TEA v1.7.1, GDS v0.2.2. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+BMAD-METHOD v6.3.0, TEA v1.7.2, GDS v0.2.2. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
 
 ### Do I need all the BMAD modules?
 
@@ -156,6 +156,10 @@ Each pass catches different things. Review #1 typically finds the most issues. R
 ### Why was WDS removed from auto-bmad?
 
 [WDS v0.3+](https://github.com/bmad-code-org/bmad-method-wds-expansion) introduced interactive visual design workflows (Figma round-trips, storyboarding, HTML prototyping, asset generation) that require human-in-the-loop participation. These cannot be run unattended by auto-bmad's automated pipeline. Use WDS directly via `/bmad-wds-*` skills inside Claude Code for the full interactive design experience.
+
+### Why aren't new v6.3.0 skills (checkpoint-preview, create-story:validate) in auto-bmad?
+
+auto-bmad only orchestrates BMAD skills that run headlessly -- no human interaction required mid-flow. Skills like `bmad-checkpoint-preview` (walks you through changes at each stop) and `bmad-create-story:validate` (asks which fixes to apply) are interactive by design. Adding them would halt the automated sprint waiting for a human who isn't there. Use these skills directly in Claude Code during your interactive planning or review phases. See the [Skills Compatibility](../README.md#bmad-skills-compatibility) table in the README for the full list.
 
 ### Do I need to specify story IDs?
 

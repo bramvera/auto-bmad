@@ -1,14 +1,98 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.2.2](https://img.shields.io/badge/BMAD-v6.2.2-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.2) [![TEA v1.7.3](https://img.shields.io/badge/TEA-v1.7.3-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.3) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.3.0](https://img.shields.io/badge/BMAD-v6.3.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.3.0) [![TEA v1.7.2](https://img.shields.io/badge/TEA-v1.7.2-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
 
-Automated BMAD pipeline orchestration for Claude Code. One command to run an entire sprint.
+Structured SDLC pipeline for Claude Code. Not a code generator -- an agile execution engine with testing, reviews, and traceability at every step.
 
-> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.2.2 with sprint automation and flattened agent architecture.
+> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.3.0 with sprint automation and flattened agent architecture.
 
 > **Permissions:** Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions`. **Use at your own risk -- only run in environments you trust.**
 
-> **This is not a "make my app" button.** BMAD is built around human-AI collaboration -- brainstorming, research, and product discovery are meant to be interactive. Use auto-bmad for **execution** (sprint/story), not for **thinking** (analysis/planning). See [Workflow](#workflow) for details.
+---
+
+## This Is Not Vibe Coding
+
+auto-bmad runs a real software development lifecycle. Every story goes through structured phases with quality gates -- not a single prompt that generates code and hopes for the best.
+
+| | Vibe Coding | BMAD + auto-bmad |
+|---|---|---|
+| **Planning** | "build me an app" | PRD, architecture, UX specs, epics, acceptance criteria |
+| **Testing** | Maybe, at the end | TDD -- tests written *before* code (ATDD in full mode), E2E at epic level |
+| **Code review** | None | Up to 3 adversarial reviews per story + edge-case hunting |
+| **Traceability** | None | Requirements -> tests -> code mapping per story |
+| **On failure** | Start over or manually fix | Retry, rollback to last checkpoint, resume from last good state |
+| **Quality gates** | Hope | 3 checkpoints (quick) or 11 checkpoints (full) per story |
+
+### What Runs Per Story
+
+```mermaid
+graph LR
+    subgraph "Quick Mode — 3 steps"
+        Q1[Create Story] --> Q2[Develop<br/>write tests + code] --> Q3[Code Review<br/>fix issues]
+    end
+```
+
+```mermaid
+graph LR
+    subgraph "Full Mode — 11 steps"
+        F1[Create] --> F2[Validate] --> F3[Adversarial<br/>Review]
+        F3 --> F4[ATDD<br/>failing tests] --> F5[Develop<br/>make tests pass] --> F6[Edge-Case<br/>Hunt]
+        F6 --> F7[Review 1] --> F8[Review 2] --> F9[Review 3]
+        F9 --> F10[Trace] --> F11[Test<br/>Automate]
+    end
+```
+
+---
+
+## Where auto-bmad Fits in BMAD
+
+[BMAD](https://github.com/bmad-code-org/BMAD-METHOD) is an agile methodology with agents for each role (analyst, architect, PM, developer, etc.). auto-bmad automates the **execution phase** -- it does not replace the human-driven analysis and planning that makes BMAD work.
+
+```
+  INTERACTIVE (you + AI)                AUTOMATED (auto-bmad)
+ ┌───────────────────────┐            ┌─────────────────────────┐
+ │  Brainstorming        │            │  Story creation          │
+ │  Domain research      │            │  Test-driven development │
+ │  Product discovery    │   hand     │  Adversarial code review │
+ │  PRD review           │ ───off──>  │  Edge-case hunting       │
+ │  Architecture review  │            │  Traceability mapping    │
+ │  Party-mode debates   │            │  Sprint reports          │
+ └───────────────────────┘            └─────────────────────────┘
+  You bring domain knowledge.          auto-bmad handles execution.
+```
+
+**Analysis and planning are meant to be interactive.** Automating them loses the core value of BMAD -- the AI asks questions, you provide domain knowledge, and the specs improve through iteration. See [Workflow](#workflow) for details.
+
+---
+
+## What You Gain and What You Trade
+
+| What you gain | What you trade |
+|---|---|
+| Hours of unattended execution -- run overnight, review in the morning | No human review between stories (full mode compensates with 3x code review + adversarial review) |
+| Consistent quality gates on every story, every time | Token cost (~60-80k per story quick, ~150-200k full) |
+| Crash-proof resumable sprints with per-story git checkpoints | Less flexibility than running BMAD skills manually and iterating |
+| Automatic rollback on failure -- no manual cleanup | Interactive BMAD skills (checkpoint-preview, party-mode) can't be used mid-sprint |
+
+---
+
+## BMAD Skills Compatibility
+
+auto-bmad only orchestrates skills that run headlessly. Skills requiring human judgment mid-flow belong in your interactive planning phase.
+
+| Skill | Works in auto-bmad? | Reason |
+|---|---|---|
+| `bmad-create-story` | Yes | Produces story file from epics without interaction |
+| `bmad-dev-story` | Yes | Implements from spec, halts on blockers |
+| `bmad-code-review` | Yes | Reviews and fixes issues autonomously |
+| `bmad-qa-generate-e2e-tests` | Yes | Generates tests from implemented features |
+| `bmad-testarch-atdd` | Yes | Writes failing tests from acceptance criteria |
+| `bmad-checkpoint-preview` | **No** | Requires human walkthrough at each review stop |
+| `bmad-create-story:validate` | **No** | Asks human which fixes to apply (all/critical/select/none) |
+| `bmad-party-mode` | **No** | Multi-agent debate needs human moderation |
+| WDS skills | **No** | Interactive Figma/design workflows |
+
+New BMAD releases may add skills that are interactive by design. These will not be added to auto-bmad's automated pipelines -- use them directly in Claude Code during your planning phase.
 
 ---
 
@@ -19,8 +103,8 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 | | Quick Mode | Full Mode |
 |---|---|---|
 | **What it does per story** | Create, develop, code review (3 steps) | Create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, trace, test automate (11 steps) |
-| **What it does at epic-end** | Quinn QA (epic-level tests), retrospective (2 steps) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
-| **Testing approach** | Tests generated at epic level by Quinn (built-in BMAD QA) | TDD per story -- ATDD writes failing tests, dev implements against them |
+| **What it does at epic-end** | E2E test generation, retrospective (2 steps) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
+| **Testing approach** | Tests generated at epic level (`bmad-qa-generate-e2e-tests`) | TDD per story -- ATDD writes failing tests, dev implements against them |
 | **BMAD modules needed** | BMAD-METHOD only | BMAD-METHOD + TEA |
 | **Duration per story** | ~25-35 min | ~60-90 min |
 | **Tokens per story** | ~60-80k | ~150-200k |
@@ -112,7 +196,7 @@ Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardra
 
 | Command | Description |
 |---------|-------------|
-| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + Quinn QA + retro at epic-end |
+| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + E2E tests + retro at epic-end |
 | [`/auto-bmad-story-quick <id>`](docs/commands-reference.md#auto-bmad-story-quick-id) | Run a single story (3 steps): create, develop, code review |
 | [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | GDS variant: run a game dev epic in quick mode |
 | [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | GDS variant: run a single game dev story in quick mode |
@@ -156,9 +240,9 @@ Both quick and full mode sprints share the same architecture: the coordinator ru
 /auto-bmad-sprint-quick 1
 ```
 
-**Lifecycle:** story 1-1 (3 steps) --> story 1-2 --> ... --> Quinn QA --> retro
+**Lifecycle:** story 1-1 (3 steps) --> story 1-2 --> ... --> E2E tests --> retro
 
-No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end, Quinn (built-in BMAD QA) generates E2E tests for the entire epic, followed by a retrospective.
+No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end, `bmad-qa-generate-e2e-tests` generates E2E tests for the entire epic, followed by a retrospective.
 
 ### Full Mode Sprint
 
@@ -248,14 +332,12 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 
 | Component | Version | Required For |
 |-----------|---------|-------------|
-| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.2) | v6.2.2 | All pipelines |
-| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.3) | v1.7.3 | Full mode only (BMM) |
+| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.3.0) | v6.3.0 | All pipelines |
+| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) | v1.7.2 | Full mode only (BMM) |
 | [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
 | [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
 
 **Quick mode needs only BMAD-METHOD** (and GDS for game projects). No TEA required.
-
-> **WDS removed from auto-bmad.** [WDS v0.3+](https://github.com/bmad-code-org/bmad-method-wds-expansion) introduced interactive visual design workflows (Figma round-trips, storyboarding, asset generation, HTML prototyping) that require human-in-the-loop participation. These cannot be run unattended by auto-bmad's automated pipeline. Use WDS directly via `/bmad-wds-*` skills inside Claude Code for the full interactive design experience.
 
 ### Config Files
 

@@ -1,6 +1,6 @@
 ---
 name: 'auto-bmad-sprint-quick'
-description: 'Quick mode: run all stories in an epic — 3 steps per story, Quinn QA at epic end (no TEA required)'
+description: 'Quick mode: run all stories in an epic — 3 steps per story, E2E tests at epic end (no TEA required)'
 ---
 
 # Load Configuration
@@ -34,7 +34,7 @@ ELSE ask the user to provide the epic number to run and set {{EPIC_ID}} to the p
 
 # Sprint Pipeline (Quick Mode)
 
-Run the entire epic lifecycle in quick mode — no epic-start, 3 steps per story, then Quinn QA + retrospective at epic-end. Fully hands-off.
+Run the entire epic lifecycle in quick mode — no epic-start, 3 steps per story, then E2E test generation + retrospective at epic-end. Fully hands-off.
 
 **ARCHITECTURE NOTE:** The sprint coordinator runs each story step as a direct Task call — it does NOT delegate to `/auto-bmad-story-quick`. This avoids context exhaustion from nested agents. Sprint → Step agent (2 levels only).
 
@@ -152,10 +152,10 @@ After all stories have been attempted (whether all succeeded or some failed):
 
 Record `{{EPIC_END_START_COMMIT}}` — run `git rev-parse --short HEAD`.
 
-### Step 1: Quinn QA — Generate E2E Tests
+### Step 1: Generate E2E Tests
 
 - **Task prompt:** `/bmad-qa-generate-e2e-tests yolo — generate end-to-end automated tests for all features implemented in epic {{EPIC_ID}}. Focus on critical happy-path user journeys. Follow the test pyramid: only create E2E tests for scenarios that genuinely require full user interaction.`
-- After Task completes: `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): quinn-qa - done"`
+- After Task completes: `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip(epic-{{EPIC_ID}}-end): e2e-tests - done"`
 
 ### Step 2: Retrospective
 
@@ -164,7 +164,7 @@ Record `{{EPIC_END_START_COMMIT}}` — run `git rev-parse --short HEAD`.
 
 **IMPORTANT — BMAD skills may commit and squash internally.** Some skills (especially `bmad-retrospective`) commit their own changes. Before running each epic-end step, check `git log --oneline -3` to see if the previous skill already handled it. If a step's work is already committed, skip it and move on.
 
-After all epic-end steps complete, check if the BMAD skills already squashed. If a commit like `chore(epic-X): epic end` already exists, skip the squash. Otherwise: `git reset --soft {{EPIC_END_START_COMMIT}}` then `git add -A && git commit -m "chore(epic-{{EPIC_ID}}): epic end — Quinn QA and retro done"`
+After all epic-end steps complete, check if the BMAD skills already squashed. If a commit like `chore(epic-X): epic end` already exists, skip the squash. Otherwise: `git reset --soft {{EPIC_END_START_COMMIT}}` then `git add -A && git commit -m "chore(epic-{{EPIC_ID}}): epic end — E2E tests and retro done"`
 
 Print: `Epic End — done (quick mode)`
 
@@ -207,7 +207,7 @@ Use this template for the report:
 
 | Step | Status | Summary |
 |------|--------|---------|
-| Quinn QA | done | <tests generated count, coverage areas> |
+| E2E Tests | done | <tests generated count, coverage areas> |
 | Retrospective | done | <action items resolved/deferred> |
 
 ## Failed Stories
@@ -218,7 +218,7 @@ List any stories that failed with the reason. If none, write "None — all stori
 
 - Total files created/modified: <sum across all stories>
 - Code review passes: <how many reviews came back clean>
-- Quinn QA tests generated: <count>
+- E2E tests generated: <count>
 
 ## Key Decisions & Learnings
 

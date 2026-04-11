@@ -226,7 +226,7 @@ Same 11 steps as GDS sprint Phase 2, standalone with its own report.
 
 ## Quick Mode Commands
 
-Quick mode uses BMAD-METHOD core only -- no TEA module required. 3 steps per story, tests generated at epic level by Quinn QA.
+Quick mode uses BMAD-METHOD core only -- no TEA module required. 3 steps per story, tests generated at epic level by `bmad-qa-generate-e2e-tests`.
 
 ### `/auto-bmad-story-quick <id>`
 
@@ -252,7 +252,7 @@ No epic-start phase. 3 steps per story. 2-step epic-end.
 
 | Step | BMAD Skill | Purpose |
 |------|-----------|---------|
-| 1 | `/bmad-qa-generate-e2e-tests` | Quinn QA -- epic-level E2E test generation |
+| 1 | `/bmad-qa-generate-e2e-tests` | Epic-level E2E test generation |
 | 2 | `/bmad-retrospective` | Retrospective with action item resolution |
 
 ### `/auto-gds-story-quick <id>`
@@ -277,7 +277,7 @@ No epic-start phase. 3 steps per story. 2-step epic-end.
 
 | Step | BMAD Skill | Purpose |
 |------|-----------|---------|
-| 1 | `/bmad-qa-generate-e2e-tests` | Quinn QA -- epic-level E2E test generation |
+| 1 | `/bmad-qa-generate-e2e-tests` | Epic-level E2E test generation |
 | 2 | `/gds-retrospective` | Retrospective with action items |
 
 ---

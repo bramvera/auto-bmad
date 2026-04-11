@@ -142,7 +142,7 @@ Report only items that genuinely require human action. If the pipeline completed
 
 ### Next
 - Start a new session with fresh context, then run `/auto-gds-story-quick <next-story>` for the next story in the sprint
-- After all stories in the epic are done, run Quinn QA manually: `/bmad-qa-generate-e2e-tests yolo` and then `/bmad-retrospective epic <epic-number> ultrathink yolo`
+- After all stories in the epic are done, run E2E test generation manually: `/bmad-qa-generate-e2e-tests yolo` and then `/bmad-retrospective epic <epic-number> ultrathink yolo`
 - Or use `/auto-gds-sprint-quick <epic-number>` to run all stories + epic-end hands-off
 ```
 
