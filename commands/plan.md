@@ -31,6 +31,8 @@ Before executing, display this to the user:
 
     Auto-plan is fast but skips interactive discovery.
     Use for: side projects, prototypes, familiar domains.
+
+    Learn more: https://docs.bmad-method.org/reference/workflow-map/
 ```
 
 After displaying, ask: "Proceed with automated planning? (y/n)"
