@@ -35,7 +35,7 @@ Before executing, display this to the user:
 
 After displaying, ask: "Proceed with automated planning? (y/n)"
 
-If declined, suggest: "Run `/bmad-brainstorming` to start interactive planning."
+If declined, suggest: "Run `/bmad-help` to see all available BMAD skills."
 
 # Load Configuration
 
