@@ -9,46 +9,33 @@ description: 'Run the BMAD pre-implementation pipeline: analysis, planning, solu
 
 Before executing, display this to the user:
 
----
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  auto-bmad-plan — Automated Planning Pipeline                      │
+│  Est: 30-60 min · ~$15-40                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│  ANALYSIS        →  PLANNING           →  SOLUTIONING              │
+│  ─────────────      ────────────────      ─────────────────────    │
+│  1. Product Brief   2. PRD               5. Architecture           │
+│                     3. Validate PRD      6. Test Framework         │
+│                     4. UX Design         7. Test Design            │
+│                                          8. Epics & Stories        │
+│                                                                     │
+│  SPRINT SETUP                                                       │
+│  ─────────────────────────────────────────────────────────────────  │
+│  9. Readiness Check  →  10. Project Context  →  11. Sprint Plan    │
+└─────────────────────────────────────────────────────────────────────┘
 
-**auto-bmad-plan** runs 11 automated steps to generate planning artifacts:
+⚠️  For best results, plan manually first:
+    /bmad-brainstorming → /bmad-domain-research → /bmad-party-mode
 
-| Phase | Steps | Output |
-|-------|-------|--------|
-| Analysis | 1. Product Brief | `product-brief-*.md` |
-| Planning | 2-4. PRD → Validate → UX Design | `prd.md`, `ux-design-specification.md` |
-| Solutioning | 5-8. Architecture → Test Framework → Test Design → Epics | `architecture.md`, `epics.md`, test configs |
-| Sprint Setup | 9-11. Readiness Check → Project Context → Sprint Plan | `sprint-status.yaml` |
+    Auto-plan is fast but skips interactive discovery.
+    Use for: side projects, prototypes, familiar domains.
+```
 
-**Est. time:** 30-60 min depending on project complexity
-**Est. cost:** ~$15-40 (varies by scope)
+After displaying, ask: "Proceed with automated planning? (y/n)"
 
----
-
-**WARNING — Manual planning recommended for best results.**
-
-BMAD is designed for **human-AI collaboration** during planning. The automated pipeline is fast but skips the interactive discovery that catches blind spots. For production projects or unfamiliar domains, run these skills manually first:
-
-- `/bmad-brainstorming` — explore the problem space
-- `/bmad-domain-research` — deep dive into the domain
-- `/bmad-party-mode` — multi-persona debate on decisions
-- `/bmad-create-product-brief` (without `yolo`) — interactive refinement
-
-**When to use auto-bmad-plan:**
-- Side projects where you already know the domain
-- Prototypes and MVPs where speed matters more than polish
-- Familiar problem spaces with clear requirements
-
-**When to plan manually:**
-- Production projects with real users
-- Unfamiliar domains requiring research
-- Complex architecture decisions
-
----
-
-After displaying the summary, ask: "Proceed with automated planning? (y/n)"
-
-If the user confirms, continue. If not, suggest: "Run `/bmad-brainstorming` to start interactive planning."
+If declined, suggest: "Run `/bmad-brainstorming` to start interactive planning."
 
 # Load Configuration
 
