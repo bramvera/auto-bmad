@@ -12,6 +12,7 @@ This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanogin
 - Updated commit messages in sprint-quick pipelines: `quinn-qa` -> `e2e-tests`
 
 ### Added
+- **auto-bmad-plan pre-run summary**: shows users exactly what 11 steps will run, estimated time/cost, and recommends manual planning for production projects
 - **README: "This Is Not Vibe Coding"** — comparison table showing how BMAD + auto-bmad differs from prompt-and-pray code generation
 - **README: visual pipeline flows** — mermaid diagrams showing what runs per story in quick and full mode
 - **README: "Where auto-bmad Fits in BMAD"** — diagram showing interactive (human) vs automated (auto-bmad) phases
@@ -19,6 +20,9 @@ This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanogin
 - **README: "BMAD Skills Compatibility"** — table of which BMAD skills work in auto-bmad and which don't (with reasons)
 - Marketplace distribution manifest (`.claude-plugin/marketplace.json`)
 - FAQ entry explaining why new v6.3.0 interactive skills (`bmad-checkpoint-preview`, `bmad-create-story:validate`) are excluded from automated pipelines
+
+### Fixed
+- **Agent editing command files**: added explicit "DO NOT EDIT" warning to all 17 command files — prevents agents from modifying pipeline instructions instead of executing them
 
 ### Internal
 - No functional pipeline changes — all underlying BMAD skills remain compatible
