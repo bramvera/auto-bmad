@@ -13,6 +13,7 @@ This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanogin
 
 ### Added
 - **auto-bmad-plan pre-run summary**: shows users exactly what 11 steps will run, estimated time/cost, and recommends manual planning for production projects
+- **Quick mode simplified**: removed E2E test generation from quick mode — epic-end is now just retrospective (1 step instead of 2). Quick mode = fast iteration, full mode = comprehensive testing.
 - **README: "This Is Not Vibe Coding"** — comparison table showing how BMAD + auto-bmad differs from prompt-and-pray code generation
 - **README: visual pipeline flows** — mermaid diagrams showing what runs per story in quick and full mode
 - **README: "Where auto-bmad Fits in BMAD"** — diagram showing interactive (human) vs automated (auto-bmad) phases

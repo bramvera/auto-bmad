@@ -17,7 +17,7 @@ auto-bmad runs a real software development lifecycle. Every story goes through s
 | | Vibe Coding | BMAD + auto-bmad |
 |---|---|---|
 | **Planning** | "build me an app" | PRD, architecture, UX specs, epics, acceptance criteria |
-| **Testing** | Maybe, at the end | TDD -- tests written *before* code (ATDD in full mode), E2E at epic level |
+| **Testing** | Maybe, at the end | Code review per story (quick), TDD with ATDD + E2E (full) |
 | **Code review** | None | Up to 3 adversarial reviews per story + edge-case hunting |
 | **Traceability** | None | Requirements -> tests -> code mapping per story |
 | **On failure** | Start over or manually fix | Retry, rollback to last checkpoint, resume from last good state |
@@ -103,8 +103,8 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 | | Quick Mode | Full Mode |
 |---|---|---|
 | **What it does per story** | Create, develop, code review (3 steps) | Create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, trace, test automate (11 steps) |
-| **What it does at epic-end** | E2E test generation, retrospective (2 steps) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
-| **Testing approach** | Tests generated at epic level (`bmad-qa-generate-e2e-tests`) | TDD per story -- ATDD writes failing tests, dev implements against them |
+| **What it does at epic-end** | Retrospective (1 step) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
+| **Testing approach** | Code review per story (no separate test generation) | TDD per story -- ATDD writes failing tests, dev implements against them |
 | **BMAD modules needed** | BMAD-METHOD only | BMAD-METHOD + TEA |
 | **Duration per story** | ~25-35 min | ~60-90 min |
 | **Tokens per story** | ~60-80k | ~150-200k |
@@ -196,7 +196,7 @@ Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardra
 
 | Command | Description |
 |---------|-------------|
-| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + E2E tests + retro at epic-end |
+| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + retro at epic-end |
 | [`/auto-bmad-story-quick <id>`](docs/commands-reference.md#auto-bmad-story-quick-id) | Run a single story (3 steps): create, develop, code review |
 | [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | GDS variant: run a game dev epic in quick mode |
 | [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | GDS variant: run a single game dev story in quick mode |
@@ -240,9 +240,9 @@ Both quick and full mode sprints share the same architecture: the coordinator ru
 /auto-bmad-sprint-quick 1
 ```
 
-**Lifecycle:** story 1-1 (3 steps) --> story 1-2 --> ... --> E2E tests --> retro
+**Lifecycle:** story 1-1 (3 steps) --> story 1-2 --> ... --> retro
 
-No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end, `bmad-qa-generate-e2e-tests` generates E2E tests for the entire epic, followed by a retrospective.
+No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end, a retrospective captures lessons learned and action items.
 
 ### Full Mode Sprint
 
