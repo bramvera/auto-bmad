@@ -183,7 +183,7 @@ Codex uses skills instead of native slash commands. Use `$auto-bmad` for status 
 
 ### Shared Agent Skills CLIs
 
-BMAD v6.5 can install shared skills into `.agents/skills` for CLIs such as Pi and other Agent Skills-compatible tools. Auto-BMAD can add matching workflow skills to that existing BMAD install:
+BMAD v6.5 can install shared skills into `.agents/skills` for CLIs such as [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) and other Agent Skills-compatible tools. Auto-BMAD can add matching workflow skills to that existing BMAD install:
 
 ```bash
 npx @bramvera/auto-bmad init
