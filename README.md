@@ -1,8 +1,8 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.5.0](https://img.shields.io/badge/BMAD-v6.5.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) [![TEA v1.15.1](https://img.shields.io/badge/TEA-v1.15.1-blue)](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Claude Code](https://img.shields.io/badge/Claude_Code-Slash_Commands-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![Codex](https://img.shields.io/badge/Codex-$auto--bmad-111827)](docs/tutorial-codex.md) [![Agent Skills](https://img.shields.io/badge/Agent_Skills-.agents%2Fskills-0f766e)](#shared-agent-skills-clis) [![BMAD v6.5.0](https://img.shields.io/badge/BMAD-v6.5.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) [![TEA v1.15.1](https://img.shields.io/badge/TEA-v1.15.1-blue)](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
 
-Structured SDLC pipeline for Claude Code, plus Codex diagnostics for BMAD 6.5 shared skill installs. Not a code generator -- an agile execution engine with testing, reviews, and traceability at every step.
+Structured SDLC pipeline orchestration for BMAD 6.5 across Claude Code, Codex, and shared Agent Skills CLIs. Not a code generator -- an agile execution engine with testing, reviews, and traceability at every step.
 
 > Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.5.0 compatibility with sprint automation, diagnostics, and flattened agent architecture.
 
