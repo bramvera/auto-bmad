@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.0] - 2026-04-28
+
+### Added
+- `/auto-bmad-check` read-only diagnostics for installed BMAD skills, configs, optional modules, and output paths.
+- Static compatibility checker for Auto-BMAD command references, including optional GDS skill directories.
+- Codex plugin manifest plus `$auto-bmad`, `$auto-bmad-check`, and `$auto-bmad-codex` skills for diagnostics and dry-run command routing checks.
+- Codex command menu script for explicit `$auto-bmad menu` / help requests, while plain `$auto-bmad` stays on fast YAML status.
+- Fast Codex YAML status lookup for missing story/sprint/epic ids, reading `sprint-status.yaml` before falling back to a direct question.
+- Numbered Codex status choices so users can reply `1`, `2`, or `continue` after `$auto-bmad`.
+- Dirty-worktree execution preflight for Codex bridge workflows; execution blocks and asks instead of skipping or continuing over uncommitted changes.
+- Dry-run flow smoke checker for Auto-BMAD command files.
+
+### Changed
+- Updated compatibility target to BMAD-METHOD v6.5.0 shared cross-agent skill layouts, TEA v1.15.1, and GDS v0.2.2/current skill surfaces.
+- Removed standalone story validation from full BMM and GDS story flows; create-story skills already self-validate, so full mode is now 10 checkpoints per story.
+- Replaced removed `bmad-quick-spec` dependency with direct minor-change spec generation in `/auto-bmad-change-spec`.
+- Routed product brief creation through `/bmad-product-brief`.
+
+### Removed
+- Legacy `/auto-bmad-setup` skill and setup scripts. This fork targets BMAD v6.5+ installs and does not support older root YAML setup flows.
+
 ## [0.9.2] - 2026-04-12
 
 ### Changed

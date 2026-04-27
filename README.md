@@ -1,10 +1,10 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.3.0](https://img.shields.io/badge/BMAD-v6.3.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.3.0) [![TEA v1.7.2](https://img.shields.io/badge/TEA-v1.7.2-blue)](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![BMAD v6.5.0](https://img.shields.io/badge/BMAD-v6.5.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) [![TEA v1.15.1](https://img.shields.io/badge/TEA-v1.15.1-blue)](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) [![GDS v0.2.2](https://img.shields.io/badge/GDS-v0.2.2-blue)](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2)
 
-Structured SDLC pipeline for Claude Code. Not a code generator -- an agile execution engine with testing, reviews, and traceability at every step.
+Structured SDLC pipeline for Claude Code, plus Codex diagnostics for BMAD 6.5 shared skill installs. Not a code generator -- an agile execution engine with testing, reviews, and traceability at every step.
 
-> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.3.0 with sprint automation and flattened agent architecture.
+> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.5.0 compatibility with sprint automation, diagnostics, and flattened agent architecture.
 
 > **Permissions:** Running without `--dangerously-skip-permissions` will prompt you for approval on nearly every action, making unattended runs impossible. For sprint runs, use `claude --dangerously-skip-permissions`. **Use at your own risk -- only run in environments you trust.**
 
@@ -21,7 +21,7 @@ auto-bmad runs a real software development lifecycle. Every story goes through s
 | **Code review** | None | Up to 3 adversarial reviews per story + edge-case hunting |
 | **Traceability** | None | Requirements -> tests -> code mapping per story |
 | **On failure** | Start over or manually fix | Retry, rollback to last checkpoint, resume from last good state |
-| **Quality gates** | Hope | 3 checkpoints (quick) or 11 checkpoints (full) per story |
+| **Quality gates** | Hope | 3 checkpoints (quick) or 10 checkpoints (full) per story |
 
 ### What Runs Per Story
 
@@ -34,11 +34,11 @@ graph LR
 
 ```mermaid
 graph LR
-    subgraph "Full Mode — 11 steps"
-        F1[Create] --> F2[Validate] --> F3[Adversarial<br/>Review]
-        F3 --> F4[ATDD<br/>failing tests] --> F5[Develop<br/>make tests pass] --> F6[Edge-Case<br/>Hunt]
-        F6 --> F7[Review 1] --> F8[Review 2] --> F9[Review 3]
-        F9 --> F10[Trace] --> F11[Test<br/>Automate]
+    subgraph "Full Mode — 10 steps"
+        F1[Create] --> F2[Adversarial<br/>Review]
+        F2 --> F3[ATDD<br/>failing tests] --> F4[Develop<br/>make tests pass] --> F5[Edge-Case<br/>Hunt]
+        F5 --> F6[Review 1] --> F7[Review 2] --> F8[Review 3]
+        F8 --> F9[Trace] --> F10[Test<br/>Automate]
     end
 ```
 
@@ -88,7 +88,7 @@ auto-bmad only orchestrates skills that run headlessly. Skills requiring human j
 | `bmad-qa-generate-e2e-tests` | Yes | Generates tests from implemented features |
 | `bmad-testarch-atdd` | Yes | Writes failing tests from acceptance criteria |
 | `bmad-checkpoint-preview` | **No** | Requires human walkthrough at each review stop |
-| `bmad-create-story:validate` | **No** | Asks human which fixes to apply (all/critical/select/none) |
+| `bmad-create-story:validate` | **No** | Standalone validation is interactive/uncertified for unattended runs; story creation self-validates |
 | `bmad-party-mode` | **No** | Multi-agent debate needs human moderation |
 | WDS skills | **No** | Interactive Figma/design workflows |
 
@@ -102,7 +102,7 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 
 | | Quick Mode | Full Mode |
 |---|---|---|
-| **What it does per story** | Create, develop, code review (3 steps) | Create, validate, adversarial review, ATDD, develop, edge-case hunt, 3x code review, trace, test automate (11 steps) |
+| **What it does per story** | Create, develop, code review (3 steps) | Create, adversarial review, ATDD, develop, edge-case hunt, 3x code review, trace, test automate (10 steps) |
 | **What it does at epic-end** | Retrospective (1 step) | Trace, NFR assessment, test review, retrospective, context refresh (5 steps) |
 | **Testing approach** | Code review per story (no separate test generation) | TDD per story -- ATDD writes failing tests, dev implements against them |
 | **BMAD modules needed** | BMAD-METHOD only | BMAD-METHOD + TEA |
@@ -142,6 +142,8 @@ auto-bmad supports two execution modes. **Pick based on your project, subscripti
 
 ## Installation
 
+### Claude Code
+
 ```
 /plugin marketplace add bramvera/claude-code-plugins
 /plugin install auto-bmad@bramvera-plugins --scope user
@@ -154,6 +156,30 @@ Or as a local plugin:
 git clone https://github.com/bramvera/auto-bmad.git
 claude --plugin-dir /path/to/auto-bmad/auto-bmad
 ```
+
+### Codex
+
+Codex plugins distribute skills, not Claude-style command files. In Codex, invoke the plugin through:
+
+```text
+$auto-bmad
+$auto-bmad-check
+$auto-bmad-codex
+```
+
+Users only need to remember `$auto-bmad`. With no specific workflow, it performs a fast YAML progress lookup and suggests the next story and epic. It does not print the full command menu unless the user asks for `menu`, `help`, or `list commands`.
+
+No separate `auto-bmad` YAML config is required for BMAD v6.5+. The Codex status path uses `_bmad/bmm/config.yaml` and `sprint-status.yaml` when sprint planning has created it.
+
+When a workflow is clear but an argument is missing, Codex does the same fast progress lookup as the Claude flow: it reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next story or epic without running full diagnostics. For example, `$auto-bmad quick story` suggests the next pending story from `sprint-status.yaml`.
+
+Plain `$auto-bmad` also prints numbered choices. Reply `1` to run the next story or `2` to run the next epic/sprint; `continue` uses option 1.
+
+Before any execution, Codex runs a dirty-worktree preflight. If uncommitted changes exist, Auto-BMAD blocks and asks whether you want to handle them manually, create a safety commit, or abort. It must not skip a story or run rollback logic over dirty user work.
+
+If Codex shows `Auto-BMAD [Plugin]`, the plugin is installed. The usable workflows are the bundled skills; in some Codex surfaces they appear namespaced as `auto-bmad:auto-bmad`, `auto-bmad:auto-bmad-check`, and `auto-bmad:auto-bmad-codex`.
+
+Current Codex support is intentionally limited to read-only diagnostics and dry-run command routing. Full unattended pipelines remain Claude Code-first because the pipeline command files rely on Claude's foreground Task tool orchestration. See the [Codex Tutorial](docs/tutorial-codex.md) for the full Codex workflow.
 
 ## Recommended: RTK for Token Savings
 
@@ -192,6 +218,12 @@ Once installed, commands like `git status`, `cargo build`, and `pnpm install` ar
 
 Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each step calls.
 
+### Diagnostics
+
+| Command | Description |
+|---------|-------------|
+| [`/auto-bmad-check`](docs/commands-reference.md#auto-bmad-check) | Read-only capability check. Reports whether BMM quick is ready and lists optional full/GDS availability without requiring extra modules. |
+
 ### Quick Mode (BMAD Core -- no TEA required)
 
 | Command | Description |
@@ -201,18 +233,20 @@ Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardra
 | [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | GDS variant: run a game dev epic in quick mode |
 | [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | GDS variant: run a single game dev story in quick mode |
 
-### Full Mode (requires TEA module)
+### Full Mode
 
 | Command | Description |
 |---------|-------------|
-| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic: 11 steps per story + 5-step epic-end ([details](#how-sprint-works)) |
-| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (11 steps): create, validate, ATDD, develop, 3x code review, trace, automate |
+| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic: 10 steps per story + 5-step epic-end ([details](#how-sprint-works)) |
+| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (10 steps): create, adversarial review, ATDD, develop, 3x code review, trace, automate |
 | [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | Epic-level test design (TEA) |
 | [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | Trace, NFR, test review, retrospective, context refresh |
 | [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | GDS variant: run a game dev epic in full mode |
 | [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | GDS variant: run a single game dev story in full mode |
 | [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | GDS epic-level game test design |
 | [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | GDS retrospective, context refresh |
+
+BMM full mode requires TEA. GDS full mode requires GDS; it does not require TEA.
 
 ### Planning and Design
 
@@ -225,7 +259,7 @@ Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardra
 
 | Command | Description |
 |---------|-------------|
-| [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | Interactive: assess scope, route to `bmad-correct-course` (significant) or `bmad-quick-spec` (minor) |
+| [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | Interactive: assess scope, route to `bmad-correct-course` (significant) or direct minor-change spec generation |
 | [`/auto-bmad-change-dev <spec>`](docs/commands-reference.md#auto-bmad-change-dev-spec) | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
 
 ---
@@ -250,7 +284,7 @@ No epic-start phase. Stories run 3 steps each (create, dev, review). At epic-end
 /auto-bmad-sprint 1
 ```
 
-**Lifecycle:** epic-start (test design) --> story 1-1 (11 steps) --> story 1-2 --> ... --> epic-end (trace, NFR, test review, retro, context refresh)
+**Lifecycle:** epic-start (test design) --> story 1-1 (10 steps) --> story 1-2 --> ... --> epic-end (trace, NFR, test review, retro, context refresh)
 
 ### Shared Sprint Features
 
@@ -299,7 +333,7 @@ Do not automate analysis. Run these BMAD skills interactively:
 /bmad-party-mode                 <-- multi-agent discussion to find blind spots
 /bmad-domain-research            <-- understand the space
 /bmad-market-research            <-- competitive analysis
-/bmad-create-product-brief       <-- guided discovery (the AI asks, you answer)
+/bmad-product-brief              <-- guided discovery (the AI asks, you answer)
 ```
 
 This produces the product brief that everything else builds on. Garbage in, garbage out.
@@ -318,7 +352,7 @@ This produces the product brief that everything else builds on. Garbage in, garb
 # Quick mode -- 3 steps per story, no TEA, ~2.5-3.5h per epic
 /auto-bmad-sprint-quick 1
 
-# Full mode -- 11 steps per story, TEA required, ~5-6h per epic
+# Full mode -- 10 steps per story, TEA required, ~5-6h per epic
 /auto-bmad-sprint 1
 ```
 
@@ -332,12 +366,16 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 
 | Component | Version | Required For |
 |-----------|---------|-------------|
-| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.3.0) | v6.3.0 | All pipelines |
-| [TEA](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.2) | v1.7.2 | Full mode only (BMM) |
+| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) | v6.5.0 | All pipelines |
+| [TEA](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) | v1.15.1 | Full mode only (BMM) |
 | [GDS](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) | v0.2.2 | GDS pipelines |
 | [CIS](https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite) | latest | Optional: enhances UX design quality |
 
 **Quick mode needs only BMAD-METHOD** (and GDS for game projects). No TEA required.
+
+Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to verify the installed skill surface before starting a pipeline. It reports optional missing modules as warnings, not quick-mode failures.
+
+BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`. Auto-BMAD's full pipeline commands remain Claude Code-first; the Codex bridge exposes `$auto-bmad`, `$auto-bmad-check`, and `$auto-bmad-codex` skills for fast YAML progress lookup, read-only diagnostics, explicit command menus, and dry-run command routing checks against the shared BMAD skill layout.
 
 ### Config Files
 
@@ -367,6 +405,7 @@ From [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude
 
 - [BMM Tutorial](docs/tutorial-bmm.md) -- Step-by-step guide for the Business Model Method pipeline
 - [GDS Tutorial](docs/tutorial-gds.md) -- Step-by-step guide for the Game Dev Suite pipeline
+- [Codex Tutorial](docs/tutorial-codex.md) -- Status, checks, command discovery, and dry-run routing in Codex
 - [Commands Reference](docs/commands-reference.md) -- Every command mapped to the exact BMAD skills it calls
 - [FAQ](docs/faq.md) -- Common questions, troubleshooting, and tips
 

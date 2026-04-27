@@ -4,7 +4,7 @@
 
 ### What is quick mode?
 
-Quick mode runs 3 steps per story (create, dev, code review) instead of 11. It skips validation, adversarial review, ATDD, edge-case hunt, extra code reviews, trace, and test automate. Tests are generated at the epic level by `bmad-qa-generate-e2e-tests` instead of per-story. Quick mode requires only BMAD-METHOD core -- no TEA module.
+Quick mode runs 3 steps per story (create, dev, code review) instead of the 10-step full flow. It skips adversarial review, ATDD, edge-case hunt, extra code reviews, trace, and test automate. Tests are generated at the epic level by `bmad-qa-generate-e2e-tests` instead of per-story. Quick mode requires only BMAD-METHOD core -- no TEA module.
 
 ### When should I use quick mode vs full mode?
 
@@ -29,6 +29,10 @@ Yes, but pick one mode per epic. Quick mode stories don't produce ATDD tests or 
 
 No. Quick mode only requires BMAD-METHOD core (and GDS for game projects). TEA is not loaded or referenced.
 
+### How do I check what is available?
+
+Run `/auto-bmad-check`. It is read-only and treats BMM quick mode as the baseline. Missing TEA or GDS is reported as optional capability unavailable, not as a failure.
+
 ### How much faster is quick mode?
 
 | | Quick | Full |
@@ -50,11 +54,37 @@ Yes. `/auto-bmad-story-quick 1-1` runs a single story in quick mode (3 steps). I
 
 ### What is auto-bmad?
 
-A Claude Code plugin that orchestrates BMAD skills sequentially. It doesn't implement anything itself — it calls BMAD skills (like `/bmad-create-story`, `/bmad-dev-story`, `/bmad-code-review`) one after another with the right arguments, git checkpoints, and retry logic. Think of it as a pipeline runner for BMAD.
+A Claude Code plugin that orchestrates BMAD skills sequentially, with a Codex bridge for read-only diagnostics and dry-run routing checks. It doesn't implement anything itself — it calls BMAD skills (like `/bmad-create-story`, `/bmad-dev-story`, `/bmad-code-review`) one after another with the right arguments, git checkpoints, and retry logic. Think of it as a pipeline runner for BMAD.
+
+### Can I use auto-bmad in Codex?
+
+Yes, for diagnostics and dry-run routing checks. Codex plugins expose skills, so use `$auto-bmad` as the main entrypoint. With no specific workflow, it reads YAML progress and suggests the next story or epic. Use `$auto-bmad menu` for the command menu, `$auto-bmad-check` for the read-only capability check, and `$auto-bmad` or `$auto-bmad-codex` to dry-run slash-like commands such as `/auto-bmad-story-quick 1-1`.
+
+If you provide a workflow but miss the required story or epic id, Codex performs a fast YAML progress lookup first. It reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next pending story or epic without running a full capability check.
+
+Plain `$auto-bmad` prints numbered choices. Reply `1` for the next story or `2` for the next epic/sprint. `continue` selects option 1.
+
+Before execution, Codex runs a dirty-worktree preflight. If uncommitted changes exist, it must stop and ask:
+
+1. Commit/stash/clean manually, then rerun Auto-BMAD
+2. Create a safety commit of all current changes, then continue
+3. Abort
+
+Auto-BMAD should never skip a story or continue into retry/rollback logic over dirty user work.
+
+There is no separate `auto-bmad` YAML config in BMAD v6.5+ support. If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the repo as a new/pre-sprint project and suggests planning or sprint-planning next steps.
+
+If Codex shows only `Auto-BMAD [Plugin]`, that means the installable bundle is present. The invocable workflows are bundled skills, and some Codex surfaces show them with the plugin namespace, for example `auto-bmad:auto-bmad`.
+
+Full unattended Auto-BMAD pipelines remain Claude Code-first because the command files use Claude foreground Task tool orchestration. In Codex, run the check and dry-run first, then execute BMAD skills manually or with an explicitly confirmed quick-mode sequence.
+
+See [Auto-BMAD with Codex](tutorial-codex.md) for the step-by-step Codex workflow.
 
 ### Which BMAD version does this fork support?
 
-BMAD-METHOD v6.3.0, TEA v1.7.2, GDS v0.2.2. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD's full pipeline runtime remains Claude Code-first, while Codex can run diagnostics and dry-run command routing checks against the shared skill layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+
+Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to validate the installed modules. Missing TEA or GDS is reported as optional unless you choose a pipeline that needs it.
 
 ### Do I need all the BMAD modules?
 
@@ -62,8 +92,10 @@ No. You only need the modules for the pipeline you're using:
 
 | Pipeline | Required Modules |
 |----------|-----------------|
-| BMM (plan, story, sprint) | BMAD-METHOD + TEA |
-| GDS (gds-plan, gds-story, gds-sprint) | BMAD-METHOD + GDS |
+| BMM quick story/sprint | BMAD-METHOD |
+| BMM full story/sprint, plan, change-dev | BMAD-METHOD + TEA |
+| BMM change-spec | BMAD-METHOD |
+| GDS pipelines | BMAD-METHOD + GDS |
 
 ### What Claude Code subscription do I need?
 
@@ -123,31 +155,30 @@ Both `/auto-bmad-story` (dash) and `/auto-bmad:story` (colon) work. The colon sy
 
 ### What's the difference between `/auto-bmad-story` and `/auto-bmad-sprint`?
 
-`/auto-bmad-story 1-1` runs a single story (11 steps, ~60 minutes).
+`/auto-bmad-story 1-1` runs a single story (10 steps, ~60 minutes).
 
 `/auto-bmad-sprint 1` runs an entire epic autonomously — epic-start, all pending stories, epic-end. It reads `sprint-status.yaml`, skips completed stories, and continues to the next story if one fails. Use this when you want to walk away and let it run for hours.
 
 ### What does the story pipeline actually do?
 
-11 sequential steps, each in a fresh context window:
+10 sequential steps, each in a fresh context window:
 
 | # | Step | Purpose |
 |---|------|---------|
 | 1 | Create | Generate story spec from epics |
-| 2 | Validate | Check spec for gaps, auto-fix |
-| 3 | Adversarial Review | Stress-test the spec, fix weaknesses |
-| 4 | ATDD | Write failing acceptance tests (TDD red phase — no production code) |
-| 5 | Develop | Implement production code to pass all tests |
-| 6 | Edge-Case Hunt | Diff new code, find unhandled paths, add guards |
-| 7 | Code Review #1 | Fix critical/high/medium issues |
-| 8 | Code Review #2 | Second pass |
-| 9 | Code Review #3 | Final pass (lighter) |
-| 10 | Trace | Map requirements to tests to code |
-| 11 | Test Automate | Fill test coverage gaps |
+| 2 | Adversarial Review | Stress-test the spec, fix weaknesses |
+| 3 | ATDD | Write failing acceptance tests (TDD red phase — no production code) |
+| 4 | Develop | Implement production code to pass all tests |
+| 5 | Edge-Case Hunt | Diff new code, find unhandled paths, add guards |
+| 6 | Code Review #1 | Fix critical/high/medium issues |
+| 7 | Code Review #2 | Second pass |
+| 8 | Code Review #3 | Final pass (lighter) |
+| 9 | Trace | Map requirements to tests to code |
+| 10 | Test Automate | Fill test coverage gaps |
 
 ### What is ATDD?
 
-Acceptance Test-Driven Development. Step 4 reads the story spec's acceptance criteria and writes failing tests for each one — unit tests for business logic, API/integration tests where possible, E2E only when browser interaction is genuinely needed. No production code is written in this step. Step 5 (Develop) then implements the code to make the tests pass.
+Acceptance Test-Driven Development. Step 3 reads the story spec's acceptance criteria and writes failing tests for each one — unit tests for business logic, API/integration tests where possible, E2E only when browser interaction is genuinely needed. No production code is written in this step. Step 4 (Develop) then implements the code to make the tests pass.
 
 ### Why 3 code reviews?
 
@@ -157,9 +188,9 @@ Each pass catches different things. Review #1 typically finds the most issues. R
 
 [WDS v0.3+](https://github.com/bmad-code-org/bmad-method-wds-expansion) introduced interactive visual design workflows (Figma round-trips, storyboarding, HTML prototyping, asset generation) that require human-in-the-loop participation. These cannot be run unattended by auto-bmad's automated pipeline. Use WDS directly via `/bmad-wds-*` skills inside Claude Code for the full interactive design experience.
 
-### Why aren't new v6.3.0 skills (checkpoint-preview, create-story:validate) in auto-bmad?
+### Why doesn't auto-bmad run create-story validation as a separate step?
 
-auto-bmad only orchestrates BMAD skills that run headlessly -- no human interaction required mid-flow. Skills like `bmad-checkpoint-preview` (walks you through changes at each stop) and `bmad-create-story:validate` (asks which fixes to apply) are interactive by design. Adding them would halt the automated sprint waiting for a human who isn't there. Use these skills directly in Claude Code during your interactive planning or review phases. See the [Skills Compatibility](../README.md#bmad-skills-compatibility) table in the README for the full list.
+`bmad-create-story` already validates newly created stories against its checklist before finalizing them. auto-bmad does not call a separate `bmad-create-story validate` step because the standalone validation path is treated as interactive/uncertified for unattended sprint runs. For manual review, run BMAD validation directly in Claude Code during an interactive planning or review phase.
 
 ### Do I need to specify story IDs?
 
@@ -183,13 +214,13 @@ Yes. `/auto-bmad-plan` scans for existing artifacts and skips steps where output
 
 | When you stop mid-story | State | Recovery |
 |---|---|---|
-| During steps 1-3 (spec creation) | Partial story spec, no code | `git reset --hard HEAD` to discard, then rerun the story |
-| During step 4 (ATDD) | Failing tests written, no prod code | `git reset --hard HEAD` to discard, then rerun |
-| During step 5 (Develop) | Partial implementation, some tests passing | `git reset --hard HEAD` to discard, then rerun |
-| During steps 6-9 (reviews) | Code exists, partially reviewed | `git reset --hard HEAD` to discard, then rerun |
-| During steps 10-11 (trace/automate) | Code is reviewed but traceability incomplete | `git reset --hard HEAD` to discard, then rerun |
+| During steps 1-2 (spec creation/review) | Partial story spec, no code | `git reset --hard HEAD` to discard, then rerun the story |
+| During step 3 (ATDD) | Failing tests written, no prod code | `git reset --hard HEAD` to discard, then rerun |
+| During step 4 (Develop) | Partial implementation, some tests passing | `git reset --hard HEAD` to discard, then rerun |
+| During steps 5-8 (reviews) | Code exists, partially reviewed | `git reset --hard HEAD` to discard, then rerun |
+| During steps 9-10 (trace/automate) | Code is reviewed but traceability incomplete | `git reset --hard HEAD` to discard, then rerun |
 
-In all cases, `git reset --hard HEAD` cleans up the partial work and `/auto-bmad-sprint <epic>` (or `/auto-bmad-story <id>`) will rerun that story from scratch. There is no way to resume a story from step 6 if you stopped at step 5 — the entire story reruns.
+In all cases, `git reset --hard HEAD` cleans up the partial work and `/auto-bmad-sprint <epic>` (or `/auto-bmad-story <id>`) will rerun that story from scratch. There is no way to resume a story from step 5 if you stopped at step 4 — the entire story reruns.
 
 ### Is the sprint command resumable?
 
@@ -205,7 +236,7 @@ No. Stories are sequential by design — each story may depend on code from prev
 
 ### What git commits does the pipeline create?
 
-During a story, it creates checkpoint commits after each step (`wip(1-1): step N/11 <name>`). At the end, it squashes all checkpoints into one clean commit like `feat(1-1): user authentication system`. The sprint command does not add its own commits on top of individual story commits.
+During a story, it creates checkpoint commits after each step (`wip(1-1): step N/10 <name>`). At the end, it squashes all checkpoints into one clean commit like `feat(1-1): user authentication system`. The sprint command does not add its own commits on top of individual story commits.
 
 ---
 
