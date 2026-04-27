@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto-BMAD Menu"
+  short_description: "YAML status, menu, dry-runs"
+  default_prompt: "Use $auto-bmad to show fast YAML progress status and suggest the next story or epic."

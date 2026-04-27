@@ -62,57 +62,54 @@ After step 1 (Create) succeeds, glob `{{implementation_artifacts}}/{{STORY_ID}}-
 
 # Pipeline Steps
 
-After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"` and prints a 1-line progress update: `Step N/11: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
+After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/10 <step-name> - done"` and prints a 1-line progress update: `Step N/10: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
 
-## Story Creation & Validation
+## Story Creation & Spec Review
 
 1. **Story {{STORY_ID}} Create**
    - **Skip if:** a story file for {{STORY_ID}} already exists in `{{implementation_artifacts}}/` (glob for `{{STORY_ID}}-*.md`). Log "Story file already exists" with the file path. Set `{{STORY_FILE}}` to the existing file path.
    - **Task prompt:** `/gds-create-story story {{STORY_ID}} yolo`
 
-2. **Story {{STORY_ID}} Validate**
-   - **Task prompt:** `/gds-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
-
-3. **Story {{STORY_ID}} Adversarial Review**
+2. **Story {{STORY_ID}} Adversarial Review**
    - **Task prompt:** `/bmad-review-adversarial-general {{STORY_FILE}} ultrathink yolo — review the story specification. Fix all issues found.`
 
 ## Development
 
-4. **Story {{STORY_ID}} Develop**
+3. **Story {{STORY_ID}} Develop**
    - **Task prompt:** `/gds-dev-story {{STORY_FILE}} ultrathink yolo`
 
 ## Reviews
 
-5. **Story {{STORY_ID}} Edge-Case Hunt**
+4. **Story {{STORY_ID}} Edge-Case Hunt**
    - **Task prompt:** `/bmad-review-edge-case-hunter ultrathink yolo — run git diff {{START_COMMIT_HASH}} to get the production code changes as content. Fix all relevant findings by adding the suggested guards.`
 
-6. **Story {{STORY_ID}} Code Review #1**
+5. **Story {{STORY_ID}} Code Review #1**
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
    - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_1_ISSUES}}` (integer count). If the review was clean (0 issues), set `{{REVIEW_1_CLEAN}}` to true.
 
-7. **Story {{STORY_ID}} Code Review #2**
+6. **Story {{STORY_ID}} Code Review #2**
    - **Skip if:** `{{REVIEW_1_CLEAN}}` is true. Log "Code Review #1 was clean — skipping reviews #2 and #3".
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
    - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_2_ISSUES}}`. If the review was clean (0 issues), set `{{REVIEW_2_CLEAN}}` to true.
 
-8. **Story {{STORY_ID}} Code Review #3**
+7. **Story {{STORY_ID}} Code Review #3**
    - **Skip if:** `{{REVIEW_1_CLEAN}}` is true (already skipped with #2) OR `{{REVIEW_2_CLEAN}}` is true. Log "Previous review was clean — skipping review #3".
    - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 ## Performance & Test Automation
 
-9. **Story {{STORY_ID}} Performance**
+8. **Story {{STORY_ID}} Performance**
    - **Task prompt:** `/gds-performance-test {{STORY_FILE}} yolo`
 
-10. **Story {{STORY_ID}} Test Automate**
+9. **Story {{STORY_ID}} Test Automate**
     - **Task prompt:** `/gds-test-automate {{STORY_FILE}} yolo — when expanding test coverage, focus on game-specific scenarios: gameplay loops, state transitions, system interactions, and edge cases in game logic. Push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
 
-11. **Story {{STORY_ID}} Test Review**
+10. **Story {{STORY_ID}} Test Review**
     - **Task prompt:** `/gds-test-review {{STORY_FILE}} yolo — review game test quality, coverage of gameplay scenarios, and ensure test reliability across game states. Include test pyramid compliance in the review: flag any E2E tests that duplicate coverage from lower layers (unit/integration/API), flag excessive E2E test counts, and recommend pushing tests down the pyramid where possible.`
 
 # Story File Update
 
-After the pipeline steps 11 is complete, the coordinator MUST:
+After pipeline step 10 is complete, the coordinator MUST:
 
 1. **Mark all tasks as done.** Read `{{STORY_FILE}}` and replace every unchecked task checkbox (`- [ ]`) with a checked one (`- [x]`). All tasks were implemented — the dev step built the code, the tests pass, and the reviews confirmed it. Do not leave unchecked boxes in a completed story.
 2. **Check completeness.** Verify the story file contains the detailed list of findings and fixes from each review (split by review), and that anything after `## Dev Agent Record` is not empty or placeholder text.
@@ -160,16 +157,15 @@ Use this template for the report:
 | # | Step | Status | Duration | Summary |
 |---|------|--------|----------|---------|
 | 1 | Story Create | done/skipped | Xm | <story title/scope> |
-| 2 | Story Validate | done | Xm | <issues found and fixed count> |
-| 3 | Adversarial Review | done | Xm | <issues found/fixed count by severity> |
-| 4 | Develop | done | Xm | <files created/modified, key implementation summary> |
-| 5 | Edge-Case Hunt | done | Xm | <unhandled paths found/fixed count> |
-| 6 | Code Review #1 | done | Xm | <issues found/fixed count by severity> |
-| 7 | Code Review #2 | done | Xm | <issues found/fixed count by severity> |
-| 8 | Code Review #3 | done | Xm | <issues found/fixed count by severity> |
-| 9 | Performance | done | Xm | <performance assessment result (pass/concerns)> |
-| 10 | Test Automate | done | Xm | <tests automated count, game scenarios covered> |
-| 11 | Test Review | done | Xm | <test quality verdict, coverage gaps flagged> |
+| 2 | Adversarial Review | done | Xm | <issues found/fixed count by severity> |
+| 3 | Develop | done | Xm | <files created/modified, key implementation summary> |
+| 4 | Edge-Case Hunt | done | Xm | <unhandled paths found/fixed count> |
+| 5 | Code Review #1 | done | Xm | <issues found/fixed count by severity> |
+| 6 | Code Review #2 | done | Xm | <issues found/fixed count by severity> |
+| 7 | Code Review #3 | done | Xm | <issues found/fixed count by severity> |
+| 8 | Performance | done | Xm | <performance assessment result (pass/concerns)> |
+| 9 | Test Automate | done | Xm | <tests automated count, game scenarios covered> |
+| 10 | Test Review | done | Xm | <test quality verdict, coverage gaps flagged> |
 
 ## Key Decisions & Learnings
 
@@ -186,11 +182,11 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already verified (tests passed, acceptance criteria matched, code review clean). Do NOT fabricate items to fill a quota.
 
-**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+**IMPORTANT: Use dash syntax (e.g. `/auto-gds-story`) NOT colon syntax (e.g. `/auto-gds:story`) when suggesting next commands to the user.**
 
 ### Next
-- Start a new session with fresh context, then run `/auto-bmad-gds-story <next-story>` for the next story in the sprint
-- After all stories in the epic are done, start a new session and run `/auto-bmad-gds-epic-end <epic-number>` to close the epic
+- Start a new session with fresh context, then run `/auto-gds-story <next-story>` for the next story in the sprint
+- After all stories in the epic are done, start a new session and run `/auto-gds-epic-end <epic-number>` to close the epic
 ```
 
 # Final Commit

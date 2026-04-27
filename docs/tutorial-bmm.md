@@ -8,8 +8,8 @@ The BMM pipeline takes a product idea through the full BMAD lifecycle -- from pl
 
 Install these modules in your project before running any BMM commands:
 
-- **BMAD-METHOD v6.2.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0))
-- **TEA v1.7.1** -- Test Engineering Architect, provides test strategy and ATDD ([repo](https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise/releases/tag/v1.7.1))
+- **BMAD-METHOD v6.5.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0))
+- **TEA v1.15.1** -- Test Engineering Architect, provides test strategy and ATDD ([package](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise))
 
 Optional but helpful:
 
@@ -21,6 +21,8 @@ Your project must have these BMAD config files (created by the BMAD CLI during p
 
 - `_bmad/bmm/config.yaml` -- BMM configuration (output folders, artifact paths)
 - `_bmad/tea/config.yaml` -- TEA configuration (test artifact paths)
+
+Run `/auto-bmad-check` to validate your installed modules. TEA is only required for full BMM, plan, and change-dev pipelines; quick story/sprint mode does not need it.
 
 ### CLI Tools
 
@@ -119,19 +121,18 @@ The story ID is two numbers separated by a dash: `<epic>-<story>`. So `1-1` mean
 
 You can also use dots or spaces as separators: `1.1` or `1 1`.
 
-**What happens (11 steps):**
+**What happens (10 steps):**
 
 1. Creates the story file
-2. Validates the story specification
-3. Runs an adversarial review of the story spec and fixes issues
-4. Generates ATDD acceptance tests (test-first, red phase only)
-5. Develops the story implementation (makes tests pass)
-6. Hunts for edge cases and adds guards
-7. Code review #1 -- fixes critical, high, and medium issues
-8. Code review #2 -- second pass
-9. Code review #3 -- final pass
-10. Traces the story for traceability
-11. Automates remaining tests
+2. Runs an adversarial review of the story spec and fixes issues
+3. Generates ATDD acceptance tests (test-first, red phase only)
+4. Develops the story implementation (makes tests pass)
+5. Hunts for edge cases and adds guards
+6. Code review #1 -- fixes critical, high, and medium issues
+7. Code review #2 -- second pass
+8. Code review #3 -- final pass
+9. Traces the story for traceability
+10. Automates remaining tests
 
 **Duration:** This is the longest pipeline -- it can run for 60+ minutes per story.
 

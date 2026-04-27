@@ -5,6 +5,9 @@ CLAUDE.md
 # Package build artifacts
 package/README.md
 package/LICENSE.md
+package/commands/
+package/skills/
+package/scripts/
 
 # OS
 .DS_Store

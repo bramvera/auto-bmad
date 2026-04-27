@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto-BMAD Flow Check"
+  short_description: "Dry-run command routing"
+  default_prompt: "Use $auto-bmad-codex to dry-run an Auto-BMAD command without invoking BMAD agents."

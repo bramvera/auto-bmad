@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto-BMAD Check"
+  short_description: "Check quick-mode readiness"
+  default_prompt: "Use $auto-bmad-check to verify whether Auto-BMAD quick mode can run in this repo."

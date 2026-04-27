@@ -8,7 +8,7 @@ The GDS pipeline takes a game idea through the BMAD lifecycle tailored for game 
 
 Install these modules in your project before running any GDS commands:
 
-- **BMAD-METHOD v6.2.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.2.0))
+- **BMAD-METHOD v6.5.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0))
 - **GDS v0.2.2** -- Game Dev Suite, provides game design, architecture, narrative, and testing ([repo](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2))
 
 ### Config Files
@@ -16,6 +16,8 @@ Install these modules in your project before running any GDS commands:
 Your project must have this BMAD config file (created by the BMAD CLI during project init):
 
 - `_bmad/gds/config.yaml` -- GDS configuration (output folders, artifact paths)
+
+Run `/auto-bmad-check` before starting a GDS pipeline. GDS references are statically checked against v0.2.2 and current source skill layouts.
 
 ### CLI Tools
 
@@ -107,19 +109,18 @@ Start a **new Claude Code session for each story** and run:
 
 The story ID format works the same as BMM: `<epic>-<story>`. `1-1` is epic 1, story 1. `2-3` is epic 2, story 3. This is a separator, not a range -- `1-7` means epic 1, story 7.
 
-**What happens (11 steps):**
+**What happens (10 steps):**
 
 1. Creates the story file
-2. Validates the story specification
-3. Runs an adversarial review and fixes issues
-4. Develops the story implementation
-5. Hunts for edge cases and adds guards
-6. Code review #1 -- fixes critical, high, and medium issues
-7. Code review #2 -- second pass
-8. Code review #3 -- final pass
-9. Runs performance assessment
-10. Automates game-specific tests (gameplay loops, state transitions)
-11. Reviews test quality and coverage
+2. Runs an adversarial review and fixes issues
+3. Develops the story implementation
+4. Hunts for edge cases and adds guards
+5. Code review #1 -- fixes critical, high, and medium issues
+6. Code review #2 -- second pass
+7. Code review #3 -- final pass
+8. Runs performance assessment
+9. Automates game-specific tests (gameplay loops, state transitions)
+10. Reviews test quality and coverage
 
 Note that GDS stories do not have a separate ATDD step or traceability step like BMM stories do. Instead, GDS includes a performance assessment step and a test review step.
 
@@ -179,7 +180,7 @@ If you are familiar with the BMM pipeline, here are the key differences:
 | Aspect | BMM | GDS |
 |--------|-----|-----|
 | Plan steps | 11 (includes PRD, UX, impl readiness) | 8 (includes GDD, narrative design) |
-| Story steps | 13 (includes ATDD, NFR, trace) | 11 (includes performance, test review) |
+| Story steps | 10 (includes ATDD, trace) | 10 (includes performance, test review) |
 | Epic-end steps | 5 (trace, NFR, test review, retro, context) | 2 (retro, context) |
 | Config files | `_bmad/bmm/config.yaml` + `_bmad/tea/config.yaml` | `_bmad/gds/config.yaml` |
 | Required modules | TEA | GDS |

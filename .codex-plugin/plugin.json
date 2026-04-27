@@ -1,0 +1,34 @@
+{
+  "name": "auto-bmad",
+  "version": "0.10.0",
+  "description": "[0.10.0] Auto-BMAD Codex skills for BMAD 6.5 diagnostics and dry-run flow checks.",
+  "author": {
+    "name": "bramvera",
+    "url": "https://github.com/bramvera"
+  },
+  "contributors": [
+    {
+      "name": "Stefano Ginella",
+      "url": "https://github.com/stefanoginella/auto-bmad"
+    }
+  ],
+  "homepage": "https://github.com/bramvera/auto-bmad",
+  "repository": "https://github.com/bramvera/auto-bmad",
+  "license": "MIT",
+  "keywords": ["bmad", "codex", "skills", "pipeline", "automation", "sdlc"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Auto-BMAD",
+    "shortDescription": "BMAD YAML status, diagnostics, and dry-runs.",
+    "longDescription": "Auto-BMAD packages Codex skills for BMAD 6.5 fast YAML progress lookup, quick-mode diagnostics, explicit command menus, and dry-run routing checks. The full Claude Code pipeline commands remain available in the Claude plugin package.",
+    "developerName": "bramvera",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/bramvera/auto-bmad",
+    "defaultPrompt": [
+      "Use $auto-bmad to show fast YAML progress status and suggest the next story or epic.",
+      "Use $auto-bmad menu to list available Auto-BMAD workflows.",
+      "Use $auto-bmad-check to check whether Auto-BMAD quick mode can run here."
+    ]
+  }
+}

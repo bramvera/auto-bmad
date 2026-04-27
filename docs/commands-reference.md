@@ -2,6 +2,34 @@
 
 Every auto-bmad command orchestrates existing BMAD skills — it never bypasses BMAD guardrails or invents its own flows. This document maps each command to the exact BMAD skills it calls, so you know what's running under the hood.
 
+Auto-BMAD exposes the same workflow intent through different host interfaces.
+
+| Host | Invocation style | Example |
+|------|------------------|---------|
+| Claude Code | Slash command | `/auto-bmad-story-quick 1-1` |
+| Codex | Skill command | `$auto-bmad quick story 1-1` |
+
+In Codex, use `$auto-bmad` as the main entrypoint. With no specific workflow, it reads YAML progress and suggests the next story or epic. Use `$auto-bmad menu` for the command menu, `$auto-bmad-check` for diagnostics, and `$auto-bmad-codex` for direct dry-run routing checks. Codex plugins expose skills rather than Claude-style slash command files, so slash-like text such as `/auto-bmad-story-quick 1-1` is routed through the Codex skill bridge.
+
+Before execution, Codex runs a dirty-worktree preflight. Dirty uncommitted changes block execution until the user chooses manual cleanup, a safety commit, or abort.
+
+---
+
+## Diagnostic Commands
+
+### `/auto-bmad-check`
+
+Read-only capability check. It verifies the current project can run Auto-BMAD and treats BMM quick mode as the baseline success path.
+
+| Check | Required For | Missing Means |
+|------|--------------|---------------|
+| `_bmad/bmm/config.yaml` | BMM quick | Blocking issue |
+| BMM quick skills | BMM quick | Blocking issue |
+| `_bmad/tea/config.yaml` | BMM full, BMM plan, change-dev | Optional capability unavailable |
+| `_bmad/gds/config.yaml` | GDS quick/full/plan | Optional capability unavailable |
+
+The command does not create config files, install modules, migrate BMAD settings, or write reports.
+
 ---
 
 ## Greenfield Commands
@@ -12,7 +40,7 @@ Planning pipeline for new projects. Each step runs as a fresh agent.
 
 | Step | BMAD Skill | Purpose | Skippable |
 |------|-----------|---------|-----------|
-| 1 | `/bmad-create-product-brief` | Create product brief from user input | Yes — if brief or PRD exists |
+| 1 | `/bmad-product-brief` | Create product brief from user input | Yes — if brief or PRD exists |
 | 2 | `/bmad-create-prd` | Create Product Requirements Document | Yes — if PRD exists |
 | 3 | `/bmad-validate-prd` | Validate PRD and auto-fix issues | Yes — if PRD predates this run |
 | 4 | `/bmad-create-ux-design` | Plan UX patterns and design specs | Yes — if UX spec exists or no frontend |
@@ -41,16 +69,15 @@ Runs an entire epic hands-off. Flattened architecture — the sprint coordinator
 | Step | BMAD Skill | Purpose |
 |------|-----------|---------|
 | 1 | `/bmad-create-story` | Generate story spec from epics |
-| 2 | `/bmad-create-story validate` | Validate story spec, auto-fix gaps |
-| 3 | `/bmad-review-adversarial-general` | Stress-test the spec, fix weaknesses |
-| 4 | `/bmad-testarch-atdd` | Write failing acceptance tests — TDD red phase (TEA module) |
-| 5 | `/bmad-dev-story` | Implement code to pass all tests |
-| 6 | `/bmad-review-edge-case-hunter` | Find unhandled paths in new code, add guards |
-| 7 | `/bmad-code-review` | Code review #1 — fix critical/high/medium issues |
-| 8 | `/bmad-code-review` | Code review #2 — only if #1 found issues |
-| 9 | `/bmad-code-review` | Code review #3 — only if #2 found issues |
-| 10 | `/bmad-testarch-trace` | Map requirements to tests to code (TEA module) |
-| 11 | `/bmad-testarch-automate` | Fill test coverage gaps (TEA module) |
+| 2 | `/bmad-review-adversarial-general` | Stress-test the spec, fix weaknesses |
+| 3 | `/bmad-testarch-atdd` | Write failing acceptance tests — TDD red phase (TEA module) |
+| 4 | `/bmad-dev-story` | Implement code to pass all tests |
+| 5 | `/bmad-review-edge-case-hunter` | Find unhandled paths in new code, add guards |
+| 6 | `/bmad-code-review` | Code review #1 — fix critical/high/medium issues |
+| 7 | `/bmad-code-review` | Code review #2 — only if #1 found issues |
+| 8 | `/bmad-code-review` | Code review #3 — only if #2 found issues |
+| 9 | `/bmad-testarch-trace` | Map requirements to tests to code (TEA module) |
+| 10 | `/bmad-testarch-automate` | Fill test coverage gaps (TEA module) |
 
 **Phase 3: Epic End**
 
@@ -66,21 +93,20 @@ Runs an entire epic hands-off. Flattened architecture — the sprint coordinator
 
 ### `/auto-bmad-story <id>`
 
-Runs a single story. Same 11 steps as the sprint's Phase 2, but as a standalone command with its own report.
+Runs a single story. Same 10 steps as the sprint's Phase 2, but as a standalone command with its own report.
 
 | Step | BMAD Skill | Purpose |
 |------|-----------|---------|
 | 1 | `/bmad-create-story` | Generate story spec |
-| 2 | `/bmad-create-story validate` | Validate and fix spec |
-| 3 | `/bmad-review-adversarial-general` | Adversarial review of spec |
-| 4 | `/bmad-testarch-atdd` | Failing acceptance tests (TEA) |
-| 5 | `/bmad-dev-story` | Implement |
-| 6 | `/bmad-review-edge-case-hunter` | Edge-case hunt on diff |
-| 7 | `/bmad-code-review` | Code review #1 |
-| 8 | `/bmad-code-review` | Code review #2 (skipped if #1 clean) |
-| 9 | `/bmad-code-review` | Code review #3 (skipped if #2 clean) |
-| 10 | `/bmad-testarch-trace` | Traceability (TEA) |
-| 11 | `/bmad-testarch-automate` | Expand test coverage (TEA) |
+| 2 | `/bmad-review-adversarial-general` | Adversarial review of spec |
+| 3 | `/bmad-testarch-atdd` | Failing acceptance tests (TEA) |
+| 4 | `/bmad-dev-story` | Implement |
+| 5 | `/bmad-review-edge-case-hunter` | Edge-case hunt on diff |
+| 6 | `/bmad-code-review` | Code review #1 |
+| 7 | `/bmad-code-review` | Code review #2 (skipped if #1 clean) |
+| 8 | `/bmad-code-review` | Code review #3 (skipped if #2 clean) |
+| 9 | `/bmad-testarch-trace` | Traceability (TEA) |
+| 10 | `/bmad-testarch-automate` | Expand test coverage (TEA) |
 
 ---
 
@@ -126,16 +152,17 @@ Interactive change spec for brownfield modifications. The command assesses scope
 | 5 | Get user approval |
 | 6 | Finalize and route for implementation |
 
-**Route B: Minor change** (contained code change) → `/bmad-quick-spec`
+**Route B: Minor change** (contained code change) → Auto-BMAD minor change spec generation
 
 | Step | What |
 |------|------|
 | 1 | Understand the change through conversation |
-| 2 | Investigate existing codebase for affected code |
-| 3 | Generate implementation-ready tech spec |
-| 4 | Review spec with the user |
+| 2 | Load BMAD project context and relevant planning artifacts |
+| 3 | Investigate existing codebase for affected code |
+| 4 | Generate implementation-ready minor change spec |
+| 5 | Review spec with the user |
 
-Both routes read project context, architecture, PRD, and epics. The human decides scope and approves the spec. Output is a spec file that `/auto-bmad-change-dev` takes as input.
+Both routes read project context and relevant BMAD artifacts. The human decides scope and approves the spec. Output is a spec file that `/auto-bmad-change-dev` takes as input.
 
 ---
 
@@ -187,16 +214,15 @@ Same structure as BMM sprint but with GDS skills:
 | Step | BMAD Skill | Purpose |
 |------|-----------|---------|
 | 1 | `/gds-create-story` | Generate story spec |
-| 2 | `/gds-create-story validate` | Validate and fix spec |
-| 3 | `/bmad-review-adversarial-general` | Adversarial review (core skill) |
-| 4 | `/gds-dev-story` | Implement |
-| 5 | `/bmad-review-edge-case-hunter` | Edge-case hunt (core skill) |
-| 6 | `/gds-code-review` | Code review #1 |
-| 7 | `/gds-code-review` | Code review #2 (skipped if #1 clean) |
-| 8 | `/gds-code-review` | Code review #3 (skipped if #2 clean) |
-| 9 | `/gds-performance-test` | Game performance assessment |
-| 10 | `/gds-test-automate` | Expand game test coverage |
-| 11 | `/gds-test-review` | Test quality review |
+| 2 | `/bmad-review-adversarial-general` | Adversarial review (core skill) |
+| 3 | `/gds-dev-story` | Implement |
+| 4 | `/bmad-review-edge-case-hunter` | Edge-case hunt (core skill) |
+| 5 | `/gds-code-review` | Code review #1 |
+| 6 | `/gds-code-review` | Code review #2 (skipped if #1 clean) |
+| 7 | `/gds-code-review` | Code review #3 (skipped if #2 clean) |
+| 8 | `/gds-performance-test` | Game performance assessment |
+| 9 | `/gds-test-automate` | Expand game test coverage |
+| 10 | `/gds-test-review` | Test quality review |
 
 **Phase 3: Epic End**
 
@@ -207,7 +233,7 @@ Same structure as BMM sprint but with GDS skills:
 
 ### `/auto-gds-story <id>`
 
-Same 11 steps as GDS sprint Phase 2, standalone with its own report.
+Same 10 steps as GDS sprint Phase 2, standalone with its own report.
 
 ### `/auto-gds-epic-start <epic>`
 
@@ -284,6 +310,7 @@ No epic-start phase. 3 steps per story. 1-step epic-end.
 
 | auto-bmad Command | Requires |
 |-------------------|----------|
+| `/auto-bmad-check` | BMAD-METHOD for useful quick-mode result; no TEA/GDS required |
 | `/auto-bmad-plan` | BMAD-METHOD + TEA |
 | `/auto-bmad-sprint` | BMAD-METHOD + TEA |
 | `/auto-bmad-story` | BMAD-METHOD + TEA |

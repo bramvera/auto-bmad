@@ -1,12 +1,15 @@
 {
   "name": "@bramvera/auto-bmad",
-  "version": "0.9.2",
-  "description": "Installs the auto-bmad Claude Code plugin — automated BMAD pipeline orchestration",
+  "version": "0.10.0",
+  "description": "Installs Auto-BMAD for Claude Code or shared Agent Skills hosts",
+  "scripts": {
+    "prepack": "cd .. && bash scripts/prepublish.sh"
+  },
   "bin": {
     "auto-bmad": "cli.js"
   },
-  "files": ["cli.js"],
-  "keywords": ["claude-code", "plugin", "bmad", "pipeline", "automation", "orchestration", "sdlc"],
+  "files": ["cli.js", "commands", "skills", "scripts"],
+  "keywords": ["agents", "agent-skills", "claude-code", "codex", "plugin", "bmad", "pipeline", "automation", "orchestration", "sdlc"],
   "author": "bramvera",
   "contributors": ["Stefano Ginella"],
   "license": "MIT",

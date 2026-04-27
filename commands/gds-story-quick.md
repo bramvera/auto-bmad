@@ -140,7 +140,7 @@ Summarize notable decisions, issues, and learnings from the pipeline run. Includ
 
 Report only items that genuinely require human action. If the pipeline completed cleanly with no concerns, write "None — pipeline completed without issues requiring human attention."
 
-**IMPORTANT: Use dash syntax (e.g. `/auto-gds-story-quick`) NOT colon syntax (e.g. `/auto-bmad:story-quick`) when suggesting next commands to the user.**
+**IMPORTANT: Use dash syntax (e.g. `/auto-gds-story-quick`) NOT colon syntax (e.g. `/auto-gds:story-quick`) when suggesting next commands to the user.**
 
 ### Next
 - Start a new session with fresh context, then run `/auto-gds-story-quick <next-story>` for the next story in the sprint
