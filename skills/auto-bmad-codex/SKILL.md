@@ -148,4 +148,37 @@ If the user asks to actually run an Auto-BMAD pipeline in Codex:
 2. Run the capability check.
 3. Run the dry-run flow check for the exact command.
 4. For full/TEA commands, stop and ask for explicit confirmation before continuing.
-5. For quick-mode commands, explain that Codex execution uses the installed BMAD skills directly rather than Claude Code foreground Task calls.
+5. Resolve the exact command file and execute that workflow contract.
+
+## Codex Execution Contract
+
+Codex must preserve Auto-BMAD's git checkpoint behavior. The command file remains the source of truth even though Codex invokes BMAD skills through the skill surface instead of Claude Code foreground Task calls.
+
+Resolve command files as follows:
+
+- `/auto-bmad-story-quick` -> `commands/story-quick.md`
+- `/auto-bmad-sprint-quick` -> `commands/sprint-quick.md`
+- `/auto-bmad-story` -> `commands/story.md`
+- `/auto-bmad-sprint` -> `commands/sprint.md`
+- `/auto-bmad-epic-start` -> `commands/epic-start.md`
+- `/auto-bmad-epic-end` -> `commands/epic-end.md`
+- `/auto-bmad-plan` -> `commands/plan.md`
+- `/auto-bmad-change-spec` -> `commands/change-spec.md`
+- `/auto-bmad-change-dev` -> `commands/change-dev.md`
+- `/auto-gds-*` -> the matching `commands/gds-*.md` file.
+
+For real execution:
+
+1. Read the resolved command file before running BMAD skills.
+2. Follow its BMAD skill order, retry policy, progress-file writes, and rollback policy.
+3. Replace each "Task prompt" with the equivalent installed BMAD skill invocation available in Codex.
+4. Keep all coordinator duties from the command file:
+   - record start commit hashes.
+   - run per-step WIP commits.
+   - update story and sprint status files.
+   - squash story commits into the final story commit.
+   - commit epic-end or pipeline completion changes.
+5. Before reporting the workflow complete or suggesting the next story/epic, run `git status --short`.
+6. If implemented workflow changes remain uncommitted, create the final commit required by the command file. If that cannot be done, stop and tell the user the workflow is complete but uncommitted.
+
+Do not say "sprint complete", "story done", or "next options" while leaving Auto-BMAD workflow changes dirty unless the user explicitly told you not to commit.

@@ -124,8 +124,38 @@ Print the output exactly. It lists ready commands first and marks optional missi
 - Apply the fast YAML status path first. Plain `$auto-bmad` means fast YAML status.
 - For `/auto-bmad-check`, availability questions, or "can Auto-BMAD run here", run the read-only capability check from `$auto-bmad-check`.
 - For `/auto-bmad-*`, `/auto-gds-*`, or natural-language workflow requests in Codex, use `$auto-bmad-codex` to run the dry-run flow checker first.
-- For quick-mode execution requests, run the capability check and dry-run first, then explain that Codex execution uses installed BMAD skills directly rather than Claude Code foreground Task calls.
+- For quick-mode execution requests, run the capability check and dry-run first, then execute the matching Auto-BMAD workflow contract below.
 - For full/TEA execution requests, stop after the dry-run unless the user explicitly confirms they want to spend the tokens.
+
+## Codex Execution Contract
+
+When Codex executes an Auto-BMAD workflow, it must preserve the same git safety contract as the Claude slash command file.
+
+1. Resolve the slash-like workflow to its command file:
+   - `quick story <id>` -> `commands/story-quick.md`
+   - `quick sprint <epic>` -> `commands/sprint-quick.md`
+   - `full story <id>` -> `commands/story.md`
+   - `full sprint <epic>` -> `commands/sprint.md`
+   - `epic start <epic>` -> `commands/epic-start.md`
+   - `epic end <epic>` -> `commands/epic-end.md`
+   - `plan <context>` -> `commands/plan.md`
+   - `change spec <description>` -> `commands/change-spec.md`
+   - `change dev <spec>` -> `commands/change-dev.md`
+   - `gds ...` -> the matching `commands/gds-*.md` file.
+2. Read that command file before execution and treat it as the source of truth for:
+   - BMAD skill order.
+   - retry and rollback rules.
+   - live progress files.
+   - per-step WIP commits.
+   - final story, epic, or pipeline squash commit.
+3. Codex does not have Claude Code foreground Task dispatch. Replace each command file "Task prompt" with the equivalent installed BMAD skill invocation, but keep the coordinator responsibilities in the Auto-BMAD command file exactly.
+4. After every successful step, run the command file's checkpoint command. If the command file says to commit after each step, do it. If the worktree is clean because the BMAD skill already committed, treat that as success.
+5. At story or epic completion, run the command file's final squash/final commit sequence before reporting the workflow complete.
+6. Before printing "done", "complete", "next story", or "next epic", run `git status --short`.
+   - If the workflow intentionally changed files and `git status --short` is not empty, create the required final Auto-BMAD commit from the command file.
+   - If a commit cannot be created, stop and tell the user the workflow is complete but uncommitted. Do not suggest the next Auto-BMAD action as if the pipeline is clean.
+
+For Codex, the difference is only the host interface. The workflow still owns commits. A successful Auto-BMAD story or sprint must not leave implemented story changes uncommitted unless the user explicitly asked to stop before committing.
 
 ## Natural Language Shortcuts
 
@@ -148,3 +178,4 @@ When running `smoke-auto-bmad-flow.mjs`, pass only the command name portion, not
 - Do not recommend installing TEA or GDS for normal quick-mode use.
 - Treat missing TEA/GDS as optional capability gaps unless the requested command requires them.
 - Never skip dirty uncommitted changes. Dirty worktree preflight is blocking for execution.
+- Never report an Auto-BMAD workflow as complete while its implemented changes are still uncommitted. Commit according to the resolved command file, or stop and ask the user.
