@@ -76,13 +76,13 @@ There is no separate `auto-bmad` YAML config in BMAD v6.5+ support. If `sprint-s
 
 If Codex shows only `Auto-BMAD [Plugin]`, that means the installable bundle is present. The invocable workflows are bundled skills, and some Codex surfaces show them with the plugin namespace, for example `auto-bmad:auto-bmad`.
 
-Full unattended Auto-BMAD pipelines remain Claude Code-first because the command files use Claude foreground Task tool orchestration. In Codex, run the check and dry-run first, then execute BMAD skills manually or with an explicitly confirmed quick-mode sequence.
+Claude Code exposes Auto-BMAD as slash commands. Codex exposes Auto-BMAD as skills. In Codex, start with `$auto-bmad`; it reads YAML status, offers numbered choices, runs the dirty-worktree preflight, and then continues through the selected workflow when confirmed.
 
 See [Auto-BMAD with Codex](tutorial-codex.md) for the step-by-step Codex workflow.
 
 ### Which BMAD version does this fork support?
 
-This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD's full pipeline runtime remains Claude Code-first, while Codex can run diagnostics and dry-run command routing checks against the shared skill layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD provides Claude Code slash commands and Codex skills over that shared skill layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
 
 Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to validate the installed modules. Missing TEA or GDS is reported as optional unless you choose a pipeline that needs it.
 

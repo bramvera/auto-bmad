@@ -179,7 +179,7 @@ Before any execution, Codex runs a dirty-worktree preflight. If uncommitted chan
 
 If Codex shows `Auto-BMAD [Plugin]`, the plugin is installed. The usable workflows are the bundled skills; in some Codex surfaces they appear namespaced as `auto-bmad:auto-bmad`, `auto-bmad:auto-bmad-check`, and `auto-bmad:auto-bmad-codex`.
 
-Current Codex support is intentionally limited to read-only diagnostics and dry-run command routing. Full unattended pipelines remain Claude Code-first because the pipeline command files rely on Claude's foreground Task tool orchestration. See the [Codex Tutorial](docs/tutorial-codex.md) for the full Codex workflow.
+Codex uses skills instead of native slash commands. Use `$auto-bmad` for status and workflow execution, `$auto-bmad-check` for diagnostics, and `$auto-bmad-codex` for dry-run command routing. See the [Codex Tutorial](docs/tutorial-codex.md) for the full Codex workflow.
 
 ## Recommended: RTK for Token Savings
 
@@ -214,53 +214,62 @@ Once installed, commands like `git status`, `cargo build`, and `pnpm install` ar
 
 ---
 
-## Commands
+## Commands and Codex Skills
 
-Every command orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each step calls.
+Every Auto-BMAD workflow orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. Claude Code exposes these workflows as slash commands. Codex exposes them as skills through `$auto-bmad`.
+
+| Host | Invocation style | Example |
+|------|------------------|---------|
+| Claude Code | Slash command | `/auto-bmad-sprint-quick 1` |
+| Codex | Skill command | `$auto-bmad quick sprint 1` |
+
+See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each workflow calls.
 
 ### Diagnostics
 
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-check`](docs/commands-reference.md#auto-bmad-check) | Read-only capability check. Reports whether BMM quick is ready and lists optional full/GDS availability without requiring extra modules. |
+| Workflow | Claude Code | Codex | Description |
+|----------|-------------|-------|-------------|
+| Readiness check | [`/auto-bmad-check`](docs/commands-reference.md#auto-bmad-check) | `$auto-bmad-check` | Read-only capability check. Reports whether BMM quick is ready and lists optional full/GDS availability without requiring extra modules. |
+| Status / next action | explicit command | `$auto-bmad` | Reads YAML progress and suggests the next story or epic. |
+| Command menu | plugin command list | `$auto-bmad menu` | Lists available Auto-BMAD workflows. |
 
 ### Quick Mode (BMAD Core -- no TEA required)
 
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | Run an entire epic: 3 steps per story + retro at epic-end |
-| [`/auto-bmad-story-quick <id>`](docs/commands-reference.md#auto-bmad-story-quick-id) | Run a single story (3 steps): create, develop, code review |
-| [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | GDS variant: run a game dev epic in quick mode |
-| [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | GDS variant: run a single game dev story in quick mode |
+| Workflow | Claude Code | Codex | Description |
+|----------|-------------|-------|-------------|
+| BMM quick sprint | [`/auto-bmad-sprint-quick <epic>`](docs/commands-reference.md#auto-bmad-sprint-quick-epic) | `$auto-bmad quick sprint <epic>` | Run an entire epic: 3 steps per story + retro at epic-end |
+| BMM quick story | [`/auto-bmad-story-quick <id>`](docs/commands-reference.md#auto-bmad-story-quick-id) | `$auto-bmad quick story <id>` | Run a single story (3 steps): create, develop, code review |
+| GDS quick sprint | [`/auto-gds-sprint-quick <epic>`](docs/commands-reference.md#auto-gds-sprint-quick-epic) | `$auto-bmad gds quick sprint <epic>` | GDS variant: run a game dev epic in quick mode |
+| GDS quick story | [`/auto-gds-story-quick <id>`](docs/commands-reference.md#auto-gds-story-quick-id) | `$auto-bmad gds quick story <id>` | GDS variant: run a single game dev story in quick mode |
 
 ### Full Mode
 
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | Run an entire epic: 10 steps per story + 5-step epic-end ([details](#how-sprint-works)) |
-| [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | Run a single story (10 steps): create, adversarial review, ATDD, develop, 3x code review, trace, automate |
-| [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | Epic-level test design (TEA) |
-| [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | Trace, NFR, test review, retrospective, context refresh |
-| [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | GDS variant: run a game dev epic in full mode |
-| [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | GDS variant: run a single game dev story in full mode |
-| [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | GDS epic-level game test design |
-| [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | GDS retrospective, context refresh |
+| Workflow | Claude Code | Codex | Description |
+|----------|-------------|-------|-------------|
+| BMM full sprint | [`/auto-bmad-sprint <epic>`](docs/commands-reference.md#auto-bmad-sprint-epic) | `$auto-bmad full sprint <epic>` | Run an entire epic: 10 steps per story + 5-step epic-end ([details](#how-sprint-works)) |
+| BMM full story | [`/auto-bmad-story <id>`](docs/commands-reference.md#auto-bmad-story-id) | `$auto-bmad full story <id>` | Run a single story (10 steps): create, adversarial review, ATDD, develop, 3x code review, trace, automate |
+| BMM epic start | [`/auto-bmad-epic-start <epic>`](docs/commands-reference.md#auto-bmad-epic-start-epic) | `$auto-bmad epic start <epic>` | Epic-level test design (TEA) |
+| BMM epic end | [`/auto-bmad-epic-end <epic>`](docs/commands-reference.md#auto-bmad-epic-end-epic) | `$auto-bmad epic end <epic>` | Trace, NFR, test review, retrospective, context refresh |
+| GDS full sprint | [`/auto-gds-sprint <epic>`](docs/commands-reference.md#auto-gds-sprint-epic) | `$auto-bmad gds full sprint <epic>` | GDS variant: run a game dev epic in full mode |
+| GDS full story | [`/auto-gds-story <id>`](docs/commands-reference.md#auto-gds-story-id) | `$auto-bmad gds full story <id>` | GDS variant: run a single game dev story in full mode |
+| GDS epic start | [`/auto-gds-epic-start <epic>`](docs/commands-reference.md#auto-gds-epic-start-epic) | `$auto-bmad gds epic start <epic>` | GDS epic-level game test design |
+| GDS epic end | [`/auto-gds-epic-end <epic>`](docs/commands-reference.md#auto-gds-epic-end-epic) | `$auto-bmad gds epic end <epic>` | GDS retrospective, context refresh |
 
 BMM full mode requires TEA. GDS full mode requires GDS; it does not require TEA.
 
 ### Planning and Design
 
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-plan`](docs/commands-reference.md#auto-bmad-plan) | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
-| [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | 8-step GDS planning: game brief, GDD, narrative, architecture, test design, sprint plan |
+| Workflow | Claude Code | Codex | Description |
+|----------|-------------|-------|-------------|
+| BMM planning | [`/auto-bmad-plan`](docs/commands-reference.md#auto-bmad-plan) | `$auto-bmad plan` | 11-step planning pipeline: product brief, PRD, UX, architecture, test design, epics, sprint plan |
+| GDS planning | [`/auto-gds-plan`](docs/commands-reference.md#auto-gds-plan) | `$auto-bmad gds plan` | 8-step GDS planning: game brief, GDD, narrative, architecture, test design, sprint plan |
 
 ### Brownfield (Existing Codebase)
 
-| Command | Description |
-|---------|-------------|
-| [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | Interactive: assess scope, route to `bmad-correct-course` (significant) or direct minor-change spec generation |
-| [`/auto-bmad-change-dev <spec>`](docs/commands-reference.md#auto-bmad-change-dev-spec) | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
+| Workflow | Claude Code | Codex | Description |
+|----------|-------------|-------|-------------|
+| Change spec | [`/auto-bmad-change-spec`](docs/commands-reference.md#auto-bmad-change-spec) | `$auto-bmad change spec` | Interactive: assess scope, route to `bmad-correct-course` (significant) or direct minor-change spec generation |
+| Change dev | [`/auto-bmad-change-dev <spec>`](docs/commands-reference.md#auto-bmad-change-dev-spec) | `$auto-bmad change dev <spec>` | Automated: regression tests, ATDD, implement, full test suite, code review, trace |
 
 ---
 
@@ -375,7 +384,7 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 
 Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to verify the installed skill surface before starting a pipeline. It reports optional missing modules as warnings, not quick-mode failures.
 
-BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`. Auto-BMAD's full pipeline commands remain Claude Code-first; the Codex bridge exposes `$auto-bmad`, `$auto-bmad-check`, and `$auto-bmad-codex` skills for fast YAML progress lookup, read-only diagnostics, explicit command menus, and dry-run command routing checks against the shared BMAD skill layout.
+BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`. Auto-BMAD exposes Claude Code slash commands and Codex skills over the same BMAD skill layout. The Codex bridge exposes `$auto-bmad`, `$auto-bmad-check`, and `$auto-bmad-codex` for fast YAML progress lookup, diagnostics, explicit command menus, dry-run routing checks, and confirmed workflow execution.
 
 ### Config Files
 

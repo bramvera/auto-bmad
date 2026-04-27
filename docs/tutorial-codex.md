@@ -2,7 +2,7 @@
 
 This tutorial shows how to use Auto-BMAD from Codex against BMAD v6.5 shared skill installs.
 
-Codex support is a bridge for status, diagnostics, command discovery, and dry-run routing. The full unattended Auto-BMAD pipelines remain Claude Code-first because those command files rely on Claude's foreground Task tool orchestration.
+Codex support is a bridge for status, diagnostics, command discovery, dry-run routing, and confirmed workflow execution through skills. Claude Code uses native slash commands; Codex uses `$auto-bmad` skills for the same workflow intent.
 
 ## What Codex Can Do
 
@@ -95,6 +95,22 @@ to continue with the next epic/sprint.
 
 `continue`, `ok`, `yes`, and similar short confirmations choose option 1.
 
+## Running Workflows
+
+Claude Code and Codex use different invocation surfaces:
+
+| Workflow | Claude Code | Codex |
+|----------|-------------|-------|
+| Readiness check | `/auto-bmad-check` | `$auto-bmad-check` |
+| Status / next action | plugin command list or explicit command | `$auto-bmad` |
+| Command menu | plugin command list | `$auto-bmad menu` |
+| Quick story | `/auto-bmad-story-quick 2-3` | `$auto-bmad quick story 2-3` |
+| Quick sprint | `/auto-bmad-sprint-quick 2` | `$auto-bmad quick sprint 2` |
+| Full story | `/auto-bmad-story 2-3` | `$auto-bmad full story 2-3` |
+| Full sprint | `/auto-bmad-sprint 2` | `$auto-bmad full sprint 2` |
+
+In Codex, prefer starting with `$auto-bmad`. It reads YAML progress, shows numbered choices, runs the dirty-worktree preflight, and then continues with the selected workflow only after the route is clear.
+
 ## Command Menu
 
 Only ask for the menu when you need discovery:
@@ -131,7 +147,7 @@ or provide a slash-like command to check routing:
 $auto-bmad-codex /auto-bmad-story-quick 1-1
 ```
 
-This validates that Auto-BMAD can resolve the command and referenced BMAD skills. It does not run a full BMAD story, sprint, or TEA flow.
+This validates that Auto-BMAD can resolve the command and referenced BMAD skills. It does not execute the BMAD story, sprint, or TEA flow.
 
 ## Dirty Worktree Preflight
 
@@ -153,13 +169,20 @@ If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the project as p
 
 In that case, run planning and sprint planning first. Auto-BMAD will point you toward the next useful command instead of requiring a separate Auto-BMAD config file.
 
-## When To Use Claude Code Instead
+## Claude Code vs Codex
 
-Use Claude Code for full unattended Auto-BMAD pipeline runs:
+Use Claude Code when you want native slash-command execution:
 
 ```text
 /auto-bmad-sprint-quick 1
 /auto-bmad-sprint 1
 ```
 
-Use Codex when you want fast status, readiness checks, dry-run validation, and carefully confirmed quick-mode execution from the shared BMAD v6.5 skill layout.
+Use Codex when you want the skill surface:
+
+```text
+$auto-bmad quick sprint 1
+$auto-bmad full sprint 1
+```
+
+The workflow intent is the same. The difference is the host interface: Claude Code installs slash commands, while Codex installs skills and routes through `$auto-bmad`.

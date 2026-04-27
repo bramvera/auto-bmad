@@ -2,6 +2,13 @@
 
 Every auto-bmad command orchestrates existing BMAD skills — it never bypasses BMAD guardrails or invents its own flows. This document maps each command to the exact BMAD skills it calls, so you know what's running under the hood.
 
+Auto-BMAD exposes the same workflow intent through different host interfaces.
+
+| Host | Invocation style | Example |
+|------|------------------|---------|
+| Claude Code | Slash command | `/auto-bmad-story-quick 1-1` |
+| Codex | Skill command | `$auto-bmad quick story 1-1` |
+
 In Codex, use `$auto-bmad` as the main entrypoint. With no specific workflow, it reads YAML progress and suggests the next story or epic. Use `$auto-bmad menu` for the command menu, `$auto-bmad-check` for diagnostics, and `$auto-bmad-codex` for direct dry-run routing checks. Codex plugins expose skills rather than Claude-style slash command files, so slash-like text such as `/auto-bmad-story-quick 1-1` is routed through the Codex skill bridge.
 
 Before execution, Codex runs a dirty-worktree preflight. Dirty uncommitted changes block execution until the user chooses manual cleanup, a safety commit, or abort.
