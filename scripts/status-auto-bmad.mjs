@@ -276,7 +276,7 @@ function printHuman(progress, kind) {
     }
   }
 
-  if (kind === "summary") {
+  if (["summary", "story", "sprint", "epic"].includes(kind)) {
     printChoices(progress);
   }
 }
