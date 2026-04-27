@@ -15,6 +15,7 @@ This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanogin
 - Numbered Codex status choices so users can reply `1`, `2`, or `continue` after `$auto-bmad`.
 - Dirty-worktree execution preflight for Codex bridge workflows; execution blocks and asks instead of skipping or continuing over uncommitted changes.
 - Dry-run flow smoke checker for Auto-BMAD command files.
+- `auto-bmad init` shared Agent Skills installer that generates `/skill:auto-bmad-*` wrappers from the existing command files and copies them into `.agents/skills` without changing Claude files.
 
 ### Changed
 - Updated compatibility target to BMAD-METHOD v6.5.0 shared cross-agent skill layouts, TEA v1.15.1, and GDS v0.2.2/current skill surfaces.

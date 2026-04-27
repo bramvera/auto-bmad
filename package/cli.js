@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const { execFileSync } = require("child_process");
 const { createInterface } = require("readline");
+const fs = require("fs");
+const path = require("path");
 
 const PLUGIN_NAME = "auto-bmad";
 const MARKETPLACE = "bramvera-plugins";
@@ -16,6 +18,36 @@ const RESET = noColor ? "" : "\x1b[0m";
 
 function run(args, opts = {}) {
   return execFileSync(args[0], args.slice(1), { stdio: "inherit", ...opts });
+}
+
+function findSourceRoot() {
+  const candidates = [
+    path.resolve(__dirname, ".."),
+    __dirname,
+    process.cwd(),
+  ];
+
+  for (const candidate of candidates) {
+    if (
+      fs.existsSync(path.join(candidate, "commands")) &&
+      fs.existsSync(path.join(candidate, "scripts", "init-agent-skills.mjs"))
+    ) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+function printHelp() {
+  console.log(`Usage:
+  auto-bmad init [options]      Copy shared Agent Skills into .agents/skills
+  auto-bmad --uninstall         Uninstall the Claude Code plugin
+  auto-bmad                     Install the Claude Code plugin
+
+Init options:
+  --project-root <path>         Target project root (default: current directory)
+  --dry-run                     Print planned writes without changing files
+`);
 }
 
 function claudeExists() {
@@ -38,6 +70,25 @@ function ask(question) {
 }
 
 async function main() {
+  const args = process.argv.slice(2);
+
+  if (args.includes("--help") || args.includes("-h") || args[0] === "help") {
+    printHelp();
+    return;
+  }
+
+  if (args[0] === "init") {
+    const sourceRoot = findSourceRoot();
+    if (!sourceRoot) {
+      console.error(`${RED}Error: Auto-BMAD command sources not found.${RESET}`);
+      console.error("Run from an Auto-BMAD checkout or reinstall the npm package with bundled sources.");
+      process.exit(1);
+    }
+    const script = path.join(sourceRoot, "scripts", "init-agent-skills.mjs");
+    run([process.execPath, script, "--source-root", sourceRoot, ...args.slice(1)]);
+    return;
+  }
+
   if (!claudeExists()) {
     console.error(`${RED}Error: claude CLI not found.${RESET}`);
     console.error("Install Claude Code first: https://docs.anthropic.com/en/docs/claude-code");
@@ -45,7 +96,7 @@ async function main() {
   }
 
   // Uninstall
-  if (process.argv.includes("--uninstall")) {
+  if (args.includes("--uninstall")) {
     console.log(`Uninstalling ${PLUGIN_NAME}...`);
     try {
       run(["claude", "plugin", "uninstall", `${PLUGIN_NAME}@${MARKETPLACE}`]);

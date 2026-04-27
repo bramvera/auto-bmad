@@ -181,6 +181,33 @@ If Codex shows `Auto-BMAD [Plugin]`, the plugin is installed. The usable workflo
 
 Codex uses skills instead of native slash commands. Use `$auto-bmad` for status and workflow execution, `$auto-bmad-check` for diagnostics, and `$auto-bmad-codex` for dry-run command routing. See the [Codex Tutorial](docs/tutorial-codex.md) for the full Codex workflow.
 
+### Shared Agent Skills CLIs
+
+BMAD v6.5 can install shared skills into `.agents/skills` for CLIs such as Pi and other Agent Skills-compatible tools. Auto-BMAD can add matching workflow skills to that existing BMAD install:
+
+```bash
+npx @bramvera/auto-bmad init
+```
+
+From a local checkout:
+
+```bash
+node package/cli.js init
+```
+
+This copies generated Auto-BMAD workflow skills into the current repo's existing `.agents/skills` directory. It does not edit `.claude`, `.claude-plugin`, or the source `commands/*.md` files.
+
+After init, slash-skill CLIs should expose entries such as:
+
+```text
+/skill:auto-bmad-sprint-quick
+/skill:auto-bmad-story-quick
+/skill:auto-bmad-sprint
+/skill:auto-bmad-plan
+```
+
+Run `auto-bmad init --dry-run` to preview the copied skills. If `.agents/skills` does not exist, run the BMAD v6.5 installer for the project first.
+
 ## Recommended: RTK for Token Savings
 
 [RTK (Rust Token Killer)](https://github.com/rtk-ai/rtk) is a CLI proxy that filters verbose tool output before it reaches Claude's context window, reducing token usage by 60-90% on common dev operations (git, build, test, lint). Since auto-bmad sprints run many shell commands over hours, RTK can significantly reduce your total token consumption.
@@ -214,16 +241,19 @@ Once installed, commands like `git status`, `cargo build`, and `pnpm install` ar
 
 ---
 
-## Commands and Codex Skills
+## Commands, Codex Skills, and Shared Skills
 
-Every Auto-BMAD workflow orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. Claude Code exposes these workflows as slash commands. Codex exposes them as skills through `$auto-bmad`.
+Every Auto-BMAD workflow orchestrates existing BMAD skills -- nothing bypasses BMAD guardrails. Claude Code exposes these workflows as slash commands. Codex exposes them through `$auto-bmad`. Shared Agent Skills CLIs expose the generated wrappers through their skill command surface.
 
 | Host | Invocation style | Example |
 |------|------------------|---------|
 | Claude Code | Slash command | `/auto-bmad-sprint-quick 1` |
 | Codex | Skill command | `$auto-bmad quick sprint 1` |
+| Agent Skills CLI | Slash skill | `/skill:auto-bmad-sprint-quick 1` |
 
 See [Commands Reference](docs/commands-reference.md) for the exact BMAD skills each workflow calls.
+
+For Agent Skills CLIs, the generated skill list mirrors the Claude command list. Use `/skill:<command-name>` for the matching workflow, for example `/skill:auto-bmad-story 1-1`.
 
 ### Diagnostics
 
@@ -384,7 +414,7 @@ Review the sprint report after each epic. Fix any failed stories individually. U
 
 Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to verify the installed skill surface before starting a pipeline. It reports optional missing modules as warnings, not quick-mode failures.
 
-BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`. Auto-BMAD exposes Claude Code slash commands and Codex skills over the same BMAD skill layout. The Codex bridge exposes `$auto-bmad`, `$auto-bmad-check`, and `$auto-bmad-codex` for fast YAML progress lookup, diagnostics, explicit command menus, dry-run routing checks, and confirmed workflow execution.
+BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`. Auto-BMAD exposes Claude Code slash commands, Codex `$` skills, and generated shared Agent Skills over the same BMAD skill layout. Run `auto-bmad init` after BMAD installation to copy the generated Auto-BMAD workflow skills into `.agents/skills`.
 
 ### Config Files
 

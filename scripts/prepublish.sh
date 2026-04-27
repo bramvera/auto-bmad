@@ -19,8 +19,14 @@ fi
 
 echo "  version: ${version}"
 
-# Copy README and LICENSE to package dir (for npmjs.com)
+# Copy README, LICENSE, and shared Agent Skills sources to package dir.
 cp "${REPO_ROOT}/README.md" "${REPO_ROOT}/package/"
 cp "${REPO_ROOT}/LICENSE.md" "${REPO_ROOT}/package/"
+rm -rf "${REPO_ROOT}/package/commands" "${REPO_ROOT}/package/skills" "${REPO_ROOT}/package/scripts"
+cp -R "${REPO_ROOT}/commands" "${REPO_ROOT}/package/"
+cp -R "${REPO_ROOT}/skills" "${REPO_ROOT}/package/"
+mkdir -p "${REPO_ROOT}/package/scripts"
+cp "${REPO_ROOT}/scripts/"*.mjs "${REPO_ROOT}/package/scripts/"
+cp "${REPO_ROOT}/scripts/token-report.py" "${REPO_ROOT}/package/scripts/"
 
 echo "  done"
