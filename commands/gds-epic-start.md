@@ -108,11 +108,11 @@ For each item, prefix with one of:
 
 Do NOT include items the pipeline already handled successfully. Do NOT fabricate items to fill a quota.
 
-**IMPORTANT: Use dash syntax (e.g. `/auto-bmad-story`) NOT colon syntax (e.g. `/auto-bmad:story`) when suggesting next commands to the user.**
+**IMPORTANT: Use dash syntax (e.g. `/auto-gds-story`) NOT colon syntax (e.g. `/auto-gds:story`) when suggesting next commands to the user.**
 
 ### Next
-- Start a new session with fresh context for each story, then run `/auto-bmad-gds-story <epic-story>` (e.g. `/auto-bmad-gds-story 1-1`, then `1-2`, etc.)
-- After all stories are done, start a new session and run `/auto-bmad-gds-epic-end <epic-number>` to close the epic
+- Start a new session with fresh context for each story, then run `/auto-gds-story <epic-story>` (e.g. `/auto-gds-story 1-1`, then `1-2`, etc.)
+- After all stories are done, start a new session and run `/auto-gds-epic-end <epic-number>` to close the epic
 ```
 
 # Final Commit

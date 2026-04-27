@@ -23,7 +23,7 @@ Read `{{output_folder}}/project-context.md` if it exists.
 
 The user MUST provide a path to a change spec file (from `/auto-bmad-change-spec`). This can be either:
 - A Sprint Change Proposal (from `bmad-correct-course`)
-- A Quick Tech Spec (from `bmad-quick-spec`)
+- An Auto-BMAD minor change spec
 
 IF user provides a file path:
 THEN set `{{CHANGE_SPEC}}` to the path and read the file.

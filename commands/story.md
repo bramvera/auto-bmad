@@ -63,60 +63,57 @@ After step 1 (Create) succeeds, glob `{{implementation_artifacts}}/{{STORY_ID}}-
 
 # Pipeline Steps
 
-After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"` and prints a 1-line progress update: `Step N/11: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
+After each successful step, the coordinator runs `git add -A && git commit --no-verify -m "wip({{STORY_ID}}): step N/10 <step-name> - done"` and prints a 1-line progress update: `Step N/10: <step-name> — <status>`. The coordinator must also track a running list of `(step_name, status, start_time, end_time)` — note the wall-clock time before and after each Task call to use in the final report.
 
-## Story Creation & Validation
+## Story Creation & Spec Review
 
 1. **Story {{STORY_ID}} Create**
    - **Skip if:** a story file for {{STORY_ID}} already exists in `{{implementation_artifacts}}/` (glob for `{{STORY_ID}}-*.md`). Log "Story file already exists" with the file path. Set `{{STORY_FILE}}` to the existing file path.
    - **Task prompt:** `/bmad-create-story story {{STORY_ID}} yolo`
 
-2. **Story {{STORY_ID}} Validate**
-   - **Task prompt:** `/bmad-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
-
-3. **Story {{STORY_ID}} Adversarial Review**
+2. **Story {{STORY_ID}} Adversarial Review**
    - **Task prompt:** `/bmad-review-adversarial-general {{STORY_FILE}} ultrathink yolo — review the story specification. Fix all issues found.`
 
 ## Test-First
 
-4. **Story {{STORY_ID}} ATDD**
+3. **Story {{STORY_ID}} ATDD**
    - **Task prompt:** `/bmad-testarch-atdd {{STORY_FILE}} ultrathink yolo — follow the test pyramid: prefer API-level and integration-level acceptance tests over E2E. Only create E2E tests for acceptance criteria that genuinely require full browser interaction (UI-specific flows). Generate unit tests for business logic criteria. Your scope is strictly TDD red phase: generate failing acceptance tests ONLY. Do not create or modify any production code, API routes, UI components, database schemas, or application logic — implementation is the Dev step's job.`
 
 ## Development
 
-5. **Story {{STORY_ID}} Develop**
+4. **Story {{STORY_ID}} Develop**
    - **Task prompt:** `/bmad-dev-story {{STORY_FILE}} ultrathink yolo`
 
 ## Reviews
 
-6. **Story {{STORY_ID}} Edge-Case Hunt**
+5. **Story {{STORY_ID}} Edge-Case Hunt**
    - **Task prompt:** `/bmad-review-edge-case-hunter ultrathink yolo — run git diff {{START_COMMIT_HASH}} to get the production code changes as content. Fix all relevant findings by adding the suggested guards.`
 
-7. **Story {{STORY_ID}} Code Review #1**
+6. **Story {{STORY_ID}} Code Review #1**
    - **Task prompt:** `/bmad-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
    - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_1_ISSUES}}` (integer count). If the review was clean (0 issues), set `{{REVIEW_1_CLEAN}}` to true.
 
-8. **Story {{STORY_ID}} Code Review #2**
+7. **Story {{STORY_ID}} Code Review #2**
    - **Skip if:** `{{REVIEW_1_CLEAN}}` is true. Log "Code Review #1 was clean — skipping reviews #2 and #3".
    - **Task prompt:** `/bmad-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
    - After the Task returns, check the result for how many issues were found and fixed. Store as `{{REVIEW_2_ISSUES}}`. If the review was clean (0 issues), set `{{REVIEW_2_CLEAN}}` to true.
 
-9. **Story {{STORY_ID}} Code Review #3**
+8. **Story {{STORY_ID}} Code Review #3**
    - **Skip if:** `{{REVIEW_1_CLEAN}}` is true (already skipped with #2) OR `{{REVIEW_2_CLEAN}}` is true. Log "Previous review was clean — skipping review #3".
    - **Task prompt:** `/bmad-code-review {{STORY_FILE}} yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
 
 ## Traceability & Test Automation
 
-10. **Story {{STORY_ID}} Trace**
+9. **Story {{STORY_ID}} Trace**
    - **Task prompt:** `/bmad-testarch-trace {{STORY_FILE}} yolo`
 
-11. **Story {{STORY_ID}} Test Automate**
+10. **Story {{STORY_ID}} Test Automate**
     - **Task prompt:** `/bmad-testarch-automate {{STORY_FILE}} yolo — when expanding test coverage, push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
 
 # Story File Update
 
-After the pipeline steps 11 is complete, the coordinator MUST:
+After the pipeline step 10 is complete, the coordinator MUST:
 
 1. **Mark all tasks as done.** Read `{{STORY_FILE}}` and replace every unchecked task checkbox (`- [ ]`) with a checked one (`- [x]`). All tasks were implemented — the dev step built the code, the tests pass, and the reviews confirmed it. Do not leave unchecked boxes in a completed story.
 2. **Check completeness.** Verify the story file contains the detailed list of findings and fixes from each review (split by review), and that anything after `## Dev Agent Record` is not empty or placeholder text.
@@ -164,16 +161,15 @@ Use this template for the report:
 | # | Step | Status | Duration | Summary |
 |---|------|--------|----------|---------|
 | 1 | Story Create | done/skipped | Xm | <story title/scope> |
-| 2 | Story Validate | done | Xm | <issues found and fixed count> |
-| 3 | Adversarial Review | done | Xm | <issues found/fixed count by severity> |
-| 4 | ATDD | done | Xm | <acceptance tests written count> |
-| 5 | Develop | done | Xm | <files created/modified, key implementation summary> |
-| 6 | Edge-Case Hunt | done | Xm | <unhandled paths found/fixed count> |
-| 7 | Code Review #1 | done | Xm | <issues found/fixed count by severity> |
-| 8 | Code Review #2 | done | Xm | <issues found/fixed count by severity> |
-| 9 | Code Review #3 | done | Xm | <issues found/fixed count by severity> |
-| 10 | Trace | done | Xm | <traceability coverage %> |
-| 11 | Test Automate | done | Xm | <tests automated count, pyramid compliance> |
+| 2 | Adversarial Review | done | Xm | <issues found/fixed count by severity> |
+| 3 | ATDD | done | Xm | <acceptance tests written count> |
+| 4 | Develop | done | Xm | <files created/modified, key implementation summary> |
+| 5 | Edge-Case Hunt | done | Xm | <unhandled paths found/fixed count> |
+| 6 | Code Review #1 | done | Xm | <issues found/fixed count by severity> |
+| 7 | Code Review #2 | done | Xm | <issues found/fixed count by severity> |
+| 8 | Code Review #3 | done | Xm | <issues found/fixed count by severity> |
+| 9 | Trace | done | Xm | <traceability coverage %> |
+| 10 | Test Automate | done | Xm | <tests automated count, pyramid compliance> |
 
 ## Key Decisions & Learnings
 

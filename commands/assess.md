@@ -79,10 +79,10 @@ For each epic (or just `{{ASSESS_EPIC}}` if set):
 
 | Condition | Mode | Steps |
 |-----------|------|-------|
-| > 5 stories | full | 11 |
-| Epic touches auth, payments, or compliance | full | 11 |
-| Epic implements 3rd-party integrations with SLAs | full | 11 |
-| Epic is core data model / migration | full | 11 |
+| > 5 stories | full | 10 |
+| Epic touches auth, payments, or compliance | full | 10 |
+| Epic implements 3rd-party integrations with SLAs | full | 10 |
+| Epic is core data model / migration | full | 10 |
 | All other epics | quick | 3 |
 
 4. Write a 1-line rationale. Be specific — reference the actual condition that triggered the decision (e.g., "6 stories" or "Epic implements Stripe payments").
@@ -96,10 +96,10 @@ Append or update the following fields in `{{implementation_artifacts}}/sprint-st
 project_complexity: <simple|standard|enterprise>
 default_mode: <quick|full>
 epic-1-mode: <quick|full>
-epic-1-steps: <3|11>
+epic-1-steps: <3|10>
 epic-1-rationale: "<one-line reason>"
 epic-2-mode: <quick|full>
-epic-2-steps: <3|11>
+epic-2-steps: <3|10>
 epic-2-rationale: "<one-line reason>"
 # ... repeat for all epics
 ```
@@ -116,9 +116,9 @@ Assessment complete — {{project_complexity}} project (default: {{default_mode}
 Epic | Mode  | Steps | Rationale
 -----+-------+-------+-----------
   1  | quick |   3   | Simple CRUD, 3 stories
-  2  | full  |  11   | Implements JWT auth and RBAC
+  2  | full  |  10   | Implements JWT auth and RBAC
   3  | quick |   3   | UI components, no backend changes
-  4  | full  |  11   | 7 stories
+  4  | full  |  10   | 7 stories
   ...
 ```
 

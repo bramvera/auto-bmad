@@ -113,7 +113,7 @@ After each successful step, the coordinator runs `git add -A && git commit --no-
 
 1. **Create Product Brief**
    - **Skip if:** product brief OR PRD already exists. Log "Product brief already exists" or "PRD already exists — product brief not needed".
-   - **Task prompt:** `/bmad-create-product-brief yolo — {{USER_INPUT_INSTRUCTION}}`
+   - **Task prompt:** `/bmad-product-brief -A yolo — {{USER_INPUT_INSTRUCTION}}`
 
 ## Phase 2: Planning
 

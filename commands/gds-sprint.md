@@ -32,7 +32,7 @@ ELSE ask the user to provide the epic number to run and set {{EPIC_ID}} to the p
 
 # Sprint Pipeline
 
-Run the entire epic lifecycle autonomously — epic-start, then each story's 11 steps directly, then epic-end. This is fully hands-off: kick it off and walk away.
+Run the entire epic lifecycle autonomously — epic-start, then each story's 10 steps directly, then epic-end. This is fully hands-off: kick it off and walk away.
 
 **ARCHITECTURE NOTE:** The sprint coordinator runs each story step as a direct Task call — it does NOT delegate to `/auto-gds-story`. This avoids 3-level nesting (sprint → story coordinator → step agent) which causes context exhaustion. Instead: sprint → step agent (2 levels only).
 
@@ -98,7 +98,7 @@ For each story ID `{{STORY_ID}}` in `{{STORY_LIST}}`, in order:
 3. Record `{{STORY_START_COMMIT}}` — run `git rev-parse --short HEAD`
 4. Set `{{EPIC_ID}}` and `{{STORY_NUM}}` by splitting `{{STORY_ID}}` on the dash separator.
 
-Run the 11 story steps below. After each successful step, run `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip({{STORY_ID}}): step N/11 <step-name> - done"`. This skips the commit if the BMAD skill already committed its own changes (working tree clean). Do NOT treat "nothing to commit" as an error — it just means the skill handled its own commits.
+Run the 10 story steps below. After each successful step, run `git add -A && git diff --cached --quiet || git commit --no-verify -m "wip({{STORY_ID}}): step N/10 <step-name> - done"`. This skips the commit if the BMAD skill already committed its own changes (working tree clean). Do NOT treat "nothing to commit" as an error — it just means the skill handled its own commits.
 
 If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT}}`, log the failure, update the progress file, and skip to the next story.
 
@@ -109,43 +109,40 @@ If any step fails after retry, roll back: `git reset --hard {{STORY_START_COMMIT
 - **Task prompt:** `/gds-create-story story {{STORY_ID}} yolo`
 - After success: glob `{{implementation_artifacts}}/{{STORY_ID}}-*.md` to set `{{STORY_FILE}}`.
 
-### Step 2: Validate Story
-- **Task prompt:** `/gds-create-story validate story {{STORY_ID}} yolo — fix all issues, recommendations and optimizations.`
-
-### Step 3: Adversarial Review
+### Step 2: Adversarial Review
 - **Task prompt:** `/bmad-review-adversarial-general {{STORY_FILE}} ultrathink yolo — review the story specification. Fix all issues found.`
 
-### Step 4: Develop
+### Step 3: Develop
 - **Task prompt:** `/gds-dev-story {{STORY_FILE}} ultrathink yolo`
 
-### Step 5: Edge-Case Hunt
+### Step 4: Edge-Case Hunt
 - **Task prompt:** `/bmad-review-edge-case-hunter ultrathink yolo — run git diff {{STORY_START_COMMIT}} to get the production code changes as content. Fix all relevant findings by adding the suggested guards.`
 
-### Step 6: Code Review #1
+### Step 5: Code Review #1
 - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 - After Task returns, extract issue count. If 0 issues found, set `{{REVIEW_1_CLEAN}}` to true.
 
-### Step 7: Code Review #2
+### Step 6: Code Review #2
 - **Skip if:** `{{REVIEW_1_CLEAN}}` is true. Log "Code Review #1 was clean — skipping reviews #2 and #3".
 - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 - After Task returns, extract issue count. If 0 issues found, set `{{REVIEW_2_CLEAN}}` to true.
 
-### Step 8: Code Review #3
+### Step 7: Code Review #3
 - **Skip if:** `{{REVIEW_1_CLEAN}}` is true OR `{{REVIEW_2_CLEAN}}` is true. Log "Previous review was clean — skipping review #3".
 - **Task prompt:** `/gds-code-review {{STORY_FILE}} ultrathink yolo — fix all critical, high, and medium issues. For low issues, fix if they have concrete evidence (file:line), do not fix style preferences or hypothetical concerns as low findings.`
 
-### Step 9: Performance
+### Step 8: Performance
 - **Task prompt:** `/gds-performance-test {{STORY_FILE}} yolo`
 
-### Step 10: Test Automate
+### Step 9: Test Automate
 - **Task prompt:** `/gds-test-automate {{STORY_FILE}} yolo — when expanding test coverage, focus on game-specific scenarios: gameplay loops, state transitions, system interactions, and edge cases in game logic. Push new tests to the lowest viable layer (unit > integration/API > E2E). Do not add E2E tests for scenarios already covered at lower layers. Only add E2E tests to fill gaps in critical happy-path coverage.`
 
-### Step 11: Test Review
+### Step 10: Test Review
 - **Task prompt:** `/gds-test-review {{STORY_FILE}} yolo — review game test quality, coverage of gameplay scenarios, and ensure test reliability across game states. Include test pyramid compliance in the review.`
 
 ## Story Completion
 
-After step 11 completes successfully:
+After step 10 completes successfully:
 
 1. **Mark all tasks as done in the story file.** Read `{{STORY_FILE}}` and replace every unchecked task checkbox (`- [ ]`) with a checked one (`- [x]`). All tasks were implemented — the dev step built the code, the tests pass, and the reviews confirmed it. Do not leave unchecked boxes in a completed story.
 2. Update `{{STORY_FILE}}` status if not already marked done.

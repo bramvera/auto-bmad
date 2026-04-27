@@ -90,20 +90,18 @@ Default steps (always run):
   3. review
 
 Optional steps (add to your run):
-  [a] validate — validate story spec before dev
-  [b] security-review — security-focused review after code review
-  [c] extra-review — additional code review pass
-  [d] e2e — generate E2E tests at epic-end
+  [a] security-review — security-focused review after code review
+  [b] extra-review — additional code review pass
+  [c] e2e — generate E2E tests at epic-end
 
-Add optional steps? (enter letters like 'bd' or press enter to skip)
+Add optional steps? (enter letters like 'ac' or press enter to skip)
 >
 ```
 
 Wait for user input. Parse selection:
-- `a` adds `validate` after `create-story`
-- `b` adds `security-review` after `review`
-- `c` adds `extra-review` after `review`
-- `d` adds `e2e` to `epic_end`
+- `a` adds `security-review` after `review`
+- `b` adds `extra-review` after `review`
+- `c` adds `e2e` to `epic_end`
 
 # Step 4: Per-Epic Customization (Optional)
 
@@ -200,7 +198,6 @@ For each story in the epic with status != `completed`:
      - `create` → `/bmad-create-story story {{story_id}} yolo`
      - `dev` → `/bmad-dev-story {{story_file}} ultrathink yolo`
      - `review` → `/bmad-code-review {{story_file}} ultrathink yolo — fix all critical, high, and medium issues`
-     - `validate` → `/bmad-create-story validate {{story_id}} yolo`
      - `security-review` → `/bmad-code-review {{story_file}} ultrathink yolo — focus on security vulnerabilities, auth issues, injection risks, data exposure`
      - `extra-review` → `/bmad-code-review {{story_file}} ultrathink yolo — second pass, focus on edge cases and error handling`
    - On failure: retry once, if still fails mark story as `failed` and ask user whether to continue or stop
