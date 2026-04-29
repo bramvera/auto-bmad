@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.1] - 2026-04-29
+
+### Changed
+- Simplified README onboarding and moved detailed install, getting started, concept, and sprint guidance into `docs/`.
+- Clarified that Codex and shared Agent Skills installs use `npx @bramvera/auto-bmad init`, while BMAD remains a prerequisite linked to upstream documentation.
+
+### Fixed
+- Codex generated sprint workflows now continue automatically when the git worktree is clean, while still blocking and asking before mutating a dirty worktree.
+
 ## [0.10.0] - 2026-04-28
 
 ### Added
