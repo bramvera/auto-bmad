@@ -136,6 +136,8 @@ When Codex executes an Auto-BMAD workflow, it must preserve the same git safety 
 1. Resolve the slash-like workflow to its command file:
    - `quick story <id>` -> `commands/story-quick.md`
    - `quick sprint <epic>` -> `commands/sprint-quick.md`
+   - `assess [epic]` -> `commands/assess.md`
+   - `sprint wizard` -> `commands/sprint-wizard.md`
    - `full story <id>` -> `commands/story.md`
    - `full sprint <epic>` -> `commands/sprint.md`
    - `epic start <epic>` -> `commands/epic-start.md`
@@ -165,12 +167,16 @@ Map common Codex phrasing to Claude command names before dry-run checks:
 
 - `quick story 1-1` -> `/auto-bmad-story-quick 1-1`
 - `quick sprint 1` -> `/auto-bmad-sprint-quick 1`
+- `assess` or `assess 1` -> `/auto-bmad-assess [1]`
+- `sprint wizard` -> `/auto-bmad-sprint-wizard`
 - `full story 1-1` -> `/auto-bmad-story 1-1`
 - `full sprint 1` -> `/auto-bmad-sprint 1`
 - `plan <context>` -> `/auto-bmad-plan <context>`
 - `change spec <description>` -> `/auto-bmad-change-spec <description>`
 - `gds quick story 1-1` -> `/auto-gds-story-quick 1-1`
 - `gds quick sprint 1` -> `/auto-gds-sprint-quick 1`
+- `gds epic start 1` -> `/auto-gds-epic-start 1`
+- `gds epic end 1` -> `/auto-gds-epic-end 1`
 
 When running `smoke-auto-bmad-flow.mjs`, pass only the command name portion, not the story id, epic id, or free-form context.
 

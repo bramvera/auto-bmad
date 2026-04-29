@@ -66,7 +66,7 @@ npx @bramvera/auto-bmad init
 
 Codex exposes the generated skill names with a `$` prefix, for example `$auto-bmad-check`, `$auto-bmad-story-quick 1-1`, and `$auto-bmad-sprint-quick 1`.
 
-If you provide a story, sprint, or epic workflow but miss the required id, the generated wrapper performs a fast YAML progress lookup first. It reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next pending story or epic without running a full capability check.
+If you provide an id-taking story, sprint, or epic workflow but miss the required id, the generated wrapper performs a fast YAML progress lookup first. It reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next pending story or epic without running a full capability check.
 
 Plain `$auto-bmad` prints numbered choices. Reply `1` for the next story or `2` for the next epic/sprint. `continue` selects option 1.
 

@@ -42,7 +42,7 @@ const COMMANDS = [
   },
   {
     group: "BMM quick",
-    capability: "BMM quick",
+    capability: "BMM assess",
     syntax: "/auto-bmad-assess [epic]",
     codex: "$auto-bmad assess [epic]",
     summary: "Assess project or epic complexity and recommend quick vs full mode.",
@@ -50,7 +50,7 @@ const COMMANDS = [
   },
   {
     group: "BMM quick",
-    capability: "BMM quick",
+    capability: "BMM sprint wizard",
     syntax: "/auto-bmad-sprint-wizard",
     codex: "$auto-bmad sprint wizard",
     summary: "Interactive sprint selection and resume flow. Full choices still require TEA.",

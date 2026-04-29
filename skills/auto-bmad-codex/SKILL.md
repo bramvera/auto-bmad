@@ -18,7 +18,7 @@ Bridge Auto-BMAD into Codex safely. Prefer diagnostics and dry-runs before any r
 
 ## Fast YAML Status Path
 
-If the user names a story, sprint, or epic workflow but omits the required id, locate `status-auto-bmad.mjs` with `find_auto_bmad_script` and run:
+If the user names an id-taking story, sprint, or epic workflow but omits the required id, locate `status-auto-bmad.mjs` with `find_auto_bmad_script` and run:
 
 ```bash
 STATUS_SCRIPT="$(find_auto_bmad_script status-auto-bmad.mjs)"
@@ -160,6 +160,8 @@ Resolve command files as follows:
 
 - `/auto-bmad-story-quick` -> `commands/story-quick.md`
 - `/auto-bmad-sprint-quick` -> `commands/sprint-quick.md`
+- `/auto-bmad-assess` -> `commands/assess.md`
+- `/auto-bmad-sprint-wizard` -> `commands/sprint-wizard.md`
 - `/auto-bmad-story` -> `commands/story.md`
 - `/auto-bmad-sprint` -> `commands/sprint.md`
 - `/auto-bmad-epic-start` -> `commands/epic-start.md`
@@ -167,6 +169,8 @@ Resolve command files as follows:
 - `/auto-bmad-plan` -> `commands/plan.md`
 - `/auto-bmad-change-spec` -> `commands/change-spec.md`
 - `/auto-bmad-change-dev` -> `commands/change-dev.md`
+- `/auto-gds-epic-start` -> `commands/gds-epic-start.md`
+- `/auto-gds-epic-end` -> `commands/gds-epic-end.md`
 - `/auto-gds-*` -> the matching `commands/gds-*.md` file.
 
 For real execution:

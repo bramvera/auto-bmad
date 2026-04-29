@@ -42,16 +42,24 @@ node /path/to/auto-bmad-source/package/cli.js init
 | Workflow | Codex | Slash-skill host |
 |----------|-------|------------------|
 | Readiness check | `$auto-bmad-check` | `/skill:auto-bmad-check` |
+| Complexity assessment | `$auto-bmad-assess [epic]` | `/skill:auto-bmad-assess [epic]` |
+| Sprint wizard | `$auto-bmad-sprint-wizard` | `/skill:auto-bmad-sprint-wizard` |
 | BMM plan | `$auto-bmad-plan <context>` | `/skill:auto-bmad-plan <context>` |
 | BMM quick story | `$auto-bmad-story-quick 1-1` | `/skill:auto-bmad-story-quick 1-1` |
 | BMM quick sprint | `$auto-bmad-sprint-quick 1` | `/skill:auto-bmad-sprint-quick 1` |
 | BMM full story | `$auto-bmad-story 1-1` | `/skill:auto-bmad-story 1-1` |
 | BMM full sprint | `$auto-bmad-sprint 1` | `/skill:auto-bmad-sprint 1` |
+| BMM epic start | `$auto-bmad-epic-start 1` | `/skill:auto-bmad-epic-start 1` |
+| BMM epic end | `$auto-bmad-epic-end 1` | `/skill:auto-bmad-epic-end 1` |
+| Change spec | `$auto-bmad-change-spec <change>` | `/skill:auto-bmad-change-spec <change>` |
+| Change dev | `$auto-bmad-change-dev <spec>` | `/skill:auto-bmad-change-dev <spec>` |
 | GDS plan | `$auto-gds-plan <context>` | `/skill:auto-gds-plan <context>` |
 | GDS quick story | `$auto-gds-story-quick 1-1` | `/skill:auto-gds-story-quick 1-1` |
 | GDS quick sprint | `$auto-gds-sprint-quick 1` | `/skill:auto-gds-sprint-quick 1` |
 | GDS full story | `$auto-gds-story 1-1` | `/skill:auto-gds-story 1-1` |
 | GDS full sprint | `$auto-gds-sprint 1` | `/skill:auto-gds-sprint 1` |
+| GDS epic start | `$auto-gds-epic-start 1` | `/skill:auto-gds-epic-start 1` |
+| GDS epic end | `$auto-gds-epic-end 1` | `/skill:auto-gds-epic-end 1` |
 
 ## Readiness Check
 
@@ -74,7 +82,7 @@ $auto-bmad-sprint-quick 1
 $auto-bmad-story-quick 1-1
 ```
 
-For story, sprint, and epic skills, you can omit the id. The generated wrapper runs the fast status helper and suggests the next story or epic from BMAD sprint status.
+For id-taking story, sprint, and epic skills, you can omit the id. The generated wrapper runs the fast status helper and suggests the next story or epic from BMAD sprint status. `$auto-bmad-sprint-wizard` is interactive and does not require an id.
 
 Before real execution, Auto-BMAD checks for uncommitted changes. If the worktree is dirty, execution blocks until you choose manual cleanup, a safety commit, or abort.
 

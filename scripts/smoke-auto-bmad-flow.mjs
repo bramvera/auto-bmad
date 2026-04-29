@@ -190,18 +190,32 @@ function normalizeCommand(command) {
 
 function extractTaskPrompts(text) {
   const prompts = [];
+  const seen = new Set();
   const patterns = [
     /\*\*Task prompt(?: \(via Bash\))?:\*\*\s*`([^`]+)`/g,
     /Task prompt:\s*`([^`]+)`/g,
     /Task prompt(?: \(via Bash\))?:\s*`([^`]+)`/g,
   ];
 
+  function add(prompt, optional = false) {
+    const normalized = prompt.trim();
+    if (!normalized || seen.has(normalized)) return;
+    seen.add(normalized);
+    prompts.push({ prompt: normalized, optional });
+  }
+
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) {
-      const prompt = match[1].trim();
-      prompts.push(prompt);
+      add(match[1]);
     }
   }
+
+  const inlineMappingPattern = /^\s*-\s*`([^`]+)`\s*(?:→|->)\s*`(\/(?:bmad|gds)-[^`]+)`/gm;
+  for (const match of text.matchAll(inlineMappingPattern)) {
+    const label = match[1].trim().toLowerCase();
+    add(match[2], label === "e2e");
+  }
+
   return prompts;
 }
 
@@ -244,14 +258,18 @@ function main() {
 
   const commandText = readText(commandFile);
   const prompts = extractTaskPrompts(commandText);
-  const skillRefs = prompts.map((prompt) => ({
-    prompt,
-    skill: extractSkillRef(prompt),
+  const skillRefs = prompts.map((item) => ({
+    prompt: item.prompt,
+    optional: item.optional,
+    skill: extractSkillRef(item.prompt),
   }));
   const skillsDirs = detectSkillsDirs(args.projectRoot, args.skillsDir, args.extraSkillsDirs);
   const skills = listSkills(skillsDirs);
   const missingSkills = skillRefs
-    .filter((item) => item.skill && !skills.has(item.skill))
+    .filter((item) => item.skill && !item.optional && !skills.has(item.skill))
+    .map((item) => item.skill);
+  const optionalMissingSkills = skillRefs
+    .filter((item) => item.skill && item.optional && !skills.has(item.skill))
     .map((item) => item.skill);
   const configs = requiredConfigs(commandText);
   const missingConfigs = configs.filter((config) => !isFile(path.join(args.projectRoot, config)));
@@ -267,14 +285,22 @@ function main() {
     calls: skillRefs.map((item, index) => ({
       step: index + 1,
       skill: item.skill,
+      optional: item.optional,
       prompt: item.prompt,
-      status: item.skill ? (skills.has(item.skill) ? "ok" : "missing") : "non-skill",
+      status: item.skill
+        ? skills.has(item.skill)
+          ? "ok"
+          : item.optional
+            ? "optional-missing"
+            : "missing"
+        : "non-skill",
     })),
     configs: configs.map((config) => ({
       path: config,
       status: isFile(path.join(args.projectRoot, config)) ? "ok" : "missing",
     })),
     missingSkills: [...new Set(missingSkills)].sort(),
+    optionalMissingSkills: [...new Set(optionalMissingSkills)].sort(),
     missingConfigs,
   };
 
@@ -304,11 +330,12 @@ function main() {
 
   console.log("Resolved Calls");
   if (result.calls.length === 0) {
-    console.log("- no Task prompts found");
+    console.log("- no BMAD/GDS calls found");
   } else {
     for (const call of result.calls) {
       const label = call.skill ? `/${call.skill}` : "non-skill";
-      console.log(`${call.step}. ${label}: ${call.status}`);
+      const suffix = call.optional ? " (optional)" : "";
+      console.log(`${call.step}. ${label}: ${call.status}${suffix}`);
     }
   }
   console.log("");
@@ -323,6 +350,9 @@ function main() {
     if (result.missingSkills.length > 0) {
       console.log(`Missing skills: ${result.missingSkills.map((skill) => `/${skill}`).join(", ")}`);
     }
+  }
+  if (result.optionalMissingSkills.length > 0) {
+    console.log(`Optional missing skills: ${result.optionalMissingSkills.map((skill) => `/${skill}`).join(", ")}`);
   }
 
   process.exit(exitCode);

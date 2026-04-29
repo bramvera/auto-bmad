@@ -19,8 +19,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Auto-BMAD",
-    "shortDescription": "BMAD YAML status, diagnostics, and dry-runs.",
-    "longDescription": "Auto-BMAD packages Codex skills for BMAD 6.5 fast YAML progress lookup, quick-mode diagnostics, explicit command menus, and dry-run routing checks. The full Claude Code pipeline commands remain available in the Claude plugin package.",
+    "shortDescription": "BMAD status, diagnostics, and workflow routing.",
+    "longDescription": "Auto-BMAD packages Codex entrypoint skills for BMAD 6.5 fast YAML progress lookup, diagnostics, command menus, dry-run routing checks, and execution guidance. Full workflow skills are generated from the Claude command files into each target project's .agents/skills directory by npx @bramvera/auto-bmad init.",
     "developerName": "bramvera",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],

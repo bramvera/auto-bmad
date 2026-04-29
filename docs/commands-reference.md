@@ -14,7 +14,7 @@ Codex and other shared Agent Skills hosts use the same npm init install path: `n
 
 Before execution, Codex runs the same dirty-worktree preflight. Dirty uncommitted changes block execution until the user chooses manual cleanup, a safety commit, or abort.
 
-For story, sprint, and epic skills, invoking a generated skill without the story id or epic number runs the fast status helper and suggests the next item from BMAD sprint status.
+For id-taking story, sprint, and epic skills, invoking a generated skill without the story id or epic number runs the fast status helper and suggests the next item from BMAD sprint status. `/auto-bmad-sprint-wizard` is interactive and does not require an id.
 
 ---
 
@@ -32,6 +32,18 @@ Read-only capability check. It verifies the current project can run Auto-BMAD an
 | `_bmad/gds/config.yaml` | GDS quick/full/plan | Optional capability unavailable |
 
 The command does not create config files, install modules, migrate BMAD settings, or write reports.
+
+---
+
+### `/auto-bmad-assess [epic]`
+
+Read-only/project-file assessment that recommends quick or full mode per epic. With no epic argument, it assesses the whole project and writes recommendation fields to `sprint-status.yaml`. With an epic argument, it updates only that epic's recommendation.
+
+---
+
+### `/auto-bmad-sprint-wizard`
+
+Interactive sprint selection and resume workflow. It builds `auto-bmad-artifacts/sprint-plan.yaml`, lets the user select epics and optional steps, then executes the selected story steps with the same checkpoint discipline as quick sprint execution. It does not require an epic argument.
 
 ---
 
@@ -314,6 +326,8 @@ No epic-start phase. 3 steps per story. 1-step epic-end.
 | auto-bmad Command | Requires |
 |-------------------|----------|
 | `/auto-bmad-check` | BMAD-METHOD for useful quick-mode result; no TEA/GDS required |
+| `/auto-bmad-assess` | BMAD-METHOD |
+| `/auto-bmad-sprint-wizard` | BMAD-METHOD |
 | `/auto-bmad-plan` | BMAD-METHOD + TEA |
 | `/auto-bmad-sprint` | BMAD-METHOD + TEA |
 | `/auto-bmad-story` | BMAD-METHOD + TEA |

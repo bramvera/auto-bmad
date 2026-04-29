@@ -25,6 +25,16 @@ const BMM_QUICK_SKILLS = [
   "bmad-retrospective",
 ];
 
+const BMM_ASSESS_SKILLS = [];
+
+const BMM_SPRINT_WIZARD_SKILLS = [
+  ...BMM_QUICK_SKILLS,
+];
+
+const BMM_SPRINT_WIZARD_OPTIONAL_SKILLS = [
+  "bmad-qa-generate-e2e-tests",
+];
+
 const BMM_FULL_SKILLS = [
   ...BMM_QUICK_SKILLS,
   "bmad-review-adversarial-general",
@@ -354,6 +364,9 @@ function buildReport(args) {
   if (!bmmConfigExists) errors.push("BMM quick mode unavailable: _bmad/bmm/config.yaml is missing.");
 
   const bmmQuickMissing = missingSkills(BMM_QUICK_SKILLS, skills);
+  const bmmAssessMissing = missingSkills(BMM_ASSESS_SKILLS, skills);
+  const bmmSprintWizardMissing = missingSkills(BMM_SPRINT_WIZARD_SKILLS, skills);
+  const bmmSprintWizardOptionalMissing = missingSkills(BMM_SPRINT_WIZARD_OPTIONAL_SKILLS, skills);
   const bmmFullMissing = missingSkills(BMM_FULL_SKILLS, skills);
   const bmmPlanMissing = missingSkills(BMM_PLAN_SKILLS, skills);
   const changeSpecMissing = missingSkills(CHANGE_SPEC_SKILLS, skills);
@@ -371,6 +384,8 @@ function buildReport(args) {
   if (!exists(tokenReporter)) warnings.push("Token cost reporter not found in this plugin checkout.");
 
   const bmmQuickAvailable = bmmConfigExists && bmmQuickMissing.length === 0 && skillsDirs.length > 0;
+  const bmmAssessAvailable = bmmConfigExists && bmmAssessMissing.length === 0 && skillsDirs.length > 0;
+  const bmmSprintWizardAvailable = bmmConfigExists && bmmSprintWizardMissing.length === 0 && skillsDirs.length > 0;
   const bmmFullAvailable = bmmQuickAvailable && teaConfigExists && bmmFullMissing.length === 0;
   const bmmPlanAvailable = bmmConfigExists && teaConfigExists && bmmPlanMissing.length === 0;
   const changeSpecAvailable = bmmConfigExists && changeSpecMissing.length === 0;
@@ -393,6 +408,30 @@ function buildReport(args) {
             bmmQuickMissing.length ? formatMissing(bmmQuickMissing) : null,
           ].filter(Boolean).join("; "),
       ["/auto-bmad-story-quick", "/auto-bmad-sprint-quick"],
+    ),
+    capability(
+      "BMM assess",
+      bmmAssessAvailable,
+      bmmAssessAvailable
+        ? "available"
+        : [
+            !bmmConfigExists ? "_bmad/bmm/config.yaml missing" : null,
+            bmmAssessMissing.length ? formatMissing(bmmAssessMissing) : null,
+          ].filter(Boolean).join("; "),
+      ["/auto-bmad-assess"],
+    ),
+    capability(
+      "BMM sprint wizard",
+      bmmSprintWizardAvailable,
+      [
+        bmmSprintWizardAvailable && bmmSprintWizardOptionalMissing.length === 0 ? "available" : null,
+        bmmSprintWizardAvailable && bmmSprintWizardOptionalMissing.length
+          ? `optional E2E step unavailable: ${formatMissing(bmmSprintWizardOptionalMissing)}`
+          : null,
+        !bmmSprintWizardAvailable && !bmmConfigExists ? "_bmad/bmm/config.yaml missing" : null,
+        !bmmSprintWizardAvailable && bmmSprintWizardMissing.length ? formatMissing(bmmSprintWizardMissing) : null,
+      ].filter(Boolean).join("; "),
+      ["/auto-bmad-sprint-wizard"],
     ),
   );
 
@@ -518,7 +557,11 @@ function buildReport(args) {
 }
 
 function renderCapability(item) {
-  const mark = item.available ? "available" : `unavailable: ${item.reason || "requirements missing"}`;
+  const mark = item.available
+    ? item.reason && item.reason !== "available"
+      ? `available (${item.reason})`
+      : "available"
+    : `unavailable: ${item.reason || "requirements missing"}`;
   return `- ${item.label}: ${mark}`;
 }
 

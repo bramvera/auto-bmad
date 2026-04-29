@@ -86,6 +86,6 @@ Codex uses the same generated skill names as slash-skill hosts, with a `$` prefi
 $auto-bmad-sprint-quick 1
 ```
 
-For story, sprint, and epic skills, you can omit the id and let the generated wrapper suggest the next item from BMAD sprint status.
+For id-taking story, sprint, and epic skills, you can omit the id and let the generated wrapper suggest the next item from BMAD sprint status.
 
 Before execution, Codex checks for uncommitted changes. If the worktree is dirty, Auto-BMAD blocks until you choose manual cleanup, a safety commit, or abort.
