@@ -9,7 +9,7 @@ Bridge Auto-BMAD into Codex safely. Prefer diagnostics and dry-runs before any r
 
 ## Guardrails
 
-- Do not run full TEA pipelines unless the user explicitly asks for full execution after seeing the dry-run.
+- Do not run full TEA pipelines from ambiguous requests. A direct full command with required arguments is explicit confirmation.
 - For smoke tests, do not invoke BMAD skills. Only run the dry-run flow checker.
 - Quick mode is the baseline: missing TEA or GDS is not a quick-mode failure.
 - Treat `/auto-bmad-*` and `/auto-gds-*` text as slash-like command names. Codex may not have Claude slash command dispatch.
@@ -59,6 +59,8 @@ Before executing any selected Auto-BMAD workflow, locate and run:
 PREFLIGHT_SCRIPT="$(find_auto_bmad_script preflight-auto-bmad.mjs)"
 node "$PREFLIGHT_SCRIPT" --project-root .
 ```
+
+If the preflight exits 0 or reports `Result: PASS - git worktree is clean.`, continue immediately. Do not ask the user to confirm a clean worktree.
 
 If the preflight reports `BLOCKED`, print its output and stop. Do not run BMAD skills, do not run `git reset`, and do not mark or skip stories. The user must choose:
 
@@ -147,7 +149,7 @@ If the user asks to actually run an Auto-BMAD pipeline in Codex:
 1. Run dirty-worktree preflight.
 2. Run the capability check.
 3. Run the dry-run flow check for the exact command.
-4. For full/TEA commands, stop and ask for explicit confirmation before continuing.
+4. If preflight is clean and the command has the required story id, epic id, spec path, or context, continue without an extra confirmation prompt. Ask only when the request is ambiguous or missing required inputs.
 5. Resolve the exact command file and execute that workflow contract.
 
 ## Codex Execution Contract

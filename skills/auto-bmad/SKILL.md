@@ -55,7 +55,7 @@ After printing plain `$auto-bmad` status, the script lists numbered actions. Int
 - `1`, `ok`, `continue`, `ok please continue`, `please continue`, `yes`, or `go` -> select option 1, the next story.
 - `2` -> select option 2, the next epic/sprint.
 
-After selection, run the same safety path as if the user had typed the listed command: dirty-worktree preflight, capability check, dry-run, then proceed only within the Codex execution boundary.
+After selection, run the same safety path as if the user had typed the listed command: dirty-worktree preflight, capability check, dry-run, then proceed only within the Codex execution boundary. A clean preflight is not a user-confirmation point.
 
 ## Dirty Worktree Preflight
 
@@ -80,6 +80,8 @@ if [ -z "$PREFLIGHT_SCRIPT" ]; then
 fi
 node "$PREFLIGHT_SCRIPT" --project-root .
 ```
+
+If the preflight exits 0 or reports `Result: PASS - git worktree is clean.`, continue immediately. Do not ask the user to confirm a clean worktree.
 
 If the preflight reports `BLOCKED`, print its output and stop. Do not skip the story, do not run BMAD skills, do not run git reset, and do not continue. Ask the user to choose:
 
@@ -125,7 +127,7 @@ Print the output exactly. It lists ready commands first and marks optional missi
 - For `/auto-bmad-check`, availability questions, or "can Auto-BMAD run here", run the read-only capability check from `$auto-bmad-check`.
 - For `/auto-bmad-*`, `/auto-gds-*`, or natural-language workflow requests in Codex, use `$auto-bmad-codex` to run the dry-run flow checker first.
 - For quick-mode execution requests, run the capability check and dry-run first, then execute the matching Auto-BMAD workflow contract below.
-- For full/TEA execution requests, stop after the dry-run unless the user explicitly confirms they want to spend the tokens.
+- For full/TEA execution requests, treat a direct command with required arguments, such as `$auto-bmad-sprint 1`, as explicit user intent. Run the capability check and dry-run first, then continue without asking for a second confirmation when preflight is clean. Ask only when the request is ambiguous, missing required arguments, or selected from an informational menu/status output.
 
 ## Codex Execution Contract
 
@@ -174,7 +176,7 @@ When running `smoke-auto-bmad-flow.mjs`, pass only the command name portion, not
 
 ## Safety
 
-- Do not run full TEA pipelines unless the user explicitly confirms after seeing the dry-run.
+- Do not run full TEA pipelines from ambiguous requests. A direct full command with required arguments is explicit confirmation.
 - Do not recommend installing TEA or GDS for normal quick-mode use.
 - Treat missing TEA/GDS as optional capability gaps unless the requested command requires them.
 - Never skip dirty uncommitted changes. Dirty worktree preflight is blocking for execution.
