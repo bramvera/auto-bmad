@@ -24,6 +24,17 @@ Your project must have these BMAD config files (created by the BMAD CLI during p
 
 Run `/auto-bmad-check` to validate your installed modules. TEA is only required for full BMM, plan, and change-dev pipelines; quick story/sprint mode does not need it.
 
+### Command Syntax by Host
+
+The examples below use Claude Code slash commands. Use the matching host syntax if you are running Auto-BMAD somewhere else:
+
+| Intent | Claude Code | Codex | Pi / shared Agent Skills |
+|--------|-------------|-------|--------------------------|
+| Readiness check | `/auto-bmad-check` | `$auto-bmad-check` | `/skill:auto-bmad-check` |
+| Plan | `/auto-bmad-plan <context>` | `$auto-bmad-plan <context>` | `/skill:auto-bmad-plan <context>` |
+| Quick sprint | `/auto-bmad-sprint-quick 1` | `$auto-bmad-sprint-quick 1` | `/skill:auto-bmad-sprint-quick 1` |
+| Full sprint | `/auto-bmad-sprint 1` | `$auto-bmad-sprint 1` | `/skill:auto-bmad-sprint 1` |
+
 ### CLI Tools
 
 - `jq` -- required for JSON processing in pipeline steps

@@ -19,6 +19,17 @@ Your project must have this BMAD config file (created by the BMAD CLI during pro
 
 Run `/auto-bmad-check` before starting a GDS pipeline. GDS references are statically checked against v0.2.2 and current source skill layouts.
 
+### Command Syntax by Host
+
+The examples below use Claude Code slash commands. Use the matching host syntax if you are running Auto-BMAD somewhere else:
+
+| Intent | Claude Code | Codex | Pi / shared Agent Skills |
+|--------|-------------|-------|--------------------------|
+| Readiness check | `/auto-bmad-check` | `$auto-bmad-check` | `/skill:auto-bmad-check` |
+| GDS plan | `/auto-gds-plan <context>` | `$auto-gds-plan <context>` | `/skill:auto-gds-plan <context>` |
+| GDS quick sprint | `/auto-gds-sprint-quick 1` | `$auto-gds-sprint-quick 1` | `/skill:auto-gds-sprint-quick 1` |
+| GDS full sprint | `/auto-gds-sprint 1` | `$auto-gds-sprint 1` | `/skill:auto-gds-sprint 1` |
+
 ### CLI Tools
 
 - `jq` -- required for JSON processing in pipeline steps

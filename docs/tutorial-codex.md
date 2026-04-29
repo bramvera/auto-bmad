@@ -1,129 +1,61 @@
 # Auto-BMAD with Codex
 
-This tutorial shows how to use Auto-BMAD from Codex against BMAD v6.5 shared skill installs.
+This tutorial shows how to use Auto-BMAD from Codex against a BMAD v6.5 project.
 
-Codex support is a bridge for status, diagnostics, command discovery, dry-run routing, and confirmed workflow execution through skills. Claude Code uses native slash commands; Codex uses `$auto-bmad` skills for the same workflow intent.
-
-## What Codex Can Do
-
-In Codex, Auto-BMAD provides:
-
-- fast YAML progress lookup with `$auto-bmad`
-- read-only readiness checks with `$auto-bmad-check`
-- explicit command menus with `$auto-bmad menu`
-- dry-run routing checks with `$auto-bmad-codex`
-- dirty-worktree preflight before any real execution
-
-Codex does not need a separate Auto-BMAD YAML file. For BMAD v6.5+, it reads the BMAD module config, such as `_bmad/bmm/config.yaml`, then resolves configured output paths like `implementation_artifacts` to find `sprint-status.yaml`.
+Codex uses the same generated Agent Skills install as Pi and other shared-skill hosts. The difference is command syntax: Codex uses `$skill-name`, while slash-skill hosts use `/skill:skill-name`.
 
 ## Prerequisites
 
-Install BMAD v6.5+ in your project first:
-
-```bash
-npx bmad-method install
-```
+Auto-BMAD assumes the target project already has BMAD v6.5+ installed and configured. Follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) for BMAD setup before using Auto-BMAD.
 
 For quick mode, BMAD-METHOD is enough. TEA is only needed for full BMM pipelines, and GDS is only needed for game-development pipelines.
 
 ## Install Auto-BMAD
 
-Install the Auto-BMAD plugin in Codex using the normal Codex plugin flow for this repository.
+Run this from each target project:
 
-After installation, Codex may show both plugin and skill entries, for example:
-
-```text
-Auto-BMAD              [Plugin]
-Auto-BMAD Menu         [Skill]
-Auto-BMAD Check        [Skill]
-Auto-BMAD Flow Check   [Skill]
+```bash
+cd /path/to/your/project
+npx @bramvera/auto-bmad init
 ```
 
-The plugin row means the bundle is installed. The invocable workflows are the skills.
+This writes generated Auto-BMAD workflow skills into the target project's `.agents/skills` directory. It writes only under `.agents/skills`.
 
-Some Codex surfaces may show namespaced skill names such as:
+Preview first:
 
-```text
-auto-bmad:auto-bmad
-auto-bmad:auto-bmad-check
-auto-bmad:auto-bmad-codex
+```bash
+npx @bramvera/auto-bmad init --dry-run
 ```
 
-## Daily Flow
+If `.agents/skills` does not exist, complete the BMAD project setup from BMAD's documentation first.
 
-Use the main entrypoint:
+For local development from a source checkout:
 
-```text
-$auto-bmad
+```bash
+git clone https://github.com/bramvera/auto-bmad.git /path/to/auto-bmad-source
+cd /path/to/your/project
+node /path/to/auto-bmad-source/package/cli.js init
 ```
 
-With no arguments, Auto-BMAD reads BMAD YAML status and suggests the next pending story and epic. It does not print the full menu during day-to-day use.
+## Command List
 
-Example output:
-
-```text
-Auto-BMAD Status
-Project: /path/to/project
-Config: _bmad/bmm/config.yaml
-Sprint status: _bmad-output/implementation-artifacts/sprint-status.yaml
-
-Next pending story: 2-3 (event management admin ui)
-Suggested: $auto-bmad quick story 2-3
-
-Next pending epic: 2
-Pending stories in epic 2: 1
-Suggested: $auto-bmad quick sprint 2
-
-Choose:
-1. Run next story 2-3
-2. Run next epic 2
-```
-
-Reply:
-
-```text
-1
-```
-
-to continue with the next story, or:
-
-```text
-2
-```
-
-to continue with the next epic/sprint.
-
-`continue`, `ok`, `yes`, and similar short confirmations choose option 1.
-
-## Running Workflows
-
-Claude Code and Codex use different invocation surfaces:
-
-| Workflow | Claude Code | Codex |
-|----------|-------------|-------|
-| Readiness check | `/auto-bmad-check` | `$auto-bmad-check` |
-| Status / next action | plugin command list or explicit command | `$auto-bmad` |
-| Command menu | plugin command list | `$auto-bmad menu` |
-| Quick story | `/auto-bmad-story-quick 2-3` | `$auto-bmad quick story 2-3` |
-| Quick sprint | `/auto-bmad-sprint-quick 2` | `$auto-bmad quick sprint 2` |
-| Full story | `/auto-bmad-story 2-3` | `$auto-bmad full story 2-3` |
-| Full sprint | `/auto-bmad-sprint 2` | `$auto-bmad full sprint 2` |
-
-In Codex, prefer starting with `$auto-bmad`. It reads YAML progress, shows numbered choices, runs the dirty-worktree preflight, and then continues with the selected workflow only after the route is clear.
-
-## Command Menu
-
-Only ask for the menu when you need discovery:
-
-```text
-$auto-bmad menu
-```
-
-This avoids repeatedly printing a large command list during normal progress checks.
+| Workflow | Codex | Slash-skill host |
+|----------|-------|------------------|
+| Readiness check | `$auto-bmad-check` | `/skill:auto-bmad-check` |
+| BMM plan | `$auto-bmad-plan <context>` | `/skill:auto-bmad-plan <context>` |
+| BMM quick story | `$auto-bmad-story-quick 1-1` | `/skill:auto-bmad-story-quick 1-1` |
+| BMM quick sprint | `$auto-bmad-sprint-quick 1` | `/skill:auto-bmad-sprint-quick 1` |
+| BMM full story | `$auto-bmad-story 1-1` | `/skill:auto-bmad-story 1-1` |
+| BMM full sprint | `$auto-bmad-sprint 1` | `/skill:auto-bmad-sprint 1` |
+| GDS plan | `$auto-gds-plan <context>` | `/skill:auto-gds-plan <context>` |
+| GDS quick story | `$auto-gds-story-quick 1-1` | `/skill:auto-gds-story-quick 1-1` |
+| GDS quick sprint | `$auto-gds-sprint-quick 1` | `/skill:auto-gds-sprint-quick 1` |
+| GDS full story | `$auto-gds-story 1-1` | `/skill:auto-gds-story 1-1` |
+| GDS full sprint | `$auto-gds-sprint 1` | `/skill:auto-gds-sprint 1` |
 
 ## Readiness Check
 
-Run:
+Start with:
 
 ```text
 $auto-bmad-check
@@ -133,56 +65,41 @@ This is read-only. It checks BMAD skill availability, module configs, optional m
 
 Quick mode is the baseline. Missing TEA or GDS is reported as an optional capability warning, not a quick-mode failure.
 
-## Dry-Run Flow Check
+## Running Workflows
 
-Run:
-
-```text
-$auto-bmad-codex
-```
-
-or provide a slash-like command to check routing:
+Use the direct generated skill name:
 
 ```text
-$auto-bmad-codex /auto-bmad-story-quick 1-1
+$auto-bmad-sprint-quick 1
+$auto-bmad-story-quick 1-1
 ```
 
-This validates that Auto-BMAD can resolve the command and referenced BMAD skills. It does not execute the BMAD story, sprint, or TEA flow.
+For story, sprint, and epic skills, you can omit the id. The generated wrapper runs the fast status helper and suggests the next story or epic from BMAD sprint status.
 
-## Dirty Worktree Preflight
-
-Before real execution, Auto-BMAD checks for uncommitted changes.
-
-If the worktree is dirty, execution blocks and Codex should ask you to choose:
-
-```text
-1. Commit/stash/clean manually, then rerun Auto-BMAD
-2. Create a safety commit of all current changes, then continue
-3. Abort
-```
-
-Auto-BMAD should not skip stories, run rollback logic, or continue over dirty user work.
+Before real execution, Auto-BMAD checks for uncommitted changes. If the worktree is dirty, execution blocks until you choose manual cleanup, a safety commit, or abort.
 
 ## New Projects
 
-If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the project as pre-sprint.
+If `sprint-status.yaml` does not exist yet, story and sprint skills cannot suggest the next item. Run planning and sprint planning first:
 
-In that case, run planning and sprint planning first. Auto-BMAD will point you toward the next useful command instead of requiring a separate Auto-BMAD config file.
+```text
+$auto-bmad-plan <product description or @file>
+```
+
+Auto-BMAD does not require a separate Auto-BMAD config file.
 
 ## Claude Code vs Codex
 
-Use Claude Code when you want native slash-command execution:
+Use Claude Code slash commands when running in Claude Code:
 
 ```text
 /auto-bmad-sprint-quick 1
-/auto-bmad-sprint 1
 ```
 
-Use Codex when you want the skill surface:
+Use Codex skill commands when running in Codex:
 
 ```text
-$auto-bmad quick sprint 1
-$auto-bmad full sprint 1
+$auto-bmad-sprint-quick 1
 ```
 
-The workflow intent is the same. The difference is the host interface: Claude Code installs slash commands, while Codex installs skills and routes through `$auto-bmad`.
+The workflow intent is the same. The install path is the same as other shared Agent Skills hosts; only the command prefix changes.

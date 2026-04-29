@@ -155,7 +155,7 @@ function buildSkill({ name, description, body }) {
   const commandName = commandNameForSkill(name);
   const statusInstruction = workflowStatusInstruction(name);
 
-  return `---\nname: ${name}\ndescription: "${escapeFrontmatter(description)}"\n---\n\n# ${title}\n\nThis is the shared Agent Skills wrapper for Claude Code command \`${commandName}\`.\n\n## Shared Agent Skills Host Adaptation\n\nFollow the workflow below as the source of truth. This wrapper exists so Agent Skills-compatible CLIs can expose Auto-BMAD workflows through their native skill or slash-skill surface, for example \`/skill:${name}\`.\n\n- Do not edit the original Claude command files.\n- When the workflow says to use a Claude Code foreground Task tool, use this host's closest fresh-context subagent mechanism. If the host has no equivalent, execute the BMAD skill calls sequentially in the current session and preserve all coordinator duties.\n- When the workflow references a BMAD slash command such as \`/bmad-dev-story\`, invoke the installed BMAD skill using this host's skill syntax, such as \`/skill:bmad-dev-story\`, if direct slash commands are not available.\n- Preserve Auto-BMAD git safety exactly: record start commits, run per-step WIP commits, update story/sprint status files, run the final squash/final commit, and check \`git status --short\` before reporting completion.\n- If the workflow references \`./scripts/<script>\` and that path is missing, use \`.agents/skills/${RUNTIME_DIR}/scripts/<script>\` from the project root.\n- If the token cost report script is unavailable on this host, skip only the cost report and mark estimated cost as unavailable. Do not skip workflow validation, commits, status updates, or reports.\n- Do not report the workflow as complete while implemented changes remain uncommitted unless the user explicitly asked to stop before committing.\n${statusInstruction}\n## Source Workflow\n\n${body.trimEnd()}\n`;
+  return `---\nname: ${name}\ndescription: "${escapeFrontmatter(description)}"\n---\n\n# ${title}\n\nThis is the shared Agent Skills wrapper for Claude Code command \`${commandName}\`.\n\n## Shared Agent Skills Host Adaptation\n\nFollow the workflow below as the source of truth. This wrapper exists so Agent Skills-compatible CLIs can expose Auto-BMAD workflows through their native skill surface, for example \`$${name}\` in Codex or \`/skill:${name}\` in slash-skill hosts.\n\n- Do not edit the original Claude command files.\n- When the workflow says to use a Claude Code foreground Task tool, use this host's closest fresh-context subagent mechanism. If the host has no equivalent, execute the BMAD skill calls sequentially in the current session and preserve all coordinator duties.\n- When the workflow references a BMAD slash command such as \`/bmad-dev-story\`, invoke the installed BMAD skill using this host's skill syntax, such as \`$bmad-dev-story\` or \`/skill:bmad-dev-story\`, if direct slash commands are not available.\n- Preserve Auto-BMAD git safety exactly: record start commits, run per-step WIP commits, update story/sprint status files, run the final squash/final commit, and check \`git status --short\` before reporting completion.\n- If the workflow references \`./scripts/<script>\` and that path is missing, use \`.agents/skills/${RUNTIME_DIR}/scripts/<script>\` from the project root.\n- If the token cost report script is unavailable on this host, skip only the cost report and mark estimated cost as unavailable. Do not skip workflow validation, commits, status updates, or reports.\n- Do not report the workflow as complete while implemented changes remain uncommitted unless the user explicitly asked to stop before committing.\n${statusInstruction}\n## Source Workflow\n\n${body.trimEnd()}\n`;
 }
 
 function listCommandFiles(commandsDir) {
@@ -182,7 +182,7 @@ function validateTarget(projectRoot) {
   if (!fs.existsSync(skillsDir)) {
     throw new Error(
       `Target .agents/skills directory not found: ${skillsDir}\n` +
-      "Run the BMAD 6.5 installer for this project first, then rerun Auto-BMAD init."
+      "Complete BMAD 6.5 project setup first, then rerun Auto-BMAD init."
     );
   }
   return skillsDir;
@@ -280,7 +280,7 @@ function main() {
       console.log(`- ${item}`);
     }
     console.log("");
-    console.log("Done. Shared Agent Skills CLIs should expose these as skill commands, for example /skill:auto-bmad-sprint-quick.");
+    console.log("Done. Codex/shared Agent Skills hosts should expose these as skill commands, for example $auto-bmad-sprint-quick or /skill:auto-bmad-sprint-quick.");
   } catch (error) {
     console.error(`Auto-BMAD init failed: ${error.message}`);
     process.exit(1);

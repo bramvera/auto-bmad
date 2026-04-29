@@ -54,13 +54,19 @@ Yes. `/auto-bmad-story-quick 1-1` runs a single story in quick mode (3 steps). I
 
 ### What is auto-bmad?
 
-A Claude Code plugin that orchestrates BMAD skills sequentially, with a Codex bridge for read-only diagnostics and dry-run routing checks. It doesn't implement anything itself — it calls BMAD skills (like `/bmad-create-story`, `/bmad-dev-story`, `/bmad-code-review`) one after another with the right arguments, git checkpoints, and retry logic. Think of it as a pipeline runner for BMAD.
+An Auto-BMAD host package for Claude Code, Codex, and shared Agent Skills-compatible CLIs. It doesn't implement anything itself — it calls BMAD skills (like `/bmad-create-story`, `/bmad-dev-story`, `/bmad-code-review`) one after another with the right arguments, git checkpoints, and retry logic. Think of it as a pipeline runner for BMAD.
 
 ### Can I use auto-bmad in Codex?
 
-Yes, for diagnostics and dry-run routing checks. Codex plugins expose skills, so use `$auto-bmad` as the main entrypoint. With no specific workflow, it reads YAML progress and suggests the next story or epic. Use `$auto-bmad menu` for the command menu, `$auto-bmad-check` for the read-only capability check, and `$auto-bmad` or `$auto-bmad-codex` to dry-run slash-like commands such as `/auto-bmad-story-quick 1-1`.
+Yes. Install it with the same shared Agent Skills command:
 
-If you provide a workflow but miss the required story or epic id, Codex performs a fast YAML progress lookup first. It reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next pending story or epic without running a full capability check.
+```bash
+npx @bramvera/auto-bmad init
+```
+
+Codex exposes the generated skill names with a `$` prefix, for example `$auto-bmad-check`, `$auto-bmad-story-quick 1-1`, and `$auto-bmad-sprint-quick 1`.
+
+If you provide a story, sprint, or epic workflow but miss the required id, the generated wrapper performs a fast YAML progress lookup first. It reads `_bmad/bmm/config.yaml`, resolves `_bmad-output/implementation-artifacts/sprint-status.yaml`, and suggests the next pending story or epic without running a full capability check.
 
 Plain `$auto-bmad` prints numbered choices. Reply `1` for the next story or `2` for the next epic/sprint. `continue` selects option 1.
 
@@ -74,17 +80,16 @@ Auto-BMAD should never skip a story or continue into retry/rollback logic over d
 
 There is no separate `auto-bmad` YAML config in BMAD v6.5+ support. If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the repo as a new/pre-sprint project and suggests planning or sprint-planning next steps.
 
-If Codex shows only `Auto-BMAD [Plugin]`, that means the installable bundle is present. The invocable workflows are bundled skills, and some Codex surfaces show them with the plugin namespace, for example `auto-bmad:auto-bmad`.
-
-Claude Code exposes Auto-BMAD as slash commands. Codex exposes Auto-BMAD as skills. In Codex, start with `$auto-bmad`; it reads YAML status, offers numbered choices, runs the dirty-worktree preflight, and then continues through the selected workflow when confirmed.
+Claude Code exposes Auto-BMAD as slash commands. Codex exposes Auto-BMAD as generated skills. The workflow names are the same; the host prefix changes.
 
 See [Auto-BMAD with Codex](tutorial-codex.md) for the step-by-step Codex workflow.
 
 ### Which BMAD version does this fork support?
 
-This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD provides Claude Code slash commands and Codex skills over that shared skill layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD provides Claude Code slash commands and generated shared skills over that layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
 
 Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to validate the installed modules. Missing TEA or GDS is reported as optional unless you choose a pipeline that needs it.
+For Pi or another shared Agent Skills host, run `/skill:auto-bmad-check`.
 
 ### Do I need all the BMAD modules?
 
@@ -119,11 +124,29 @@ Rough token usage per command:
 
 ### How do I install from this fork?
 
+See [Installation](installation.md) for the full host-specific setup.
+
+For Claude Code, the fastest install is:
+
+```bash
+npx @bramvera/auto-bmad
+```
+
+Or install manually inside Claude Code:
+
 ```
 /plugin marketplace add bramvera/claude-code-plugins
 /plugin install auto-bmad@bramvera-plugins --scope user
 /reload-plugins
 ```
+
+For Codex, Pi, or another shared Agent Skills-compatible host, run this from the target project:
+
+```bash
+npx @bramvera/auto-bmad init
+```
+
+This writes generated Auto-BMAD wrappers into the target project's `.agents/skills` directory. The target project must already be a BMAD project; follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) for BMAD setup. Start with `$auto-bmad-check` in Codex or `/skill:auto-bmad-check` in slash-skill hosts.
 
 ### How do I switch from the original to this fork?
 
@@ -144,6 +167,12 @@ rm -rf ~/.claude/plugins/cache/bramvera-plugins/auto-bmad
 ```
 
 Then `/reload-plugins`. This forces a fresh download from GitHub.
+
+For shared Agent Skills installs, rerun this from the target project:
+
+```bash
+npx @bramvera/auto-bmad init
+```
 
 ### I see both colon and dash syntax — which one do I use?
 

@@ -158,8 +158,13 @@ function collectScanFiles(repoRoot) {
     "README.md",
     "CHANGELOG.md",
     "docs/commands-reference.md",
+    "docs/concepts.md",
     "docs/faq.md",
+    "docs/getting-started.md",
+    "docs/installation.md",
+    "docs/sprints.md",
     "docs/tutorial-bmm.md",
+    "docs/tutorial-codex.md",
     "docs/tutorial-gds.md",
   ];
 

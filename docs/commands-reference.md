@@ -7,11 +7,14 @@ Auto-BMAD exposes the same workflow intent through different host interfaces.
 | Host | Invocation style | Example |
 |------|------------------|---------|
 | Claude Code | Slash command | `/auto-bmad-story-quick 1-1` |
-| Codex | Skill command | `$auto-bmad quick story 1-1` |
+| Codex | Skill command | `$auto-bmad-story-quick 1-1` |
+| Agent Skills CLI | Slash skill | `/skill:auto-bmad-story-quick 1-1` |
 
-In Codex, use `$auto-bmad` as the main entrypoint. With no specific workflow, it reads YAML progress and suggests the next story or epic. Use `$auto-bmad menu` for the command menu, `$auto-bmad-check` for diagnostics, and `$auto-bmad-codex` for direct dry-run routing checks. Codex plugins expose skills rather than Claude-style slash command files, so slash-like text such as `/auto-bmad-story-quick 1-1` is routed through the Codex skill bridge.
+Codex and other shared Agent Skills hosts use the same npm init install path: `npx @bramvera/auto-bmad init` from the target project. The generated skill names are the same; only the host prefix changes. Codex uses `$auto-bmad-sprint-quick 1`, while slash-skill hosts use `/skill:auto-bmad-sprint-quick 1`.
 
-Before execution, Codex runs a dirty-worktree preflight. Dirty uncommitted changes block execution until the user chooses manual cleanup, a safety commit, or abort.
+Before execution, Codex runs the same dirty-worktree preflight. Dirty uncommitted changes block execution until the user chooses manual cleanup, a safety commit, or abort.
+
+For story, sprint, and epic skills, invoking a generated skill without the story id or epic number runs the fast status helper and suggests the next item from BMAD sprint status.
 
 ---
 
