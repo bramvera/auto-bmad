@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.10.3",
-  "description": "[0.10.3] Auto-BMAD Codex skills for BMAD 6.5 diagnostics and dry-run flow checks.",
+  "version": "0.10.4",
+  "description": "[0.10.4] Auto-BMAD Codex skills for BMAD 6.5 diagnostics and dry-run flow checks.",
   "author": {
     "name": "bramvera",
     "url": "https://github.com/bramvera"

@@ -39,6 +39,8 @@ Options:
 
 Wait for user input. If `r`, load the plan and jump to "Execute Plan" section. If `s`, mark current story as skipped and continue. If `n`, continue with wizard. If `c`, stop.
 
+If the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait here. Set `{{RUN_MODE}}` to `autonomous`, choose `r`, load the plan, and jump to "Execute Plan" section.
+
 **If no plan exists or user chose `n`:** Continue with wizard below.
 
 # Step 1: Scan Epics
@@ -78,6 +80,8 @@ Which epics to run?
 
 Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 
+If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
+
 # Step 3: Customize Steps
 
 Display:
@@ -103,6 +107,8 @@ Wait for user input. Parse selection:
 - `b` adds `extra-review` after `review`
 - `c` adds `e2e` to `epic_end`
 
+If `{{RUN_MODE}}` is `autonomous`, do not wait for optional step input. Use the default quick-safe story steps only: `create`, `dev`, `review`, and `retro` at epic end. Do not add optional steps unless the user explicitly requested them in the original wizard invocation.
+
 # Step 4: Per-Epic Customization (Optional)
 
 Ask:
@@ -122,6 +128,8 @@ Epic {{id}} ({{name}}):
   Change for this epic? (enter new letters or press enter to keep)
   >
 ```
+
+If `{{RUN_MODE}}` is `autonomous`, do not wait for this input. Apply the selected steps to all selected epics.
 
 # Step 5: Build and Save Plan
 
@@ -179,6 +187,33 @@ If `n`, stop and tell user: "Plan saved. Run `/auto-bmad-sprint-wizard` again to
 
 If `y`, continue to Execute Plan.
 
+If `{{RUN_MODE}}` is `autonomous`, do not wait for confirmation. Print `Autonomous mode — proceeding with recommended plan.`, then continue to Execute Plan.
+
+# Autonomous Mode Policy
+
+Autonomous mode is for overnight or hands-off runs. In this mode, avoid avoidable user prompts and keep working until the selected plan completes or hits a real safety blocker.
+
+Use these defaults in autonomous mode:
+
+- Existing interrupted plan: resume.
+- Epic selection: recommended.
+- Optional steps: none, unless explicitly requested.
+- Per-epic customization: apply the same selected steps to all epics.
+- Proceed confirmation: yes.
+- Dependency gates: auto-run runnable prerequisite stories, then resume the originally blocked story.
+- Step failure after one retry: mark the story failed, record the reason and commit state, then continue to the next runnable story instead of asking whether to continue.
+- Blocked story that cannot be auto-unblocked: mark blocked, record the reason, commit state, then continue to the next runnable story.
+- Stop only for dirty worktree/preflight block, dependency cycle, missing prerequisite story, missing required project config/status files, or repeated infrastructure failure that prevents all remaining stories from running.
+
+At the end of autonomous mode, the sprint report MUST include:
+
+- Completed stories
+- Failed stories and reasons
+- Blocked stories and exact blockers
+- Auto-resolved dependency stories
+- Stories skipped because they were unsafe to run
+- Next recommended command if work remains
+
 # Execute Plan
 
 Update plan status to `in_progress` and save.
@@ -200,8 +235,36 @@ For each story in the epic with status != `completed`:
      - `review` → `/bmad-code-review {{story_file}} ultrathink yolo — fix all critical, high, and medium issues`
      - `security-review` → `/bmad-code-review {{story_file}} ultrathink yolo — focus on security vulnerabilities, auth issues, injection risks, data exposure`
      - `extra-review` → `/bmad-code-review {{story_file}} ultrathink yolo — second pass, focus on edge cases and error handling`
-   - On failure: retry once, if still fails mark story as `failed` and ask user whether to continue or stop
+   - On failure: retry once. If still failing in interactive mode, mark story as `failed` and ask user whether to continue or stop. If still failing in autonomous mode, mark story as `failed`, record the reason in the plan/report, commit the status update, and continue to the next runnable story.
    - On success: commit checkpoint
+
+## Dependency Gate Handling
+
+If a story is blocked by an explicit dependency gate, treat the gate as executable prerequisite work. Do not stop just to tell the user what to run unless the prerequisite cannot be determined or cannot be executed safely.
+
+When a dependency gate is detected:
+
+1. Identify the required gate story ID from `{{implementation_artifacts}}/sprint-status.yaml`, story metadata, or the blocking rule text.
+2. Check the gate story status in `sprint-status.yaml`.
+3. If the gate story is already completed, continue the blocked story immediately.
+4. If the gate story is pending and has no unresolved dependency of its own:
+   - Update the plan and save:
+     - `current_story: {{story_id}}`
+     - `current_step: auto-unblocking`
+     - blocked by: `{{gate_story_id}}`
+   - Print: `Dependency gate detected: {{story_id}} requires {{gate_story_id}}. Running prerequisite story first.`
+   - Run the gate story through the same selected story steps and checkpoint commits.
+   - Mark the gate story completed in `sprint-status.yaml`.
+   - Record the gate story in the final sprint report under `Auto-Resolved Dependencies`.
+   - Return to `{{story_id}}` and continue from the blocked step.
+5. If the gate story belongs to another selected epic, reorder the plan so the gate story runs before the blocked story, then return to the original story.
+6. If the gate story has its own dependency gate, resolve dependencies recursively in dependency order. Stop only on a cycle, missing story ID, dirty worktree/preflight block, repeated step failure, or a dependency outside the runnable project scope.
+7. If stopping is unavoidable, update the plan with `current_step: blocked`, include the exact blocker reason, and print `Recommended Unblock Path` with exact commands:
+   - `/auto-bmad-story-quick {{gate_story_id}}`
+   - `/auto-bmad-sprint-wizard` after the gate is done
+8. In autonomous mode, if the blocked story cannot be auto-unblocked but other selected stories remain runnable, commit the blocked status update and continue to the next runnable story. Do not stop the whole wizard unless no runnable work remains or a safety blocker is present.
+
+Use dash syntax in suggested commands. The default behavior is auto-unblock and continue, not ask the sleeping user to choose.
 
 3. After all stories in epic complete, run epic-end steps:
    - `retro` → `/bmad-retrospective epic {{epic_id}} ultrathink yolo`
@@ -213,6 +276,13 @@ After all epics complete:
 1. Update plan status to `completed`
 2. Generate sprint report (same format as sprint-quick.md)
 3. Print report to user
+4. Print a `Next` section:
+   - Review the sprint report and any failed or blocked stories
+   - List any stories completed automatically as dependency gates under `Auto-Resolved Dependencies`
+   - If blocked stories remain, run the recommended gate story or prerequisite epic first, then run `/auto-bmad-sprint-wizard` to resume
+   - If failed stories exist, run them individually: `/auto-bmad-story-quick <story-id>`
+   - If more epics remain, run `/auto-bmad-sprint-quick <next-epic-number>` for the next epic, or run `/auto-bmad-sprint-wizard` to choose the next batch
+   - If all epics are done, the project is complete
 
 # Interruption Recovery
 
@@ -220,4 +290,16 @@ The plan file is saved after every step change. If Claude Code is interrupted:
 - Plan file shows exactly where it stopped
 - Next run detects `status: in_progress` and offers resume
 
-**From this point on, do NOT auto-commit.** Only commit when the user explicitly asks you to.
+# Commit and Status Safety
+
+The wizard owns its progress files and workflow outputs. Do not leave wizard state dirty just because the run ended, blocked, or failed.
+
+Before reporting blocked, failed, interrupted, or completed:
+
+1. Run `git status --short`.
+2. If changes are Auto-BMAD plan/status/report updates, story outputs, or workflow output from completed steps, commit them with an appropriate checkpoint/status message:
+   - `chore(auto-bmad): update sprint wizard state`
+   - `wip({{story_id}}): wizard checkpoint - {{step_name}}`
+   - `chore(auto-bmad): record blocked wizard state`
+3. If unrelated user changes are present, do not commit them blindly. Report the dirty paths and stop before any command that could run `git reset --hard`.
+4. Do not report the wizard complete while implemented workflow changes remain uncommitted unless commit creation fails or the user explicitly asked to avoid commits.

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.4] - 2026-04-29
+
+### Fixed
+- Made sprint wizard autonomous mode explicit for overnight/hands-off runs, including default selections, auto-resolved dependency gates, failure/blocked-story continuation, and final reporting.
+- Replaced the wizard's no-auto-commit footer with commit/status safety rules so wizard progress and workflow outputs are not left dirty after blocked, failed, interrupted, or completed runs.
+
 ## [0.10.3] - 2026-04-29
 
 ### Fixed
