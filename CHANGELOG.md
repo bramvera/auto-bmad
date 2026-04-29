@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.2] - 2026-04-29
+
+### Fixed
+- Aligned Codex/shared Agent Skills routing with the Claude command surface, including assess, sprint wizard, and GDS epic commands.
+- Stopped generated `$auto-bmad-sprint-wizard` skills from asking for an epic before starting the interactive wizard.
+- Updated Codex smoke and capability checks to detect sprint-wizard BMAD calls and report optional E2E support separately.
+
 ## [0.10.1] - 2026-04-29
 
 ### Changed

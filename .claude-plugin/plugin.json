@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.10.1",
-  "description": "[0.10.1] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA), full mode (10-step), diagnostics, and brownfield pipelines.",
+  "version": "0.10.2",
+  "description": "[0.10.2] Automated BMAD pipeline orchestration: quick mode (3-step, no TEA), full mode (10-step), diagnostics, and brownfield pipelines.",
   "author": {
     "name": "bramvera",
     "url": "https://github.com/bramvera"
