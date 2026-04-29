@@ -188,3 +188,5 @@ For real execution:
 6. If implemented workflow changes remain uncommitted, create the final commit required by the command file. If that cannot be done, stop and tell the user the workflow is complete but uncommitted.
 
 Do not say "sprint complete", "story done", or "next options" while leaving Auto-BMAD workflow changes dirty unless the user explicitly told you not to commit.
+
+Do not pause, stop, or return early because the turn is long, the run is large, or a partial batch feels more manageable. Auto-BMAD sprint commands are selected as full-sprint execution. Continue until the selected workflow completes, hits a real blocker, or the user explicitly asks you to stop.

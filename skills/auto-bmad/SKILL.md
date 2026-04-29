@@ -161,6 +161,8 @@ When Codex executes an Auto-BMAD workflow, it must preserve the same git safety 
 
 For Codex, the difference is only the host interface. The workflow still owns commits. A successful Auto-BMAD story or sprint must not leave implemented story changes uncommitted unless the user explicitly asked to stop before committing.
 
+Do not pause, stop, or return early because the turn is long, the run is large, or a partial batch feels more manageable. Auto-BMAD sprint commands are selected as full-sprint execution. Continue until the selected workflow completes, hits a real blocker, or the user explicitly asks you to stop.
+
 ## Natural Language Shortcuts
 
 Map common Codex phrasing to Claude command names before dry-run checks:
@@ -186,4 +188,5 @@ When running `smoke-auto-bmad-flow.mjs`, pass only the command name portion, not
 - Do not recommend installing TEA or GDS for normal quick-mode use.
 - Treat missing TEA/GDS as optional capability gaps unless the requested command requires them.
 - Never skip dirty uncommitted changes. Dirty worktree preflight is blocking for execution.
+- Never self-pause an Auto-BMAD story or sprint because of turn length, context length, elapsed time, or "manageability"; those are not workflow blockers.
 - Never report an Auto-BMAD workflow as complete while its implemented changes are still uncommitted. Commit according to the resolved command file, or stop and ask the user.

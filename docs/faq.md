@@ -78,6 +78,8 @@ Before execution, Codex runs a dirty-worktree preflight. If uncommitted changes 
 
 Auto-BMAD should never skip a story or continue into retry/rollback logic over dirty user work.
 
+Once an Auto-BMAD sprint starts, the agent should not pause after a partial batch just because the run is long or the turn feels large. A sprint stops only when the workflow completes, hits a real blocker, or the user explicitly asks it to stop.
+
 There is no separate `auto-bmad` YAML config in BMAD v6.5+ support. If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the repo as a new/pre-sprint project and suggests planning or sprint-planning next steps.
 
 Claude Code exposes Auto-BMAD as slash commands. Codex exposes Auto-BMAD as generated skills. The workflow names are the same; the host prefix changes.

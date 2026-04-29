@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.3] - 2026-04-29
+
+### Fixed
+- Made Codex/shared Agent Skills instructions explicit that Auto-BMAD sprint runs must not self-pause because a turn is long or a partial batch feels more manageable.
+
 ## [0.10.2] - 2026-04-29
 
 ### Fixed
