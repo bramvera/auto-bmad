@@ -203,7 +203,16 @@ Use these defaults in autonomous mode:
 - Dependency gates: auto-run runnable prerequisite stories, then resume the originally blocked story.
 - Step failure after one retry: mark the story failed, record the reason and commit state, then continue to the next runnable story instead of asking whether to continue.
 - Blocked story that cannot be auto-unblocked: mark blocked, record the reason, commit state, then continue to the next runnable story.
+- Epic boundary: finishing one epic is not a stopping point. If the plan has any later epic with status other than `completed`, continue into the next runnable epic automatically.
 - Stop only for dirty worktree/preflight block, dependency cycle, missing prerequisite story, missing required project config/status files, or repeated infrastructure failure that prevents all remaining stories from running.
+
+Autonomous completion criteria:
+
+- Do not report the wizard as complete after finishing only the current epic.
+- Do not stop at a clean checkpoint just because it is a convenient boundary.
+- Before stopping, reread `{{auto_bmad_artifacts}}/sprint-plan.yaml` and `{{implementation_artifacts}}/sprint-status.yaml`.
+- Stop only when every selected epic in the plan is `completed`, `failed`, `blocked`, or has no runnable pending stories left.
+- If Epic N is complete and Epic N+1 through the end of the selected plan remain pending, immediately continue with the next runnable epic.
 
 At the end of autonomous mode, the sprint report MUST include:
 
@@ -271,6 +280,8 @@ Use dash syntax in suggested commands. The default behavior is auto-unblock and 
    - `e2e` → `/bmad-qa-generate-e2e-tests yolo — generate E2E tests for epic {{epic_id}}`
 
 4. Mark epic as `completed` in plan, save
+
+In autonomous mode, after marking an epic completed, reread the plan. If any selected epic remains pending, print `Epic {{epic_id}} complete; continuing to next selected epic {{next_epic_id}}.` and continue immediately. Do not return a final report yet.
 
 After all epics complete:
 1. Update plan status to `completed`

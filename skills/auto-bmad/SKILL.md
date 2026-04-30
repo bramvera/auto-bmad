@@ -163,6 +163,8 @@ For Codex, the difference is only the host interface. The workflow still owns co
 
 Do not pause, stop, or return early because the turn is long, the run is large, or a partial batch feels more manageable. Auto-BMAD sprint commands are selected as full-sprint execution. Continue until the selected workflow completes, hits a real blocker, or the user explicitly asks you to stop.
 
+For `/auto-bmad-sprint-wizard` and `$auto-bmad sprint wizard`, the selected workflow is the entire saved wizard plan, not the current story or current epic. If `sprint-plan.yaml` still has later selected epics or stories with runnable pending work, continue into them automatically. A clean checkpoint at an epic boundary is not a completion condition.
+
 ## Natural Language Shortcuts
 
 Map common Codex phrasing to Claude command names before dry-run checks:
