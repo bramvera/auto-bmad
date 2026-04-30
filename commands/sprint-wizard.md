@@ -21,14 +21,14 @@ Check if `{{auto_bmad_artifacts}}/sprint-plan.yaml` exists.
 
 If the user invoked the wizard with `reset`, `restart`, `new plan`, `rebuild plan`, or `discard plan`:
 
-0. Reset has priority over resume/autonomous. If the invocation contains both `reset` and `autonomous`, do the reset/archive path first, then continue autonomously with the rebuilt plan. Do not resume the old plan.
+0. Reset has priority over resume/autonomous. Do not resume the old plan after reset.
 1. Prefer running the runtime helper if available: `node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .`. If that path is missing, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`.
 2. The reset helper MUST create a timestamped backup copy first (`sprint-plan-backup-before-reset-{{datetime}}.yaml`), then move the active plan to a timestamped archive (`sprint-plan-archived-{{datetime}}.yaml`).
 3. If the helper is unavailable, manually copy `{{auto_bmad_artifacts}}/sprint-plan.yaml` to `{{auto_bmad_artifacts}}/sprint-plan-backup-before-reset-{{datetime}}.yaml`, then move the original to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{datetime}}.yaml`.
 4. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
 5. Print both backup and archive paths.
-6. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
-7. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
+6. Continue with Step 1: Scan Epics and show the wizard questions again.
+7. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, keep `{{RUN_MODE}}` unset until after showing the wizard questions. Pre-fill defaults as autonomous recommendations, but still display the questions and the proposed answers before proceeding. The user must be able to see and change epic selection and optional steps after reset.
 
 **If exists and status is `in_progress`:**
 
@@ -107,7 +107,9 @@ Which epics to run?
 
 Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 
-If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
+If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and this is not immediately after a reset, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
+
+If this is immediately after a reset, display the recommended selection and ask for confirmation or edits even if the reset command included `autonomous`.
 
 # Step 3: Customize Steps
 
@@ -134,7 +136,9 @@ Wait for user input. Parse selection:
 - `b` adds `extra-review` after `review`
 - `c` adds `e2e` to `epic_end`
 
-If `{{RUN_MODE}}` is `autonomous`, do not wait for optional step input. Use the default quick-safe story steps only: `create`, `dev`, `review`, and `retro` at epic end. Do not add optional steps unless the user explicitly requested them in the original wizard invocation.
+If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for optional step input. Use the default quick-safe story steps only: `create`, `dev`, `review`, and `retro` at epic end. Do not add optional steps unless the user explicitly requested them in the original wizard invocation.
+
+If this is immediately after a reset, show optional steps and ask the user to choose again. Do not silently carry old optional steps or silently drop them.
 
 If the user explicitly requests optional E2E or full/TEA-style steps, verify capability before saving the plan:
 - `e2e` requires `bmad-qa-generate-e2e-tests`
@@ -165,7 +169,9 @@ Epic {{id}} ({{name}}):
   >
 ```
 
-If `{{RUN_MODE}}` is `autonomous`, do not wait for this input. Apply the selected steps to all selected epics.
+If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for this input. Apply the selected steps to all selected epics.
+
+If this is immediately after a reset, ask this question again so the user can change per-epic customization.
 
 # Step 5: Build and Save Plan
 
@@ -225,7 +231,9 @@ If `n`, stop and tell user: "Plan saved. Run `/auto-bmad-sprint-wizard` again to
 
 If `y`, continue to Execute Plan.
 
-If `{{RUN_MODE}}` is `autonomous`, do not wait for confirmation. Print `Autonomous mode — proceeding with recommended plan.`, then continue to Execute Plan.
+If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for confirmation. Print `Autonomous mode — proceeding with recommended plan.`, then continue to Execute Plan.
+
+If this is immediately after a reset and the reset invocation included `autonomous`, show the final rebuilt plan and ask `Proceed autonomously with this rebuilt plan? (y/n)`. If `y`, set `{{RUN_MODE}}` to `autonomous` and continue to Execute Plan. If `n`, save the plan and stop.
 
 # Autonomous Mode Policy
 

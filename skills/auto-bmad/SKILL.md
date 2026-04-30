@@ -194,7 +194,7 @@ For sprint wizard reset commands, reset is not optional prose. Before executing 
 node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .
 ```
 
-If that path is unavailable, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`. Then execute `/auto-bmad-sprint-wizard` normally; if the original command included `autonomous`, keep autonomous mode enabled.
+If that path is unavailable, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`. Then execute `/auto-bmad-sprint-wizard` normally. Reset means "ask the wizard questions again"; even if the original command included `autonomous`, show the rebuilt plan questions and ask before proceeding autonomously.
 
 ## Safety
 

@@ -72,6 +72,32 @@ Start with quick mode unless you already know you need the heavier full pipeline
 
 Codex and shared Agent Skills installs use the same generated skill names. Only the host prefix changes: `$auto-bmad-sprint-quick` in Codex, `/skill:auto-bmad-sprint-quick` in slash-skill hosts.
 
+## Sprint Wizard Resume And Reset
+
+The sprint wizard is for selecting multiple epics and optional steps, then resuming from `auto-bmad-artifacts/sprint-plan.yaml`.
+
+Common Codex forms:
+
+```text
+$auto-bmad sprint wizard
+$auto-bmad sprint wizard autonomous
+$auto-bmad sprint wizard reset
+```
+
+- `sprint wizard` shows existing plan status, remaining tasks, capability warnings, and asks what to do.
+- `sprint wizard autonomous` resumes the saved plan without routine prompts.
+- `sprint wizard reset` backs up and archives the existing plan, then asks the wizard questions again.
+- `sprint wizard reset autonomous` still shows the rebuilt wizard questions first, then asks whether to proceed autonomously.
+
+Reset creates timestamped safety files before rebuilding:
+
+```text
+_bmad-output/auto-bmad-artifacts/sprint-plan-backup-before-reset-<datetime>.yaml
+_bmad-output/auto-bmad-artifacts/sprint-plan-archived-<datetime>.yaml
+```
+
+Wizard status also reports whether your selected steps match the installed capabilities. Quick mode needs only BMAD-METHOD. E2E requires `bmad-qa-generate-e2e-tests`. Full/TEA steps require `_bmad/tea/config.yaml` and matching `bmad-testarch-*` skills.
+
 ## Choose a Mode
 
 | | Quick Mode | Full Mode |

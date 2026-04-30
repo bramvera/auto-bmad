@@ -73,6 +73,33 @@ Sprints are resumable. Run the same command again, or ask Claude Code to resume.
 
 Terminal crashed mid-sprint. Resume picked up at story 1-4; stories 1-1 through 1-3 were already committed and skipped.
 
+### Sprint Wizard Resume
+
+The sprint wizard stores its selected multi-epic plan at:
+
+```text
+_bmad-output/auto-bmad-artifacts/sprint-plan.yaml
+```
+
+When a plan exists, the wizard should show current epic/story/step, remaining story and task counts, selected steps, and capability warnings before asking whether to resume, skip, rebuild, or cancel.
+
+Use reset when the saved plan is stale or you want to answer the wizard questions again:
+
+```text
+$auto-bmad sprint wizard reset
+```
+
+Reset creates timestamped safety files before removing the active plan:
+
+```text
+sprint-plan-backup-before-reset-<datetime>.yaml
+sprint-plan-archived-<datetime>.yaml
+```
+
+Then it shows the wizard questions again. `reset autonomous` pre-fills autonomous recommendations but still shows the rebuilt questions and asks before proceeding.
+
+If the plan contains optional/full steps, the wizard checks capability. Quick mode requires only BMAD-METHOD. E2E requires `bmad-qa-generate-e2e-tests`. Full/TEA steps require `_bmad/tea/config.yaml` and matching `bmad-testarch-*` skills.
+
 ## Progress and Reports
 
 Auto-BMAD writes progress after every story, including:

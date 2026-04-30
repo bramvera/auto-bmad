@@ -84,6 +84,24 @@ $auto-bmad-story-quick 1-1
 
 For id-taking story, sprint, and epic skills, you can omit the id. The generated wrapper runs the fast status helper and suggests the next story or epic from BMAD sprint status. `$auto-bmad-sprint-wizard` is interactive and does not require an id.
 
+Sprint wizard reset and monitoring:
+
+```text
+$auto-bmad sprint wizard
+$auto-bmad sprint wizard autonomous
+$auto-bmad sprint wizard reset
+```
+
+Use `reset` when the saved wizard plan is stale or you want to choose epics/steps again. Reset backs up and archives the old `sprint-plan.yaml`, then asks the wizard questions again. `reset autonomous` still shows the rebuilt plan questions before proceeding.
+
+For read-only monitoring:
+
+```bash
+node .agents/skills/_auto-bmad-runtime/scripts/status-auto-bmad.mjs --project-root . --wizard
+```
+
+The wizard status shows remaining tasks and warns when the plan contains optional/full steps that the current installation cannot run. Quick mode only requires BMAD-METHOD; E2E requires `bmad-qa-generate-e2e-tests`; full/TEA mode requires `_bmad/tea/config.yaml` and matching `bmad-testarch-*` skills.
+
 Before real execution, Auto-BMAD checks for uncommitted changes. If the worktree is dirty, execution blocks until you choose manual cleanup, a safety commit, or abort.
 
 ## New Projects

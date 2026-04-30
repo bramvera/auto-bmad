@@ -45,6 +45,17 @@ Read-only/project-file assessment that recommends quick or full mode per epic. W
 
 Interactive sprint selection and resume workflow. It builds `auto-bmad-artifacts/sprint-plan.yaml`, lets the user select epics and optional steps, then executes the selected story steps with the same checkpoint discipline as quick sprint execution. It does not require an epic argument.
 
+Reset variants:
+
+```text
+/auto-bmad-sprint-wizard reset
+/auto-bmad-sprint-wizard reset autonomous
+```
+
+Reset backs up and archives the existing plan before showing the wizard questions again. `reset autonomous` does not silently proceed; it shows the rebuilt questions and asks before running autonomously.
+
+The wizard resume view reports current epic/story/step, remaining tasks, selected story steps, selected epic-end steps, and capability warnings. If a plan includes `e2e`, TEA/test-architecture, or other non-quick steps that are not installed, the wizard must tell the user what is missing instead of silently dropping the step.
+
 ---
 
 ## Greenfield Commands
