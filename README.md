@@ -108,7 +108,7 @@ Wizard status also reports whether your selected steps match the installed capab
 | BMAD modules | BMAD-METHOD only | BMAD-METHOD + TEA |
 | Per story | Create, develop, code review | Create, adversarial review, ATDD, develop, edge-case hunt, 3x review, trace, automate |
 | Best for | Prototypes, side projects, familiar domains, token control | Production systems, complex domains, brownfield risk, traceability |
-| Typical sprint | 2.5-3.5h, ~350-450k tokens | 5-6h, ~800k-1M tokens |
+| Typical sprint | Workload-dependent; often a few hours for a small quick epic, with wall time affected by host/model speed and reasoning effort | Workload-dependent; slower because TEA quality gates add more steps and review/test work |
 
 Game-development pipelines use GDS. See [GDS Tutorial](docs/tutorial-gds.md).
 

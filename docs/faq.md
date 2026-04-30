@@ -37,8 +37,8 @@ Run `/auto-bmad-check`. It is read-only and treats BMM quick mode as the baselin
 
 | | Quick | Full |
 |---|---|---|
-| Per story | ~25-35m, ~60-80k tokens | ~60-90m, ~150-200k tokens |
-| Per sprint (5 stories) | ~2.5-3.5h, ~350-450k tokens | ~5-6h, ~800k-1M tokens |
+| Per story | Workload-dependent; usually faster than full | Workload-dependent; slower because TEA adds quality gates |
+| Per sprint | Workload-dependent; affected by story count and test/runtime cost | Workload-dependent; higher token/time cost because TEA adds quality gates |
 
 ### Does quick mode still generate tests?
 
@@ -108,17 +108,17 @@ No. You only need the modules for the pipeline you're using:
 
 The pipelines are long-running and token-heavy. A Claude Code Max x5 or x20 subscription is strongly recommended. On x1 you'll hit rate limits mid-story.
 
-Rough token usage per command:
+Rough token usage and wall time vary by host/model throughput, reasoning effort (`low`, `medium`, `high`, `xhigh`), story size, test/build runtime, retries, and review fixes:
 
 | Command | Duration | Tokens |
 |---------|----------|--------|
-| `/auto-bmad-story-quick` | ~25-35m | ~60-80k |
-| `/auto-bmad-sprint-quick` (5 stories) | ~2.5-3.5h | ~350-450k |
-| `/auto-bmad-story` (full) | ~60-90m | ~150-200k |
-| `/auto-bmad-sprint` (full, 5 stories) | ~5-6h | ~800k-1M |
-| `/auto-bmad-plan` | ~40-60m | ~100-150k |
-| `/auto-bmad-epic-start` | ~5-10m | ~20-30k |
-| `/auto-bmad-epic-end` | ~15-20m | ~40-60k |
+| `/auto-bmad-story-quick` | workload-dependent | varies |
+| `/auto-bmad-sprint-quick` | workload-dependent | varies by story count |
+| `/auto-bmad-story` (full) | workload-dependent; slower than quick | higher than quick |
+| `/auto-bmad-sprint` (full) | workload-dependent; slower than quick | higher than quick |
+| `/auto-bmad-plan` | workload-dependent | varies by input/artifact size |
+| `/auto-bmad-epic-start` | workload-dependent | varies |
+| `/auto-bmad-epic-end` | workload-dependent | varies |
 
 ---
 

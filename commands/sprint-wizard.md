@@ -270,7 +270,7 @@ Skipped completed epics: {{completed_skipped_epics_or_none}}
 {{end}}
 
 Execution: {{execution_style}}
-Estimated time: ~{{estimate}}h
+Time estimate: workload-dependent; affected by story size, model speed, reasoning effort (low/medium/high/xhigh), test/build runtime, retries, and review fixes.
 Plan saved: {{auto_bmad_artifacts}}/sprint-plan.yaml
 
 Proceed? (y/n)

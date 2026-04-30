@@ -122,11 +122,13 @@ The coordinator keeps only pass/fail state and short summaries. Each step gets a
 
 | Command | Duration | Tokens |
 |---------|----------|--------|
-| `/auto-bmad-story-quick` | ~25-35m | ~60-80k |
-| `/auto-bmad-sprint-quick` with 5 stories | ~2.5-3.5h | ~350-450k |
-| `/auto-bmad-story` full | ~60-90m | ~150-200k |
-| `/auto-bmad-sprint` full with 5 stories | ~5-6h | ~800k-1M |
-| `/auto-bmad-plan` | ~40-60m | ~100-150k |
+| `/auto-bmad-story-quick` | workload-dependent | varies |
+| `/auto-bmad-sprint-quick` | workload-dependent | varies by story count |
+| `/auto-bmad-story` full | workload-dependent; slower than quick | higher than quick |
+| `/auto-bmad-sprint` full | workload-dependent; slower than quick | higher than quick |
+| `/auto-bmad-plan` | workload-dependent | varies by input/artifact size |
+
+Wall time depends heavily on host throughput, model reasoning effort (`low`, `medium`, `high`, `xhigh`), test/build runtime, retries, and how much review work is needed. Treat any estimate as a rough planning hint, not a promise.
 
 ## RTK for Token Savings
 

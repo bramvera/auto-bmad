@@ -70,7 +70,7 @@ New BMAD releases may add skills that are interactive by design. Those belong in
 | BMAD modules | BMAD-METHOD only | BMAD-METHOD + TEA |
 | Testing approach | Review and existing project tests | TDD and traceability with TEA |
 | Duration per story | ~25-35 min | ~60-90 min |
-| Tokens per story | ~60-80k | ~150-200k |
+| Tokens per story | Workload-dependent | Higher than quick because TEA adds steps |
 | Best for | Prototypes, familiar domains, solo devs, tight token budgets | Production systems, complex domains, brownfield risk, regulated environments |
 
 Use quick mode first unless the project clearly needs full traceability and heavier test architecture.
