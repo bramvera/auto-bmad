@@ -98,7 +98,8 @@ Ask:
 ```
 Which epics to run?
   - Enter numbers separated by commas: 1,2,3
-  - Or 'all' for all pending epics
+  - Or 'all' for all runnable epics only (run/resume recommendations; completed skip epics are excluded)
+  - Or 'all including completed' to include completed epics in the saved plan
   - Or 'recommended' to use recommendations above
   - Default: recommended
 
@@ -106,6 +107,14 @@ Which epics to run?
 ```
 
 Wait for user input. Parse selection and store as `{{selected_epics}}` list.
+
+Selection rules:
+- `recommended`, blank, or default selects every epic whose recommendation is `run` or `resume`.
+- `all` selects every epic whose recommendation is `run` or `resume`. It MUST NOT include epics whose recommendation is `skip`.
+- `all including completed` selects every epic, including completed skip epics.
+- Number lists such as `5,6,7` select exactly those numbered epics, but the plan summary must still show which selected epics are already completed and will be skipped.
+
+If the user enters `all` and any completed skip epics exist, print a one-line clarification before continuing: `All means runnable epics only; completed epics {{skipped_epics}} are excluded.`
 
 If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and this is not immediately after a reset, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
 
@@ -245,7 +254,10 @@ Display:
 ```
 Sprint Plan Ready
 
-{{for each epic}}
+Runnable scope: {{runnable_epics}}
+Skipped completed epics: {{completed_skipped_epics_or_none}}
+
+{{for each runnable epic}}
   Epic {{id}}: {{story_count}} stories
     Steps: {{steps_list}}
     Epic-end: {{epic_end_list}}
