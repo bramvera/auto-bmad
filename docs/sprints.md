@@ -128,7 +128,7 @@ The coordinator keeps only pass/fail state and short summaries. Each step gets a
 | `/auto-bmad-sprint` full | workload-dependent; slower than quick | higher than quick |
 | `/auto-bmad-plan` | workload-dependent | varies by input/artifact size |
 
-Wall time depends heavily on host throughput, model reasoning effort (`low`, `medium`, `high`, `xhigh`), test/build runtime, retries, and how much review work is needed. Treat any estimate as a rough planning hint, not a promise.
+Wall time depends heavily on host throughput, model reasoning effort (`low`, `medium`, `high`, `xhigh`), test/build runtime, retries, and how much review work is needed. For GPT-5.5 planning, a rough baseline is about 60 output tokens/sec, but full sprint time is usually dominated by tool calls, tests, fixes, and hidden reasoning rather than output streaming alone. Treat any estimate as a rough planning hint, not a promise.
 
 ## RTK for Token Savings
 

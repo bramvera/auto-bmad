@@ -108,7 +108,7 @@ No. You only need the modules for the pipeline you're using:
 
 The pipelines are long-running and token-heavy. A Claude Code Max x5 or x20 subscription is strongly recommended. On x1 you'll hit rate limits mid-story.
 
-Rough token usage and wall time vary by host/model throughput, reasoning effort (`low`, `medium`, `high`, `xhigh`), story size, test/build runtime, retries, and review fixes:
+Rough token usage and wall time vary by host/model throughput, reasoning effort (`low`, `medium`, `high`, `xhigh`), story size, test/build runtime, retries, and review fixes. For GPT-5.5 planning, use about 60 output tokens/sec as a rough output-streaming baseline, then add time for tool calls, hidden reasoning, tests, builds, and fixes:
 
 | Command | Duration | Tokens |
 |---------|----------|--------|

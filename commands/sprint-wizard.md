@@ -270,7 +270,7 @@ Skipped completed epics: {{completed_skipped_epics_or_none}}
 {{end}}
 
 Execution: {{execution_style}}
-Time estimate: workload-dependent; affected by story size, model speed, reasoning effort (low/medium/high/xhigh), test/build runtime, retries, and review fixes.
+Time estimate: rough only. For GPT-5.5 planning, use about 60 output tokens/sec as a baseline, then add tool-call time, test/build runtime, retries, and review fixes. Reasoning effort (low/medium/high/xhigh), context size, and host mode can move this up or down.
 Plan saved: {{auto_bmad_artifacts}}/sprint-plan.yaml
 
 Proceed? (y/n)
