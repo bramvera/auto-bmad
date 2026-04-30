@@ -135,8 +135,9 @@ Optional steps (add to your run):
   [a] security-review — security-focused review after code review
   [b] extra-review — additional code review pass
   [c] e2e — generate E2E tests at epic-end
+  [n] none — skip optional steps
 
-Add optional steps? (enter letters like 'ac' or press enter to skip)
+Add optional steps? (enter letters like 'ac', or 'n' for none)
 >
 ```
 
@@ -144,6 +145,8 @@ Wait for user input. Parse selection:
 - `a` adds `security-review` after `review`
 - `b` adds `extra-review` after `review`
 - `c` adds `e2e` to `epic_end`
+- `n`, `none`, `no`, or `skip` adds no optional steps
+- Blank input should not be required. If the user sends a blank or whitespace-only response, treat it as `n`.
 
 If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for optional step input. Use the default quick-safe story steps only: `create`, `dev`, `review`, and `retro` at epic end. Do not add optional steps unless the user explicitly requested them in the original wizard invocation.
 
@@ -175,8 +178,9 @@ Choose execution style? (1/2, default: 1)
 ```
 
 Wait for user input. Store as `{{execution_style}}`:
-- `subagents` for option `1` or blank
+- `subagents` for option `1`
 - `current-session` for option `2`
+- Blank input should not be required. If the user sends a blank or whitespace-only response, treat it as `1`.
 
 If the user invoked the wizard with `no subagents`, `without subagents`, `single session`, or `current session`, set `{{execution_style}}` to `current-session`.
 
@@ -204,9 +208,11 @@ If `n`, for each epic in `{{selected_epics}}`:
 Epic {{id}} ({{name}}):
   Current: create → dev → review {{+ optional_steps}}
   
-  Change for this epic? (enter new letters or press enter to keep)
+  Change for this epic? (enter new letters, or 'k' to keep)
   >
 ```
+
+For per-epic customization, `k`, `keep`, blank, or whitespace-only input keeps the current selection. Blank input is tolerated for host compatibility but must not be advertised as the primary path.
 
 If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for this input. Apply the selected steps to all selected epics.
 
