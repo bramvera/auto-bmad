@@ -96,7 +96,7 @@ Use `reset` when the saved wizard plan is stale or you want to choose epics/step
 
 The wizard also asks for execution style. Choose fresh workers/subagents when you want Codex to run each BMAD step in a separate worker context. Choose current session when you want simpler sequential execution. Codex only spawns subagents when the wizard plan or user request explicitly asks for them.
 
-When selecting epics, `all` means all runnable/pending epics. Completed epics are skipped; hard startovers require an intentional project/git reset outside the wizard.
+When selecting epics, choose `recommended` or explicit epic numbers. Completed epics are skipped; hard startovers require an intentional project/git reset outside the wizard.
 
 For read-only monitoring:
 

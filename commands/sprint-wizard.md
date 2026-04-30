@@ -98,7 +98,6 @@ Ask:
 ```
 Which epics to run?
   - Enter numbers separated by commas: 1,2,3
-  - Or 'all' for all runnable epics only (run/resume recommendations; completed epics are excluded)
   - Or 'recommended' to use recommendations above
   - Default: recommended
 
@@ -109,10 +108,10 @@ Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 
 Selection rules:
 - `recommended`, blank, or default selects every epic whose recommendation is `run` or `resume`.
-- `all` selects every epic whose recommendation is `run` or `resume`. It MUST NOT include epics whose recommendation is `skip`.
 - Number lists such as `5,6,7` select those numbered epics only if they have runnable work. If the list includes completed epics, exclude them from the runnable plan and show them under skipped completed epics.
+- `all` is not a supported selection. If the user enters `all`, explain that the wizard accepts `recommended` or explicit epic numbers, then ask for the selection again.
 
-If the user enters `all` and any completed epics exist, print a one-line clarification before continuing: `All means runnable epics only; completed epics {{skipped_epics}} are excluded.`
+If a numbered selection includes completed epics, print a one-line clarification before continuing: `Completed epics {{skipped_epics}} are excluded from the runnable plan.`
 
 If the user explicitly wants to rerun completed epics or fully start over, do not use wizard reset for that. Explain that wizard reset only rebuilds the Auto-BMAD plan from current sprint status. A hard startover requires the user to intentionally reset/rewrite project git and BMAD sprint status outside the wizard.
 
