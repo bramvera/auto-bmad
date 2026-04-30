@@ -135,6 +135,8 @@ Print the output exactly. It lists ready commands first and marks optional missi
 
 When Codex executes an Auto-BMAD workflow, it must preserve the same git safety contract as the Claude slash command file.
 
+Codex subagents are opt-in. If the sprint wizard plan has `execution_style: subagents`, or the user explicitly asks for subagents, workers, delegation, or fresh worker contexts, use Codex worker subagents for BMAD step execution when the host exposes that capability. If the plan has `execution_style: current-session`, or the host does not expose subagents, run the BMAD skill calls sequentially in the current session while preserving all coordinator duties.
+
 1. Resolve the slash-like workflow to its command file:
    - `quick story <id>` -> `commands/story-quick.md`
    - `quick sprint <epic>` -> `commands/sprint-quick.md`
@@ -154,7 +156,7 @@ When Codex executes an Auto-BMAD workflow, it must preserve the same git safety 
    - live progress files.
    - per-step WIP commits.
    - final story, epic, or pipeline squash commit.
-3. Codex does not have Claude Code foreground Task dispatch. Replace each command file "Task prompt" with the equivalent installed BMAD skill invocation, but keep the coordinator responsibilities in the Auto-BMAD command file exactly.
+3. Codex does not have Claude Code foreground Task dispatch. Replace each command file "Task prompt" with either a Codex worker subagent call or the equivalent installed BMAD skill invocation, based on the sprint wizard `execution_style` or explicit user request. Keep the coordinator responsibilities in the Auto-BMAD command file exactly.
 4. After every successful step, run the command file's checkpoint command. If the command file says to commit after each step, do it. If the worktree is clean because the BMAD skill already committed, treat that as success.
 5. At story or epic completion, run the command file's final squash/final commit sequence before reporting the workflow complete.
 6. Before printing "done", "complete", "next story", or "next epic", run `git status --short`.

@@ -56,6 +56,8 @@ Reset backs up and archives the existing plan before showing the wizard question
 
 The wizard resume view reports current epic/story/step, remaining tasks, selected story steps, selected epic-end steps, and capability warnings. If a plan includes `e2e`, TEA/test-architecture, or other non-quick steps that are not installed, the wizard must tell the user what is missing instead of silently dropping the step.
 
+The wizard asks for execution style and stores it in the plan as `execution_style: subagents` or `execution_style: current-session`. Codex only spawns subagents when the selected execution style or user request explicitly asks for them.
+
 ---
 
 ## Greenfield Commands

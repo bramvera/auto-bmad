@@ -149,7 +149,37 @@ If requested steps are unavailable, tell the user exactly what is missing and as
 - save the plan with unavailable steps marked unavailable
 - stop and install the missing capability
 
-# Step 4: Per-Epic Customization (Optional)
+# Step 4: Execution Style
+
+Display:
+```
+Execution style
+
+  [1] Fresh workers/subagents (recommended when the host supports it)
+      Each create/dev/review step runs in a fresh worker context, then returns to the wizard coordinator for checkpointing.
+
+  [2] Current session
+      Run the BMAD skills sequentially in the current session. Use this when subagents are unavailable or you want simpler monitoring.
+
+Choose execution style? (1/2, default: 1)
+>
+```
+
+Wait for user input. Store as `{{execution_style}}`:
+- `subagents` for option `1` or blank
+- `current-session` for option `2`
+
+If the user invoked the wizard with `no subagents`, `without subagents`, `single session`, or `current session`, set `{{execution_style}}` to `current-session`.
+
+If the user invoked the wizard with `subagents`, `workers`, `fresh workers`, or `fresh context`, set `{{execution_style}}` to `subagents`.
+
+If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do not wait for execution style input. Use `subagents` when the host exposes a fresh-context worker/subagent mechanism; otherwise use `current-session`.
+
+If this is immediately after a reset, show this question again so the user can change between subagents and current-session execution.
+
+For Codex specifically, Codex only spawns subagents when explicitly asked. If the user chooses `subagents`, make the execution report and worker prompts explicit that the wizard is using Codex subagents/workers for BMAD steps. If the host still does not expose a subagent mechanism, print a warning, store `current-session`, and continue sequentially unless the user asked to stop.
+
+# Step 5: Per-Epic Customization (Optional)
 
 Ask:
 ```
@@ -173,7 +203,7 @@ If `{{RUN_MODE}}` is `autonomous` and this is not immediately after a reset, do 
 
 If this is immediately after a reset, ask this question again so the user can change per-epic customization.
 
-# Step 5: Build and Save Plan
+# Step 6: Build and Save Plan
 
 Build the sprint plan object:
 
@@ -182,6 +212,7 @@ version: 1
 created: {{timestamp}}
 updated: {{timestamp}}
 status: pending
+execution_style: {{execution_style}} # subagents or current-session
 
 defaults:
   steps: [create, dev, review]
@@ -206,9 +237,9 @@ Create `{{auto_bmad_artifacts}}/` directory if it doesn't exist.
 
 Save to `{{auto_bmad_artifacts}}/sprint-plan.yaml`.
 
-Before saving, include enough plan state to support resume UX: selected story steps, selected epic-end steps, current epic/story/step, remaining story count, and any unavailable selected steps with their missing skills.
+Before saving, include enough plan state to support resume UX: selected story steps, selected epic-end steps, execution style, current epic/story/step, remaining story count, and any unavailable selected steps with their missing skills.
 
-# Step 6: Confirm
+# Step 7: Confirm
 
 Display:
 ```
@@ -220,6 +251,7 @@ Sprint Plan Ready
     Epic-end: {{epic_end_list}}
 {{end}}
 
+Execution: {{execution_style}}
 Estimated time: ~{{estimate}}h
 Plan saved: {{auto_bmad_artifacts}}/sprint-plan.yaml
 
@@ -244,6 +276,7 @@ Use these defaults in autonomous mode:
 - Existing interrupted plan: resume.
 - Epic selection: recommended.
 - Optional steps: none, unless explicitly requested.
+- Execution style: subagents/fresh workers when the host supports them, otherwise current-session.
 - Per-epic customization: apply the same selected steps to all epics.
 - Proceed confirmation: yes.
 - Dependency gates: auto-run runnable prerequisite stories, then resume the originally blocked story.
@@ -284,7 +317,9 @@ For each story in the epic with status != `completed`:
 2. For each step in the epic's step list:
    - Update plan: `current_step: {{step_name}}`
    - Save plan to disk
-   - Run the step as a Task:
+   - Run the step using the selected execution style:
+     - If `execution_style: subagents`, run the step as a fresh worker/subagent task. The coordinator must wait for the worker result before checkpointing and starting the next step.
+     - If `execution_style: current-session`, invoke the BMAD skill directly in the current session, then perform the same checkpoint/status handling.
      - `create` → `/bmad-create-story story {{story_id}} yolo`
      - `dev` → `/bmad-dev-story {{story_file}} ultrathink yolo`
      - `review` → `/bmad-code-review {{story_file}} ultrathink yolo — fix all critical, high, and medium issues`

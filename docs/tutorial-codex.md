@@ -94,6 +94,8 @@ $auto-bmad sprint wizard reset
 
 Use `reset` when the saved wizard plan is stale or you want to choose epics/steps again. Reset backs up and archives the old `sprint-plan.yaml`, then asks the wizard questions again. `reset autonomous` still shows the rebuilt plan questions before proceeding.
 
+The wizard also asks for execution style. Choose fresh workers/subagents when you want Codex to run each BMAD step in a separate worker context. Choose current session when you want simpler sequential execution. Codex only spawns subagents when the wizard plan or user request explicitly asks for them.
+
 For read-only monitoring:
 
 ```bash

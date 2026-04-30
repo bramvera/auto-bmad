@@ -157,6 +157,8 @@ If the user asks to actually run an Auto-BMAD pipeline in Codex:
 
 Codex must preserve Auto-BMAD's git checkpoint behavior. The command file remains the source of truth even though Codex invokes BMAD skills through the skill surface instead of Claude Code foreground Task calls.
 
+Codex subagents are opt-in. If the sprint wizard plan has `execution_style: subagents`, or the user explicitly asks for subagents, workers, delegation, or fresh worker contexts, use Codex worker subagents for BMAD step execution when the host exposes that capability. If the plan has `execution_style: current-session`, or the host does not expose subagents, run the BMAD skill calls sequentially in the current session while preserving all coordinator duties.
+
 Resolve command files as follows:
 
 - `/auto-bmad-story-quick` -> `commands/story-quick.md`
@@ -180,7 +182,7 @@ For real execution:
 
 1. Read the resolved command file before running BMAD skills.
 2. Follow its BMAD skill order, retry policy, progress-file writes, and rollback policy.
-3. Replace each "Task prompt" with the equivalent installed BMAD skill invocation available in Codex.
+3. Replace each "Task prompt" with either a Codex worker subagent call or the equivalent installed BMAD skill invocation available in Codex, based on the sprint wizard `execution_style` or explicit user request.
 4. Keep all coordinator duties from the command file:
    - record start commit hashes.
    - run per-step WIP commits.
