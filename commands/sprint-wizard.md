@@ -36,6 +36,19 @@ Found existing sprint plan (interrupted)
 Status: Epic {{current_epic}}, Story {{current_story}}, Step: {{current_step}}
 Progress: {{completed_count}}/{{total_count}} epics complete
 
+Remaining:
+  - Current story: {{current_story}} remaining steps: {{remaining_steps}}
+  - Next story: {{next_story}}
+  - Next epic: {{next_epic}}
+  - Remaining stories: {{remaining_story_count}}
+  - Remaining tasks: {{remaining_task_count}}
+
+Capability:
+  - Quick mode: available/unavailable
+  - Optional E2E: available/unavailable
+  - Full/TEA mode: available/unavailable
+  - Plan includes unavailable steps: {{unavailable_steps_or_none}}
+
 Options:
   [r] Resume from where it stopped
   [s] Skip current story, continue with next
@@ -47,6 +60,8 @@ Options:
 ```
 
 Wait for user input. If `r`, load the plan and jump to "Execute Plan" section. If `s`, mark current story as skipped and continue. If `n`, continue with wizard. If `x`, archive the existing plan as described above and continue with Step 1. If `c`, stop.
+
+Before displaying existing-plan options, inspect the saved plan's selected story steps and epic-end steps. If the plan contains `e2e`, `test-design`, `atdd`, `trace`, `automate`, `nfr`, `test-review`, or `project-context`, check whether the matching skills and `_bmad/tea/config.yaml` exist. Warn clearly when the current installation supports quick mode only. Do not silently omit an optional/full step from the plan.
 
 If the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait here. Set `{{RUN_MODE}}` to `autonomous`, choose `r`, load the plan, and jump to "Execute Plan" section.
 
@@ -118,6 +133,15 @@ Wait for user input. Parse selection:
 
 If `{{RUN_MODE}}` is `autonomous`, do not wait for optional step input. Use the default quick-safe story steps only: `create`, `dev`, `review`, and `retro` at epic end. Do not add optional steps unless the user explicitly requested them in the original wizard invocation.
 
+If the user explicitly requests optional E2E or full/TEA-style steps, verify capability before saving the plan:
+- `e2e` requires `bmad-qa-generate-e2e-tests`
+- Full/TEA-style test architecture steps require `_bmad/tea/config.yaml` and the matching `bmad-testarch-*` skills
+
+If requested steps are unavailable, tell the user exactly what is missing and ask whether to:
+- continue with quick mode only
+- save the plan with unavailable steps marked unavailable
+- stop and install the missing capability
+
 # Step 4: Per-Epic Customization (Optional)
 
 Ask:
@@ -172,6 +196,8 @@ epics:
 Create `{{auto_bmad_artifacts}}/` directory if it doesn't exist.
 
 Save to `{{auto_bmad_artifacts}}/sprint-plan.yaml`.
+
+Before saving, include enough plan state to support resume UX: selected story steps, selected epic-end steps, current epic/story/step, remaining story count, and any unavailable selected steps with their missing skills.
 
 # Step 6: Confirm
 
