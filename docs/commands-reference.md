@@ -58,7 +58,7 @@ The wizard resume view reports current epic/story/step, remaining tasks, selecte
 
 The wizard asks for execution style and stores it in the plan as `execution_style: subagents` or `execution_style: current-session`. Codex only spawns subagents when the selected execution style or user request explicitly asks for them.
 
-For epic selection, `all` means all runnable/pending epics. Completed epics are excluded unless the user explicitly enters `all including completed`.
+For epic selection, `all` means all runnable/pending epics. Completed epics are excluded. Wizard reset only rebuilds the Auto-BMAD plan from current sprint status; it is not a hard project startover.
 
 ---
 

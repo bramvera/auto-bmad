@@ -89,7 +89,7 @@ $auto-bmad sprint wizard reset
 - `sprint wizard reset` backs up and archives the existing plan, then asks the wizard questions again.
 - `sprint wizard reset autonomous` still shows the rebuilt wizard questions first, then asks whether to proceed autonomously.
 - The wizard asks whether to run BMAD steps through fresh workers/subagents or in the current session. Codex only spawns subagents when that option, or an explicit subagent/worker request, is present.
-- In the wizard, `all` means all runnable/pending epics. Completed epics are excluded unless you explicitly enter `all including completed`.
+- In the wizard, `all` means all runnable/pending epics. Completed epics are excluded; hard startovers require an intentional project/git reset outside the wizard.
 
 Reset creates timestamped safety files before rebuilding:
 

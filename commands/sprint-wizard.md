@@ -98,8 +98,7 @@ Ask:
 ```
 Which epics to run?
   - Enter numbers separated by commas: 1,2,3
-  - Or 'all' for all runnable epics only (run/resume recommendations; completed skip epics are excluded)
-  - Or 'all including completed' to include completed epics in the saved plan
+  - Or 'all' for all runnable epics only (run/resume recommendations; completed epics are excluded)
   - Or 'recommended' to use recommendations above
   - Default: recommended
 
@@ -111,10 +110,11 @@ Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 Selection rules:
 - `recommended`, blank, or default selects every epic whose recommendation is `run` or `resume`.
 - `all` selects every epic whose recommendation is `run` or `resume`. It MUST NOT include epics whose recommendation is `skip`.
-- `all including completed` selects every epic, including completed skip epics.
-- Number lists such as `5,6,7` select exactly those numbered epics, but the plan summary must still show which selected epics are already completed and will be skipped.
+- Number lists such as `5,6,7` select those numbered epics only if they have runnable work. If the list includes completed epics, exclude them from the runnable plan and show them under skipped completed epics.
 
-If the user enters `all` and any completed skip epics exist, print a one-line clarification before continuing: `All means runnable epics only; completed epics {{skipped_epics}} are excluded.`
+If the user enters `all` and any completed epics exist, print a one-line clarification before continuing: `All means runnable epics only; completed epics {{skipped_epics}} are excluded.`
+
+If the user explicitly wants to rerun completed epics or fully start over, do not use wizard reset for that. Explain that wizard reset only rebuilds the Auto-BMAD plan from current sprint status. A hard startover requires the user to intentionally reset/rewrite project git and BMAD sprint status outside the wizard.
 
 If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and this is not immediately after a reset, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
 
