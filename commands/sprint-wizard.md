@@ -98,9 +98,9 @@ Ask:
 ```
 Which epics to run?
   [A] Recommended runnable epics: {{recommended_epics}}
-  [B] Choose epics manually by number
+  Or enter epic numbers separated by commas, for example 5,6,7
 
-Enter A or B:
+Enter A or epic numbers:
 >
 ```
 
@@ -108,7 +108,6 @@ Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 
 Selection rules:
 - `A`, `a`, `recommended`, or `recommend` selects every epic whose recommendation is `run` or `resume`.
-- `B`, `b`, `manual`, or `choose` asks a follow-up: `Enter epic numbers separated by commas, for example 5,6,7`.
 - Number lists such as `5,6,7` are accepted directly and select those numbered epics only if they have runnable work. If the list includes completed epics, exclude them from the runnable plan and show them under skipped completed epics.
 - Blank input should not be required. If the user sends a blank or whitespace-only response, treat it as `A`.
 - `all` is not a supported selection. If the user enters `all`, explain that the wizard accepts `A` for recommended or explicit epic numbers, then ask for the selection again.
