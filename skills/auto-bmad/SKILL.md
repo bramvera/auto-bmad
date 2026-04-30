@@ -188,6 +188,14 @@ Map common Codex phrasing to Claude command names before dry-run checks:
 
 When running `smoke-auto-bmad-flow.mjs`, pass only the command name portion, not the story id, epic id, or free-form context.
 
+For sprint wizard reset commands, reset is not optional prose. Before executing the wizard workflow, run the reset helper from the target project if available:
+
+```bash
+node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .
+```
+
+If that path is unavailable, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`. Then execute `/auto-bmad-sprint-wizard` normally; if the original command included `autonomous`, keep autonomous mode enabled.
+
 ## Safety
 
 - Do not run full TEA pipelines from ambiguous requests. A direct full command with required arguments is explicit confirmation.

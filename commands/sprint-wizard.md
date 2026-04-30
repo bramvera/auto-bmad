@@ -21,11 +21,13 @@ Check if `{{auto_bmad_artifacts}}/sprint-plan.yaml` exists.
 
 If the user invoked the wizard with `reset`, `restart`, `new plan`, `rebuild plan`, or `discard plan`:
 
-1. If `{{auto_bmad_artifacts}}/sprint-plan.yaml` exists, move it to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{timestamp}}.yaml`.
-2. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
-3. Print: `Reset sprint wizard plan; archived previous plan to {{archive_path}}.`
-4. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
-5. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
+0. Reset has priority over resume/autonomous. If the invocation contains both `reset` and `autonomous`, do the reset/archive path first, then continue autonomously with the rebuilt plan. Do not resume the old plan.
+1. Prefer running the runtime helper if available: `node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .`. If that path is missing, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`.
+2. If the helper is unavailable, manually move `{{auto_bmad_artifacts}}/sprint-plan.yaml` to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{timestamp}}.yaml`.
+3. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
+4. Print: `Reset sprint wizard plan; archived previous plan to {{archive_path}}.`
+5. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
+6. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
 
 **If exists and status is `in_progress`:**
 
@@ -63,7 +65,7 @@ Wait for user input. If `r`, load the plan and jump to "Execute Plan" section. I
 
 Before displaying existing-plan options, inspect the saved plan's selected story steps and epic-end steps. If the plan contains `e2e`, `test-design`, `atdd`, `trace`, `automate`, `nfr`, `test-review`, or `project-context`, check whether the matching skills and `_bmad/tea/config.yaml` exist. Warn clearly when the current installation supports quick mode only. Do not silently omit an optional/full step from the plan.
 
-If the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait here. Set `{{RUN_MODE}}` to `autonomous`, choose `r`, load the plan, and jump to "Execute Plan" section.
+If the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and did not invoke reset/restart/new plan/rebuild plan/discard plan, do not wait here. Set `{{RUN_MODE}}` to `autonomous`, choose `r`, load the plan, and jump to "Execute Plan" section.
 
 **If no plan exists or user chose `n`:** Continue with wizard below.
 

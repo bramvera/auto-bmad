@@ -195,3 +195,11 @@ Do not say "sprint complete", "story done", or "next options" while leaving Auto
 Do not pause, stop, or return early because the turn is long, the run is large, or a partial batch feels more manageable. Auto-BMAD sprint commands are selected as full-sprint execution. Continue until the selected workflow completes, hits a real blocker, or the user explicitly asks you to stop.
 
 For `/auto-bmad-sprint-wizard` and `$auto-bmad sprint wizard`, the selected workflow is the entire saved wizard plan, not the current story or current epic. If `sprint-plan.yaml` still has later selected epics or stories with runnable pending work, continue into them automatically. A clean checkpoint at an epic boundary is not a completion condition.
+
+For sprint wizard reset commands, reset is not optional prose. Before executing the wizard workflow, run the reset helper from the target project if available:
+
+```bash
+node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .
+```
+
+If that path is unavailable, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`. Then execute `/auto-bmad-sprint-wizard` normally; if the original command included `autonomous`, keep autonomous mode enabled.

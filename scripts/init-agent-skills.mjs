@@ -13,6 +13,7 @@ const SCRIPT_NAMES = [
   "check-bmad-refs.mjs",
   "menu-auto-bmad.mjs",
   "preflight-auto-bmad.mjs",
+  "reset-sprint-wizard.mjs",
   "smoke-auto-bmad-flow.mjs",
   "status-auto-bmad.mjs",
   "token-report.py",
