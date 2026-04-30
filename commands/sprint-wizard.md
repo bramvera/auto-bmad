@@ -97,25 +97,27 @@ Found {{epic_count}} epics:
 Ask:
 ```
 Which epics to run?
-  - Enter numbers separated by commas: 1,2,3
-  - Or 'recommended' to use recommendations above
-  - Default: recommended
+  [A] Recommended runnable epics: {{recommended_epics}}
+  [B] Choose epics manually by number
 
+Enter A or B:
 >
 ```
 
 Wait for user input. Parse selection and store as `{{selected_epics}}` list.
 
 Selection rules:
-- `recommended`, blank, or default selects every epic whose recommendation is `run` or `resume`.
-- Number lists such as `5,6,7` select those numbered epics only if they have runnable work. If the list includes completed epics, exclude them from the runnable plan and show them under skipped completed epics.
-- `all` is not a supported selection. If the user enters `all`, explain that the wizard accepts `recommended` or explicit epic numbers, then ask for the selection again.
+- `A`, `a`, `recommended`, or `recommend` selects every epic whose recommendation is `run` or `resume`.
+- `B`, `b`, `manual`, or `choose` asks a follow-up: `Enter epic numbers separated by commas, for example 5,6,7`.
+- Number lists such as `5,6,7` are accepted directly and select those numbered epics only if they have runnable work. If the list includes completed epics, exclude them from the runnable plan and show them under skipped completed epics.
+- Blank input should not be required. If the user sends a blank or whitespace-only response, treat it as `A`.
+- `all` is not a supported selection. If the user enters `all`, explain that the wizard accepts `A` for recommended or explicit epic numbers, then ask for the selection again.
 
 If a numbered selection includes completed epics, print a one-line clarification before continuing: `Completed epics {{skipped_epics}} are excluded from the runnable plan.`
 
 If the user explicitly wants to rerun completed epics or fully start over, do not use wizard reset for that. Explain that wizard reset only rebuilds the Auto-BMAD plan from current sprint status. A hard startover requires the user to intentionally reset/rewrite project git and BMAD sprint status outside the wizard.
 
-If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and this is not immediately after a reset, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `recommended`.
+If `{{RUN_MODE}}` is `autonomous`, or if the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, and this is not immediately after a reset, do not wait for selection. Set `{{RUN_MODE}}` to `autonomous` and select `A`.
 
 If this is immediately after a reset, display the recommended selection and ask for confirmation or edits even if the reset command included `autonomous`.
 
