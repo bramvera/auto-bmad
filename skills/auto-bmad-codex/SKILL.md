@@ -163,6 +163,8 @@ Resolve command files as follows:
 - `/auto-bmad-sprint-quick` -> `commands/sprint-quick.md`
 - `/auto-bmad-assess` -> `commands/assess.md`
 - `/auto-bmad-sprint-wizard` -> `commands/sprint-wizard.md`
+- `/auto-bmad-sprint-wizard reset` -> `commands/sprint-wizard.md`, using the command file's reset/archive path before rebuilding the plan
+- `/auto-bmad-sprint-wizard reset autonomous` -> `commands/sprint-wizard.md`, using reset/archive plus autonomous defaults
 - `/auto-bmad-story` -> `commands/story.md`
 - `/auto-bmad-sprint` -> `commands/sprint.md`
 - `/auto-bmad-epic-start` -> `commands/epic-start.md`

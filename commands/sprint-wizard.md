@@ -19,6 +19,14 @@ Read `_bmad/bmm/config.yaml` and set the following variables (resolve `{project-
 
 Check if `{{auto_bmad_artifacts}}/sprint-plan.yaml` exists.
 
+If the user invoked the wizard with `reset`, `restart`, `new plan`, `rebuild plan`, or `discard plan`:
+
+1. If `{{auto_bmad_artifacts}}/sprint-plan.yaml` exists, move it to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{timestamp}}.yaml`.
+2. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
+3. Print: `Reset sprint wizard plan; archived previous plan to {{archive_path}}.`
+4. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
+5. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
+
 **If exists and status is `in_progress`:**
 
 Display:
@@ -32,12 +40,13 @@ Options:
   [r] Resume from where it stopped
   [s] Skip current story, continue with next
   [n] New plan (discard current)
+  [x] Reset/archive current plan and rebuild from sprint status
   [c] Cancel
 
 >
 ```
 
-Wait for user input. If `r`, load the plan and jump to "Execute Plan" section. If `s`, mark current story as skipped and continue. If `n`, continue with wizard. If `c`, stop.
+Wait for user input. If `r`, load the plan and jump to "Execute Plan" section. If `s`, mark current story as skipped and continue. If `n`, continue with wizard. If `x`, archive the existing plan as described above and continue with Step 1. If `c`, stop.
 
 If the user invoked the wizard with `auto`, `autonomous`, `overnight`, `hands-off`, `yolo`, or explicitly asked to run while away, do not wait here. Set `{{RUN_MODE}}` to `autonomous`, choose `r`, load the plan, and jump to "Execute Plan" section.
 

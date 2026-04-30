@@ -175,6 +175,8 @@ Map common Codex phrasing to Claude command names before dry-run checks:
 - `quick sprint 1` -> `/auto-bmad-sprint-quick 1`
 - `assess` or `assess 1` -> `/auto-bmad-assess [1]`
 - `sprint wizard` -> `/auto-bmad-sprint-wizard`
+- `sprint wizard reset`, `reset wizard sprint`, or `wizard reset` -> `/auto-bmad-sprint-wizard reset`
+- `sprint wizard reset autonomous`, `reset wizard sprint autonomous`, or `wizard reset autonomous` -> `/auto-bmad-sprint-wizard reset autonomous`
 - `full story 1-1` -> `/auto-bmad-story 1-1`
 - `full sprint 1` -> `/auto-bmad-sprint 1`
 - `plan <context>` -> `/auto-bmad-plan <context>`
