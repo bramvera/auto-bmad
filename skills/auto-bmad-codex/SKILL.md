@@ -14,6 +14,7 @@ Bridge Auto-BMAD into Codex safely. Prefer diagnostics and dry-runs before any r
 - Quick mode is the baseline: missing TEA or GDS is not a quick-mode failure.
 - Treat `/auto-bmad-*` and `/auto-gds-*` text as slash-like command names. Codex may not have Claude slash command dispatch.
 - Before running capability checks or dry-runs, use the fast YAML status lookup for a missing story id or epic id. It reads only `_bmad/<module>/config.yaml` and the resolved `sprint-status.yaml`; it does not inspect TOML, skills, or optional modules.
+- For progress/status/order questions such as "what's my order?", "current status", "where is the wizard?", or "what is running next?", run the fast status helper with `--wizard`. This is read-only and must not interrupt a running wizard worker.
 - Before any real workflow execution, run the dirty-worktree preflight. If dirty changes exist, stop and ask the user. Never skip the story or continue over dirty uncommitted changes.
 
 ## Fast YAML Status Path

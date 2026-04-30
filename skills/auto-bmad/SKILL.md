@@ -15,6 +15,7 @@ Before running any capability check, menu, or dry-run, inspect the user's messag
 
 - Plain `$auto-bmad` with no extra request.
 - Story, sprint, or epic workflows with a missing required id.
+- Progress/status/order questions such as "what's my order?", "current status", "where is the wizard?", or "what is running next?".
 
 It reads only `_bmad/<module>/config.yaml` and the resolved `sprint-status.yaml`; it must not run the full capability check.
 
@@ -38,6 +39,7 @@ fi
 ```
 
 - Plain `$auto-bmad` -> run `node "$STATUS_SCRIPT" --project-root .` and print the status output. Do not print the command menu.
+- Status/order/progress questions -> run `node "$STATUS_SCRIPT" --project-root . --wizard` and print the status output. This is read-only and must not interrupt a running wizard worker.
 - `$auto-bmad quick story`, `/auto-bmad-story-quick`, `$auto-bmad full story`, `/auto-bmad-story`, `$auto-bmad gds quick story`, or `$auto-bmad gds full story` without a story id -> run `node "$STATUS_SCRIPT" --project-root . --kind story` (`--module gds` for GDS), then ask which story id to use with the suggested next story.
 - `$auto-bmad quick sprint`, `/auto-bmad-sprint-quick`, `$auto-bmad full sprint`, `/auto-bmad-sprint`, `$auto-bmad gds quick sprint`, or `$auto-bmad gds full sprint` without an epic id -> run `node "$STATUS_SCRIPT" --project-root . --kind sprint` (`--module gds` for GDS), then ask which epic number to use with the suggested next epic.
 - `$auto-bmad epic start`, `$auto-bmad epic end`, `/auto-bmad-epic-start`, `/auto-bmad-epic-end`, `$auto-bmad gds epic start`, or `$auto-bmad gds epic end` without an epic id -> run `node "$STATUS_SCRIPT" --project-root . --kind epic` (`--module gds` for GDS), then ask which epic number to use with the suggested next epic.

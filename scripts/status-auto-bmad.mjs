@@ -12,6 +12,7 @@ Options:
   --project-root <path>  Project root to check. Default: current directory.
   --module <name>        Module config to read: bmm or gds. Default: bmm.
   --kind <name>          Output focus: summary, story, sprint, or epic. Default: summary.
+  --wizard               Include sprint wizard plan progress when available.
   --json                 Print machine-readable JSON.
   --help                 Show this help.
 `;
@@ -24,6 +25,7 @@ function parseArgs(argv) {
     projectRoot: process.cwd(),
     module: "bmm",
     kind: "summary",
+    wizard: false,
     json: false,
   };
 
@@ -52,6 +54,10 @@ function parseArgs(argv) {
     }
     if (arg === "--json") {
       args.json = true;
+      continue;
+    }
+    if (arg === "--wizard") {
+      args.wizard = true;
       continue;
     }
     failUsage(`Unknown option: ${arg}`);
@@ -196,6 +202,7 @@ function buildProgress(projectRoot, moduleName) {
     sprintStatusPath,
     sprintStatusFound: sprintStatusPath ? isFile(sprintStatusPath) : false,
     planningState: detectPlanningState(planningArtifacts),
+    wizard: detectWizardState(outputFolder),
     epics: epicList,
     nextEpic: nextEpic
       ? {
@@ -205,6 +212,93 @@ function buildProgress(projectRoot, moduleName) {
         }
       : null,
     nextStory,
+  };
+}
+
+function detectWizardState(outputFolder) {
+  if (!outputFolder) return { found: false };
+  const planPath = path.join(outputFolder, "auto-bmad-artifacts", "sprint-plan.yaml");
+  const text = readText(planPath);
+  if (!text) return { found: false, planPath };
+
+  const stories = [];
+  const epics = [];
+  const lines = text.split(/\r?\n/);
+  let currentEpic = null;
+  let inEpics = false;
+  let inStories = false;
+
+  for (const line of lines) {
+    if (/^epics:\s*$/.test(line)) {
+      inEpics = true;
+      continue;
+    }
+    if (inEpics && /^\S/.test(line) && !/^epics:\s*$/.test(line)) {
+      inEpics = false;
+      inStories = false;
+    }
+    if (!inEpics) continue;
+
+    const epicMatch = line.match(/^\s{2}-\s+id:\s*"?([^"\n]+)"?\s*$/);
+    if (epicMatch) {
+      currentEpic = { id: epicMatch[1].trim(), status: "unknown", stories: [] };
+      epics.push(currentEpic);
+      inStories = false;
+      continue;
+    }
+    if (!currentEpic) continue;
+
+    const epicStatusMatch = line.match(/^\s{4}status:\s*"?([^"\n]+)"?\s*$/);
+    if (epicStatusMatch && !inStories) {
+      currentEpic.status = epicStatusMatch[1].trim();
+      continue;
+    }
+    if (/^\s{4}stories:\s*$/.test(line)) {
+      inStories = true;
+      continue;
+    }
+    const storyMatch = line.match(/^\s{6}-\s+id:\s*"?([^"\n]+)"?\s*$/);
+    if (storyMatch && inStories) {
+      const story = {
+        id: storyMatch[1].trim(),
+        epicId: currentEpic.id,
+        status: "unknown",
+      };
+      currentEpic.stories.push(story);
+      stories.push(story);
+      continue;
+    }
+    const storyStatusMatch = line.match(/^\s{8}status:\s*"?([^"\n]+)"?\s*$/);
+    if (storyStatusMatch && inStories && currentEpic.stories.length) {
+      currentEpic.stories[currentEpic.stories.length - 1].status = storyStatusMatch[1].trim();
+    }
+  }
+
+  const status = parseYamlValue(text, "status");
+  const updated = parseYamlValue(text, "updated");
+  const currentEpicId = parseYamlValue(text, "current_epic");
+  const currentStory = parseYamlValue(text, "current_story");
+  const currentStep = parseYamlValue(text, "current_step");
+  const completedStories = stories.filter((story) => DONE_STATUSES.has(story.status.toLowerCase())).length;
+  const pendingStories = stories.filter((story) => !DONE_STATUSES.has(story.status.toLowerCase())).length;
+  const nextStory = stories.find((story) => !DONE_STATUSES.has(story.status.toLowerCase())) || null;
+  const nextEpic = epics.find((epic) => epic.status.toLowerCase() !== "completed") || null;
+
+  return {
+    found: true,
+    planPath,
+    status,
+    updated,
+    currentEpic: currentEpicId,
+    currentStory,
+    currentStep,
+    completedStories,
+    pendingStories,
+    totalStories: stories.length,
+    completedEpics: epics.filter((epic) => epic.status.toLowerCase() === "completed").length,
+    totalEpics: epics.length,
+    nextStory,
+    nextEpic: nextEpic ? { id: nextEpic.id, status: nextEpic.status } : null,
   };
 }
 
@@ -243,6 +337,10 @@ function printHuman(progress, kind) {
     }${progress.sprintStatusFound ? "" : " (missing)"}`,
   );
 
+  if (progress.wizard?.found) {
+    printWizard(progress);
+  }
+
   if (!progress.configFound) {
     console.log(`\nMissing _bmad/${progress.module}/config.yaml.`);
     console.log("This project does not have the BMAD module YAML needed for Auto-BMAD status.");
@@ -278,6 +376,18 @@ function printHuman(progress, kind) {
 
   if (["summary", "story", "sprint", "epic"].includes(kind)) {
     printChoices(progress);
+  }
+}
+
+function printWizard(progress) {
+  const wizard = progress.wizard;
+  console.log("\nSprint wizard plan:");
+  console.log(`Plan: ${relative(progress.projectRoot, wizard.planPath)}`);
+  console.log(`Status: ${wizard.status || "unknown"}${wizard.updated ? ` (updated ${wizard.updated})` : ""}`);
+  console.log(`Current: Epic ${wizard.currentEpic || "unknown"}, Story ${wizard.currentStory || "unknown"}, Step ${wizard.currentStep || "unknown"}`);
+  console.log(`Progress: ${wizard.completedStories}/${wizard.totalStories} stories, ${wizard.completedEpics}/${wizard.totalEpics} epics completed`);
+  if (wizard.nextStory) {
+    console.log(`Next pending in plan: Epic ${wizard.nextStory.epicId}, Story ${wizard.nextStory.id}`);
   }
 }
 
