@@ -23,11 +23,12 @@ If the user invoked the wizard with `reset`, `restart`, `new plan`, `rebuild pla
 
 0. Reset has priority over resume/autonomous. If the invocation contains both `reset` and `autonomous`, do the reset/archive path first, then continue autonomously with the rebuilt plan. Do not resume the old plan.
 1. Prefer running the runtime helper if available: `node .agents/skills/_auto-bmad-runtime/scripts/reset-sprint-wizard.mjs --project-root .`. If that path is missing, find `reset-sprint-wizard.mjs` in the Auto-BMAD package/plugin checkout and run it with `--project-root .`.
-2. If the helper is unavailable, manually move `{{auto_bmad_artifacts}}/sprint-plan.yaml` to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{timestamp}}.yaml`.
-3. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
-4. Print: `Reset sprint wizard plan; archived previous plan to {{archive_path}}.`
-5. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
-6. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
+2. The reset helper MUST create a timestamped backup copy first (`sprint-plan-backup-before-reset-{{datetime}}.yaml`), then move the active plan to a timestamped archive (`sprint-plan-archived-{{datetime}}.yaml`).
+3. If the helper is unavailable, manually copy `{{auto_bmad_artifacts}}/sprint-plan.yaml` to `{{auto_bmad_artifacts}}/sprint-plan-backup-before-reset-{{datetime}}.yaml`, then move the original to `{{auto_bmad_artifacts}}/sprint-plan-archived-{{datetime}}.yaml`.
+4. If any previous wizard reports exist, leave them in place. Do not delete historical reports.
+5. Print both backup and archive paths.
+6. Continue with Step 1: Scan Epics and build a new plan from the current `sprint-status.yaml`.
+7. If the reset invocation also includes `auto`, `autonomous`, `overnight`, `hands-off`, or `yolo`, set `{{RUN_MODE}}` to `autonomous` and use autonomous defaults for the new plan.
 
 **If exists and status is `in_progress`:**
 

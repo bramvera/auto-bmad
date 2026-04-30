@@ -6,8 +6,8 @@ import process from "node:process";
 const HELP = `Usage: node scripts/reset-sprint-wizard.mjs --project-root <path>
 
 Archive the current Auto-BMAD sprint wizard plan. This is intentionally narrow:
-it only moves _bmad-output/auto-bmad-artifacts/sprint-plan.yaml and leaves
-historical reports untouched.
+it creates a timestamped backup copy, then moves sprint-plan.yaml to a
+timestamped archive path, and leaves historical reports untouched.
 `;
 
 function parseArgs(argv) {
@@ -59,6 +59,16 @@ function timestamp() {
   return new Date().toISOString().replaceAll(":", "").replace(/\.\d{3}Z$/, "Z");
 }
 
+function uniquePath(filePath) {
+  if (!fs.existsSync(filePath)) return filePath;
+  const parsed = path.parse(filePath);
+  for (let index = 2; index < 1000; index += 1) {
+    const candidate = path.join(parsed.dir, `${parsed.name}-${index}${parsed.ext}`);
+    if (!fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error(`Unable to find available backup path for ${filePath}`);
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const configPath = path.join(args.projectRoot, "_bmad", "bmm", "config.yaml");
@@ -77,9 +87,14 @@ function main() {
   }
 
   fs.mkdirSync(artifactsDir, { recursive: true });
-  const archivePath = path.join(artifactsDir, `sprint-plan-archived-${timestamp()}.yaml`);
+  const stamp = timestamp();
+  const backupPath = uniquePath(path.join(artifactsDir, `sprint-plan-backup-before-reset-${stamp}.yaml`));
+  const archivePath = uniquePath(path.join(artifactsDir, `sprint-plan-archived-${stamp}.yaml`));
+  fs.copyFileSync(planPath, backupPath);
   fs.renameSync(planPath, archivePath);
-  console.log(`Reset sprint wizard plan; archived previous plan to ${path.relative(args.projectRoot, archivePath)}.`);
+  console.log("Reset sprint wizard plan.");
+  console.log(`Backup copy: ${path.relative(args.projectRoot, backupPath)}`);
+  console.log(`Archived plan: ${path.relative(args.projectRoot, archivePath)}`);
 }
 
 main();
