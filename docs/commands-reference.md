@@ -60,6 +60,16 @@ The wizard asks for execution style and stores it in the plan as `execution_styl
 
 For epic selection, the wizard accepts `A` for recommended runnable epics or explicit epic numbers. Completed epics are excluded from the runnable plan. Wizard reset only rebuilds the Auto-BMAD plan from current sprint status; it is not a hard project startover.
 
+Wizard prompts avoid blank-input defaults for Codex compatibility:
+
+| Prompt | Answer |
+|---|---|
+| Epic selection | `A` for recommended runnable epics, or numbers like `5,6,7` |
+| Optional steps | letters such as `c` for E2E, or `n` for none |
+| Execution style | `1` for fresh workers/subagents, `2` for current session |
+| Per-epic customization | `y` to apply the same steps to all selected epics |
+| Proceed | `y` to start, `n` to save the plan and stop |
+
 ---
 
 ## Greenfield Commands

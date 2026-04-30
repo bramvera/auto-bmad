@@ -98,6 +98,18 @@ The wizard also asks for execution style. Choose fresh workers/subagents when yo
 
 When selecting epics, choose `A` for recommended runnable epics or type explicit epic numbers. Completed epics are skipped; hard startovers require an intentional project/git reset outside the wizard.
 
+Typical quick-mode wizard answers:
+
+```text
+A   # recommended runnable epics
+n   # no optional steps
+1   # fresh workers/subagents
+y   # apply to all selected epics
+y   # proceed
+```
+
+Use `c` instead of `n` at the optional-step prompt when you want epic-end E2E generation and the project has `bmad-qa-generate-e2e-tests` installed.
+
 For read-only monitoring:
 
 ```bash
