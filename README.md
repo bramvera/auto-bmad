@@ -1,16 +1,16 @@
 # Auto BMAD
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Claude Code](https://img.shields.io/badge/Claude_Code-Slash_Commands-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![Codex](https://img.shields.io/badge/Codex-$auto--bmad--check-111827)](docs/tutorial-codex.md) [![Agent Skills](https://img.shields.io/badge/Agent_Skills-.agents%2Fskills-0f766e)](docs/installation.md#codex-and-shared-agent-skills-hosts) [![BMAD v6.5.0](https://img.shields.io/badge/BMAD-v6.5.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE.md) [![Claude Code](https://img.shields.io/badge/Claude_Code-Slash_Commands-blueviolet)](https://docs.anthropic.com/en/docs/claude-code) [![Codex](https://img.shields.io/badge/Codex-$auto--bmad--check-111827)](docs/tutorial-codex.md) [![Agent Skills](https://img.shields.io/badge/Agent_Skills-.agents%2Fskills-0f766e)](docs/installation.md#codex-and-shared-agent-skills-hosts) [![BMAD v6.6.0](https://img.shields.io/badge/BMAD-v6.6.0-orange)](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0)
 
-Auto-BMAD runs BMAD 6.5 execution pipelines across Claude Code, Codex, and shared Agent Skills hosts. It does not generate an app from one prompt. It orchestrates existing BMAD skills with checkpoints, reviews, reports, and resumable sprint state.
+Auto-BMAD runs BMAD 6.6 execution pipelines across Claude Code, Codex, and shared Agent Skills hosts. It does not generate an app from one prompt. It orchestrates existing BMAD skills with checkpoints, reviews, reports, and resumable sprint state.
 
-> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.5.0 with quick/full modes, sprint automation, diagnostics, and flattened agent architecture.
+> Fork of [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad), updated for BMAD-METHOD v6.6.0 with quick/full modes, sprint automation, diagnostics, and flattened agent architecture.
 
 ## Requirements
 
 Auto-BMAD runs on top of an existing BMAD project. Before installing Auto-BMAD, set up the required BMAD modules from their own documentation:
 
-- [BMAD-METHOD v6.5.0](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) - required for every Auto-BMAD workflow
+- [BMAD-METHOD v6.6.0](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0) - required for every Auto-BMAD workflow
 - [TEA v1.15.1](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) - required only for full BMM mode
 - [GDS v0.2.2](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) - required only for game-development workflows
 

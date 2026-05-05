@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This fork diverges from [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) starting at v0.3.0.
 
+## [0.10.5] - 2026-05-06
+
+### Changed
+- Updated the advertised compatibility target to BMAD-METHOD v6.6.0 after validating BMAD 6.6.0 and TEA 1.15.1 skill references, fresh-install diagnostics, and Auto-BMAD command smoke routing.
+
 ## [0.10.4] - 2026-04-29
 
 ### Fixed

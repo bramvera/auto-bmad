@@ -8,7 +8,7 @@ The BMM pipeline takes a product idea through the full BMAD lifecycle -- from pl
 
 Install these modules in your project before running any BMM commands:
 
-- **BMAD-METHOD v6.5.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0))
+- **BMAD-METHOD v6.6.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0))
 - **TEA v1.15.1** -- Test Engineering Architect, provides test strategy and ATDD ([package](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise))
 
 Optional but helpful:

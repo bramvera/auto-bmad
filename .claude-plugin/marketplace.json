@@ -10,7 +10,7 @@
       "name": "auto-bmad",
       "source": "./",
       "description": "Automated BMAD pipeline orchestration: quick mode (3-step), full mode (10-step), diagnostics, and brownfield pipelines.",
-      "version": "0.10.3",
+      "version": "0.10.5",
       "author": { "name": "bramvera" },
       "skills": ["./skills/auto-bmad-check"]
     }

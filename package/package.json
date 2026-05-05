@@ -1,6 +1,6 @@
 {
   "name": "@bramvera/auto-bmad",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "Installs Auto-BMAD for Claude Code or shared Agent Skills hosts",
   "scripts": {
     "prepack": "cd .. && bash scripts/prepublish.sh"

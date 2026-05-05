@@ -9,7 +9,7 @@ Auto-BMAD has two parts:
 
 Auto-BMAD assumes the target project is already a working BMAD project. Install and configure BMAD modules from their own documentation:
 
-- [BMAD-METHOD v6.5.0](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) - required for every Auto-BMAD workflow
+- [BMAD-METHOD v6.6.0](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0) - required for every Auto-BMAD workflow
 - [TEA v1.15.1](https://www.npmjs.com/package/bmad-method-test-architecture-enterprise) - required only for full BMM mode
 - [GDS v0.2.2](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2) - required only for GDS workflows
 

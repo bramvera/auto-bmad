@@ -8,7 +8,7 @@ The GDS pipeline takes a game idea through the BMAD lifecycle tailored for game 
 
 Install these modules in your project before running any GDS commands:
 
-- **BMAD-METHOD v6.5.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0))
+- **BMAD-METHOD v6.6.0** -- the core method ([repo](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0))
 - **GDS v0.2.2** -- Game Dev Suite, provides game design, architecture, narrative, and testing ([repo](https://github.com/bmad-code-org/bmad-module-game-dev-studio/releases/tag/v0.2.2))
 
 ### Config Files

@@ -80,7 +80,7 @@ Auto-BMAD should never skip a story or continue into retry/rollback logic over d
 
 Once an Auto-BMAD sprint starts, the agent should not pause after a partial batch just because the run is long or the turn feels large. A sprint stops only when the workflow completes, hits a real blocker, or the user explicitly asks it to stop.
 
-There is no separate `auto-bmad` YAML config in BMAD v6.5+ support. If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the repo as a new/pre-sprint project and suggests planning or sprint-planning next steps.
+There is no separate `auto-bmad` YAML config in BMAD v6.6+ support. If `sprint-status.yaml` does not exist yet, `$auto-bmad` treats the repo as a new/pre-sprint project and suggests planning or sprint-planning next steps.
 
 Claude Code exposes Auto-BMAD as slash commands. Codex exposes Auto-BMAD as generated skills. The workflow names are the same; the host prefix changes.
 
@@ -88,7 +88,7 @@ See [Auto-BMAD with Codex](tutorial-codex.md) for the step-by-step Codex workflo
 
 ### Which BMAD version does this fork support?
 
-This branch targets BMAD-METHOD v6.5.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.5 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD provides Claude Code slash commands and generated shared skills over that layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
+This branch targets BMAD-METHOD v6.6.0, TEA v1.15.1, and GDS v0.2.2/current skill surfaces by static compatibility checks. BMAD v6.6 supports shared cross-agent skill installs through `.agents/skills`; Auto-BMAD provides Claude Code slash commands and generated shared skills over that layout. The upstream [stefanoginella/auto-bmad](https://github.com/stefanoginella/auto-bmad) targets an older version with different skill naming.
 
 Run `/auto-bmad-check` in Claude Code or `$auto-bmad-check` in Codex to validate the installed modules. Missing TEA or GDS is reported as optional unless you choose a pipeline that needs it.
 For Pi or another shared Agent Skills host, run `/skill:auto-bmad-check`.
@@ -148,7 +148,7 @@ For Codex, Pi, or another shared Agent Skills-compatible host, run this from the
 npx @bramvera/auto-bmad init
 ```
 
-This writes generated Auto-BMAD wrappers into the target project's `.agents/skills` directory. The target project must already be a BMAD project; follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) for BMAD setup. Start with `$auto-bmad-check` in Codex or `/skill:auto-bmad-check` in slash-skill hosts.
+This writes generated Auto-BMAD wrappers into the target project's `.agents/skills` directory. The target project must already be a BMAD project; follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0) for BMAD setup. Start with `$auto-bmad-check` in Codex or `/skill:auto-bmad-check` in slash-skill hosts.
 
 ### How do I switch from the original to this fork?
 

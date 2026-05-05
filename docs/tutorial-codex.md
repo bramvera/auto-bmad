@@ -1,12 +1,12 @@
 # Auto-BMAD with Codex
 
-This tutorial shows how to use Auto-BMAD from Codex against a BMAD v6.5 project.
+This tutorial shows how to use Auto-BMAD from Codex against a BMAD v6.6 project.
 
 Codex uses the same generated Agent Skills install as Pi and other shared-skill hosts. The difference is command syntax: Codex uses `$skill-name`, while slash-skill hosts use `/skill:skill-name`.
 
 ## Prerequisites
 
-Auto-BMAD assumes the target project already has BMAD v6.5+ installed and configured. Follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.5.0) for BMAD setup before using Auto-BMAD.
+Auto-BMAD assumes the target project already has BMAD v6.6+ installed and configured. Follow the [BMAD-METHOD documentation](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.6.0) for BMAD setup before using Auto-BMAD.
 
 For quick mode, BMAD-METHOD is enough. TEA is only needed for full BMM pipelines, and GDS is only needed for game-development pipelines.
 

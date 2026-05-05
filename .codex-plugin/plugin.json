@@ -1,7 +1,7 @@
 {
   "name": "auto-bmad",
-  "version": "0.10.4",
-  "description": "[0.10.4] Auto-BMAD Codex skills for BMAD 6.5 diagnostics and dry-run flow checks.",
+  "version": "0.10.5",
+  "description": "[0.10.5] Auto-BMAD Codex skills for BMAD 6.6 diagnostics and dry-run flow checks.",
   "author": {
     "name": "bramvera",
     "url": "https://github.com/bramvera"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Auto-BMAD",
     "shortDescription": "BMAD status, diagnostics, and workflow routing.",
-    "longDescription": "Auto-BMAD packages Codex entrypoint skills for BMAD 6.5 fast YAML progress lookup, diagnostics, command menus, dry-run routing checks, and execution guidance. Full workflow skills are generated from the Claude command files into each target project's .agents/skills directory by npx @bramvera/auto-bmad init.",
+    "longDescription": "Auto-BMAD packages Codex entrypoint skills for BMAD 6.6 fast YAML progress lookup, diagnostics, command menus, dry-run routing checks, and execution guidance. Full workflow skills are generated from the Claude command files into each target project's .agents/skills directory by npx @bramvera/auto-bmad init.",
     "developerName": "bramvera",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
